@@ -4,7 +4,7 @@ Please note that this tool is in the very early stages of development. It works 
 
 ## Install (still in Alpha)
 
-`composer global require davidpeach/composer-manuscript`
+`composer global require davidpeach/composer-manuscript:dev-main`
 
 ## Uninstall
 
