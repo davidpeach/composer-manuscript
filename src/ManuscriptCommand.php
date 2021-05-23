@@ -57,6 +57,7 @@ class ManuscriptCommand extends Command
         $this->packageDescription = $this->determinePackageDescription($input, $output);
         $this->packageAuthor = $this->determinePackageAuthor($input, $output);
         $this->packageMinimumStability = $this->determinePackageMinimumStability($input, $output);
+        $this->packageLicense = $this->determinePackageLicense($input, $output);
 
         $this->packageDirectory = $this->determinePackageDirectory($input, $output);
         $this->packageNameSpace = $this->determinePackageNameSpace();
@@ -150,6 +151,13 @@ class ManuscriptCommand extends Command
         return $this->helper->ask($input, $output, $question);
     }
 
+    private function determinePackageLicense($input, $output): string
+    {
+        $question = new Question('Please enter the license for your package [MIT]: ', 'MIT');
+
+        return $this->helper->ask($input, $output, $question);
+    }
+
     private function determinePackageDirectory($input, $output): string
     {
         $packageFolderName = str_replace('/', '-', $this->packageName);
@@ -201,6 +209,7 @@ class ManuscriptCommand extends Command
             '--description="'. $this->packageDescription . '"',
             '--author="' . $this->packageAuthor . '"',
             '--stability="' . $this->packageMinimumStability . '"',
+            '--license="' . $this->packageLicense . '"',
         ];
 
         $commands = [
