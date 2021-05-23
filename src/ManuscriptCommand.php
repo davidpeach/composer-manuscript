@@ -52,7 +52,11 @@ class ManuscriptCommand extends Command
 
         $this->installDirectory = $this->determineInstallDirectory($input, $output);
 
+        // composer json values
         $this->packageName = $this->determinePackageName($input, $output);
+        $this->packageDescription = $this->determinePackageDescription($input, $output);
+
+
         $this->packageDirectory = $this->determinePackageDirectory($input, $output);
         $this->packageNameSpace = $this->determinePackageNameSpace();
 
@@ -83,6 +87,13 @@ class ManuscriptCommand extends Command
     private function determinePackageName($input, $output): string
     {
         $question = new Question('Please enter the name of your package [wow/such-package]: ', 'wow/such-package');
+
+        return $this->helper->ask($input, $output, $question);
+    }
+
+    private function determinePackageDescription($input, $output): string
+    {
+        $question = new Question('Please enter the description of your package []: ', '');
 
         return $this->helper->ask($input, $output, $question);
     }
@@ -134,7 +145,8 @@ class ManuscriptCommand extends Command
 
         $composerBuildCommand = [
             'composer init',
-            '--name=' . $this->packageName,
+            '--name="' . $this->packageName . '"',
+            '--description=' . '"' . $this->packageDescription . '"',
         ];
 
         $commands = [
