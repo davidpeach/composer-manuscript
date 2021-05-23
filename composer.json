@@ -1,0 +1,27 @@
+{
+    "name": "davidpeach/manuscript",
+    "description": "A quick-start tool for creating composer packages",
+    "require": {
+        "symfony/process": "^5.2",
+        "symfony/console": "^5.2",
+        "illuminate/support": "^8.42"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Peach",
+            "email": "mail@davidpeach.co.uk"
+        }
+    ],
+    "bin": [
+        "bin/manuscript"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Davidpeach\\Manuscript\\": "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.2"
+    }
+}
