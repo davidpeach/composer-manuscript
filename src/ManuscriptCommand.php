@@ -24,6 +24,18 @@ class ManuscriptCommand extends Command
 
     private $packageName;
 
+    private $packageDescription;
+
+    private $packageAuthor;
+
+    private $packageMinimumStability;
+
+    private $packageLicense;
+
+    private $packageDirectory;
+
+    private $packageNameSpace;
+
     private $packageFramework;
 
     private $packageFrameworkInstallLocation;
