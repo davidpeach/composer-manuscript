@@ -132,7 +132,18 @@ class ManuscriptCommand extends Command
 
         mkdir($this->packageDirectory);
 
-        $process = Process::fromShellCommandline('cd ' . $this->packageDirectory . ' && composer init --name=' . $this->packageName . ' && cd ' . $this->cwd);
+        $composerBuildCommand = [
+            'composer init',
+            '--name=' . $this->packageName,
+        ];
+
+        $commands = [
+            'cd ' . $this->packageDirectory,
+            implode(' ', $composerBuildCommand),
+            'cd ' . $this->cwd,
+        ];
+
+        $process = Process::fromShellCommandline(implode(' && ', $commands));
         $process->run();
 
         if (!$process->isSuccessful()) {
