@@ -56,6 +56,7 @@ class ManuscriptCommand extends Command
         $this->packageName = $this->determinePackageName($input, $output);
         $this->packageDescription = $this->determinePackageDescription($input, $output);
         $this->packageAuthor = $this->determinePackageAuthor($input, $output);
+        $this->packageMinimumStability = $this->determinePackageMinimumStability($input, $output);
 
         $this->packageDirectory = $this->determinePackageDirectory($input, $output);
         $this->packageNameSpace = $this->determinePackageNameSpace();
@@ -136,6 +137,19 @@ class ManuscriptCommand extends Command
         return sprintf('%s <%s>', $name, $email);
     }
 
+    private function determinePackageMinimumStability($input, $output): string
+    {
+        //dev, alpha, beta, RC, and stable.
+        $question = new ChoiceQuestion(
+            'Please select your minimum stability [stable]',
+            ['dev', 'alpha', 'beta', 'RC', 'stable'],
+            4
+        );
+        $question->setErrorMessage('Minimum Stability %s is invalid.');
+
+        return $this->helper->ask($input, $output, $question);
+    }
+
     private function determinePackageDirectory($input, $output): string
     {
         $packageFolderName = str_replace('/', '-', $this->packageName);
@@ -186,6 +200,7 @@ class ManuscriptCommand extends Command
             '--name="' . $this->packageName . '"',
             '--description="'. $this->packageDescription . '"',
             '--author="' . $this->packageAuthor . '"',
+            '--stability="' . $this->packageMinimumStability . '"',
         ];
 
         $commands = [
