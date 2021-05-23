@@ -217,12 +217,27 @@ class ManuscriptCommand extends Command
 
         $composerBuildCommand = [
             'composer init',
-            '--name="' . $this->packageName . '"',
-            '--description="'. $this->packageDescription . '"',
-            '--author="' . $this->packageAuthor . '"',
-            '--stability="' . $this->packageMinimumStability . '"',
-            '--license="' . $this->packageLicense . '"',
         ];
+
+        if (! empty($this->packageName)) {
+            $composerBuildCommand[] = '--name="' . $this->packageName . '"';
+        }
+
+        if (! empty($this->packageDescription)) {
+            $composerBuildCommand[] = '--description="' . $this->packageDescription . '"';
+        }
+
+        if (! empty($this->packageAuthor)) {
+            $composerBuildCommand[] = '--author="' . $this->packageAuthor . '"';
+        }
+
+        if (! empty($this->packageMinimumStability)) {
+            $composerBuildCommand[] = '--stability="' . $this->packageMinimumStability . '"';
+        }
+
+        if (! empty($this->packageLicense)) {
+            $composerBuildCommand[] = '--license="' . $this->packageLicense . '"';
+        }
 
         $commands = [
             'cd ' . $this->packageDirectory,
