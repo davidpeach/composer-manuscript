@@ -24,6 +24,18 @@ class ManuscriptCommand extends Command
 
     private $packageName;
 
+    private $packageDescription;
+
+    private $packageAuthor;
+
+    private $packageMinimumStability;
+
+    private $packageLicense;
+
+    private $packageDirectory;
+
+    private $packageNameSpace;
+
     private $packageFramework;
 
     private $packageFrameworkInstallLocation;
@@ -52,7 +64,13 @@ class ManuscriptCommand extends Command
 
         $this->installDirectory = $this->determineInstallDirectory($input, $output);
 
+        // composer json values
         $this->packageName = $this->determinePackageName($input, $output);
+        $this->packageDescription = $this->determinePackageDescription($input, $output);
+        $this->packageAuthor = $this->determinePackageAuthor($input, $output);
+        $this->packageMinimumStability = $this->determinePackageMinimumStability($input, $output);
+        $this->packageLicense = $this->determinePackageLicense($input, $output);
+
         $this->packageDirectory = $this->determinePackageDirectory($input, $output);
         $this->packageNameSpace = $this->determinePackageNameSpace();
 
@@ -83,6 +101,71 @@ class ManuscriptCommand extends Command
     private function determinePackageName($input, $output): string
     {
         $question = new Question('Please enter the name of your package [wow/such-package]: ', 'wow/such-package');
+
+        return $this->helper->ask($input, $output, $question);
+    }
+
+    private function determinePackageDescription($input, $output): string
+    {
+        $question = new Question('Please enter the description of your package []: ', '');
+
+        return $this->helper->ask($input, $output, $question);
+    }
+
+    private function determinePackageAuthor($input, $output): string
+    {
+        $name  = '';
+        $email = '';
+
+        $process = new Process([
+            'git',
+            'config',
+            '--global',
+            'user.name'
+        ]);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $name = trim($process->getOutput(), "\n");
+
+        $process = new Process([
+            'git',
+            'config',
+            '--global',
+            'user.email'
+        ]);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $email = trim($process->getOutput(), "\n");
+
+        return sprintf('%s <%s>', $name, $email);
+    }
+
+    private function determinePackageMinimumStability($input, $output): string
+    {
+        //dev, alpha, beta, RC, and stable.
+        $question = new ChoiceQuestion(
+            'Please select your minimum stability [stable]',
+            ['dev', 'alpha', 'beta', 'RC', 'stable'],
+            4
+        );
+        $question->setErrorMessage('Minimum Stability %s is invalid.');
+
+        return $this->helper->ask($input, $output, $question);
+    }
+
+    private function determinePackageLicense($input, $output): string
+    {
+        $question = new Question('Please enter the license for your package [MIT]: ', 'MIT');
 
         return $this->helper->ask($input, $output, $question);
     }
@@ -134,8 +217,27 @@ class ManuscriptCommand extends Command
 
         $composerBuildCommand = [
             'composer init',
-            '--name=' . $this->packageName,
         ];
+
+        if (! empty($this->packageName)) {
+            $composerBuildCommand[] = '--name="' . $this->packageName . '"';
+        }
+
+        if (! empty($this->packageDescription)) {
+            $composerBuildCommand[] = '--description="' . $this->packageDescription . '"';
+        }
+
+        if (! empty($this->packageAuthor)) {
+            $composerBuildCommand[] = '--author="' . $this->packageAuthor . '"';
+        }
+
+        if (! empty($this->packageMinimumStability)) {
+            $composerBuildCommand[] = '--stability="' . $this->packageMinimumStability . '"';
+        }
+
+        if (! empty($this->packageLicense)) {
+            $composerBuildCommand[] = '--license="' . $this->packageLicense . '"';
+        }
 
         $commands = [
             'cd ' . $this->packageDirectory,
