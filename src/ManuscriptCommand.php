@@ -55,7 +55,7 @@ class ManuscriptCommand extends Command
         // composer json values
         $this->packageName = $this->determinePackageName($input, $output);
         $this->packageDescription = $this->determinePackageDescription($input, $output);
-
+        $this->packageAuthor = $this->determinePackageAuthor($input, $output);
 
         $this->packageDirectory = $this->determinePackageDirectory($input, $output);
         $this->packageNameSpace = $this->determinePackageNameSpace();
@@ -96,6 +96,44 @@ class ManuscriptCommand extends Command
         $question = new Question('Please enter the description of your package []: ', '');
 
         return $this->helper->ask($input, $output, $question);
+    }
+
+    private function determinePackageAuthor($input, $output): string
+    {
+        $name  = '';
+        $email = '';
+
+        $process = new Process([
+            'git',
+            'config',
+            '--global',
+            'user.name'
+        ]);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $name = trim($process->getOutput(), "\n");
+
+        $process = new Process([
+            'git',
+            'config',
+            '--global',
+            'user.email'
+        ]);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $email = trim($process->getOutput(), "\n");
+
+        return sprintf('%s <%s>', $name, $email);
     }
 
     private function determinePackageDirectory($input, $output): string
@@ -146,7 +184,8 @@ class ManuscriptCommand extends Command
         $composerBuildCommand = [
             'composer init',
             '--name="' . $this->packageName . '"',
-            '--description=' . '"' . $this->packageDescription . '"',
+            '--description="'. $this->packageDescription . '"',
+            '--author="' . $this->packageAuthor . '"',
         ];
 
         $commands = [
