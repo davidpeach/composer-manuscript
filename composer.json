@@ -1,6 +1,6 @@
 {
-    "name": "davidpeach/manuscript",
-    "description": "A quick-start tool for creating composer packages",
+    "name": "davidpeach/composer-manuscript",
+    "description": "A quick-start tool for building composer packages locally",
     "require": {
         "symfony/process": "^5.2",
         "symfony/console": "^5.2",
