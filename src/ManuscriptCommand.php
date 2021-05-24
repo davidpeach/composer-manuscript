@@ -66,10 +66,19 @@ class ManuscriptCommand extends Command
 
         // composer json values
         $this->packageName = $this->determinePackageName($input, $output);
+        $output->writeln('<comment>' . $this->packageName . "</comment>\n");
+
         $this->packageDescription = $this->determinePackageDescription($input, $output);
+        $output->writeln('<comment>' . $this->packageDescription . "</comment>\n");
+
         $this->packageAuthor = $this->determinePackageAuthor($input, $output);
+        $output->writeln('<comment>' . $this->packageAuthor . "</comment>\n");
+
         $this->packageMinimumStability = $this->determinePackageMinimumStability($input, $output);
+        $output->writeln('<comment>' . $this->packageMinimumStability . "</comment>\n");
+
         $this->packageLicense = $this->determinePackageLicense($input, $output);
+        $output->writeln('<comment>' . $this->packageLicense . "</comment>\n");
 
         $this->packageDirectory = $this->determinePackageDirectory($input, $output);
         $this->packageNameSpace = $this->determinePackageNameSpace();
@@ -100,14 +109,14 @@ class ManuscriptCommand extends Command
 
     private function determinePackageName($input, $output): string
     {
-        $question = new Question('Please enter the name of your package [wow/such-package]: ', 'wow/such-package');
+        $question = new Question('<question>Please enter the name of your package [wow/such-package]</question> : ', 'wow/such-package');
 
         return $this->helper->ask($input, $output, $question);
     }
 
     private function determinePackageDescription($input, $output): string
     {
-        $question = new Question('Please enter the description of your package []: ', '');
+        $question = new Question('<question>Please enter the description of your package</question> : ', '');
 
         return $this->helper->ask($input, $output, $question);
     }
@@ -147,14 +156,18 @@ class ManuscriptCommand extends Command
 
         $email = trim($process->getOutput(), "\n");
 
-        return sprintf('%s <%s>', $name, $email);
+        $determinedAuthorDetails = sprintf('%s <%s>', $name, $email);
+
+        $question = new Question('<question>Please confirm the package author details [' . $determinedAuthorDetails . ']</question> : ', $determinedAuthorDetails);
+
+        return $this->helper->ask($input, $output, $question);
     }
 
     private function determinePackageMinimumStability($input, $output): string
     {
         //dev, alpha, beta, RC, and stable.
         $question = new ChoiceQuestion(
-            'Please select your minimum stability [stable]',
+            '<question>Please select your minimum stability [stable]</question> : ',
             ['dev', 'alpha', 'beta', 'RC', 'stable'],
             4
         );
@@ -165,7 +178,7 @@ class ManuscriptCommand extends Command
 
     private function determinePackageLicense($input, $output): string
     {
-        $question = new Question('Please enter the license for your package [MIT]: ', 'MIT');
+        $question = new Question('<question>Please enter the license for your package [MIT]</question> : ', 'MIT');
 
         return $this->helper->ask($input, $output, $question);
     }
@@ -186,7 +199,7 @@ class ManuscriptCommand extends Command
         $question->setErrorMessage('Framework %s is invalid.');
 
         $this->chosenFramework = $this->helper->ask($input, $output, $question);
-        $output->writeln('You have just selected: '.$this->chosenFramework);
+        $output->writeln('<comment>' . $this->chosenFramework . '</comment>');
 
         return $this->frameworks[$this->chosenFramework];
     }
