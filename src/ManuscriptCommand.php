@@ -89,6 +89,9 @@ class ManuscriptCommand extends Command
         $this->createEmptyPackageFolder();
         $this->setupPackageFrameworkFolder();
 
+
+        $this->writeSummary($output);
+
         return Command::SUCCESS;
     }
 
@@ -313,5 +316,18 @@ class ManuscriptCommand extends Command
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+    }
+
+    private function writeSummary($output)
+    {
+        $output->writeln("\n<info>Setup complete!</info>");
+        $output->writeln("<info>Thank You for using Manuscript.</info>");
+        $output->writeln("");
+        $output->writeln("<info>Go to <comment>" . realpath($this->packageDirectory) . "</comment> " . PHP_EOL . "and start building your package :)</info>");
+        $output->writeln("");
+        $output->writeln("<info>A site has also been setup at " . PHP_EOL . "<comment>" . realpath($this->packageFrameworkInstallLocation) . ' </comment>' . PHP_EOL . "with your new package pre-installed (symlinked from your local package folder)<info>");
+        $output->writeln("<info>Any changes made whilst developing your package will be immediately updated " . PHP_EOL . "in the laravel test environment.</info>");
+        $output->writeln("");
+        $output->writeln("<info>Run <comment>cd " . realpath($this->packageFrameworkInstallLocation) . " && php artisan serve</comment> " . PHP_EOL . "in a separate terminal window to begin the laravel test environment.</info>");
     }
 }
