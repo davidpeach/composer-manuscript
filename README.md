@@ -12,12 +12,28 @@ Please note that this tool is in the very early stages of development. It works 
 
 ## Usage
 
-```
+### Scaffolding a fresh package
+
+```bash
 # Change directory into the folder where all of your development packages will live
 cd ~/your/package/development/folder
 manuscript setup
+
+# You can also specify an install directory with the --install-dir flag
+manuscript setup --install-dir=/path/to/other/folder
 ```
-You will be asked to enter the full `namespace/package-name` that you want your package to have.
+
+You will be asked to enter the full `namespace/package-name` that you want your package to have, as well as some other settings that will be used to generate your new package's composer file.
+
+### Setting up with existing package
+```bash
+# Change directory into your existing package directory
+cd ~/your/existing/package
+
+# Run the setup command with the --current flag
+manuscript setup --current
+```
+
 You will also be asked which framework you want to develop your package with (only `Laravel` versions `6.x`, `7.x` and `8.x` are supported currently)
 
 ## What is Manuscript?
