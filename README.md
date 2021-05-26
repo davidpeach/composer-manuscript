@@ -34,6 +34,7 @@ cd ~/your/existing/package
 manuscript setup --current
 ```
 
+### Playground setup
 You will also be asked which framework you want to develop your package with (only `Laravel` versions `6.x`, `7.x` and `8.x` are supported currently)
 
 ## What is Manuscript?
