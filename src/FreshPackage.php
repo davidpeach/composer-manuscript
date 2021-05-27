@@ -21,6 +21,11 @@ class FreshPackage extends Package
         return $this->data['name'];
     }
 
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
     public function getData()
     {
         $this->data['name'] = $this->determineName();
@@ -76,6 +81,15 @@ class FreshPackage extends Package
         }
 
         mkdir($fullPath . '/src');
+
+        file_put_contents(
+            $fullPath . '/src/Quote.php',
+            str_replace(
+                '{#NAMESPACE#}',
+                trim($this->getNamespace(), '\\'),
+                file_get_contents(__DIR__ . '/../stubs/Quote.stub')
+            )
+        );
 
         AddsToJsonFile::add(
             $fullPath . '/composer.json',

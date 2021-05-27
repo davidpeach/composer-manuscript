@@ -37,4 +37,15 @@ class PackageInstaller
             throw new ProcessFailedException($process);
         }
     }
+
+    public static function addDemoRoute($directory, $namespace)
+    {
+        $routesFile = file_get_contents($directory . '/routes/web.php');
+
+        $toAdd = "Route::get('/quote', function () {
+                return " . $namespace . "Quote::random();
+            });";
+
+        file_put_contents($directory . '/routes/web.php', "\n\n" . $toAdd, FILE_APPEND);
+    }
 }

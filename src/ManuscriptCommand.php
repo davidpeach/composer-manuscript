@@ -60,6 +60,13 @@ class ManuscriptCommand extends Command
             $package->getName()
         );
 
+        if ( ! $this->isCurrent) {
+            PackageInstaller::addDemoRoute(
+                $playground->getDirectory(),
+                $package->getNamespace()
+            );
+        }
+
         $this->writeSummary($output, $package->getDirectory(), $playground->getDirectory());
         return Command::SUCCESS;
     }

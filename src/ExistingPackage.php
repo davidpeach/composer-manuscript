@@ -14,6 +14,11 @@ class ExistingPackage extends Package
         return $this->data['name'];
     }
 
+    public function getNameSpace()
+    {
+        return $this->namespace;
+    }
+
     public function getData()
     {
         $composerArray = json_decode(file_get_contents($this->getDirectory() . '/composer.json'), true);
