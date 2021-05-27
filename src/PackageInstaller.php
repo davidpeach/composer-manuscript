@@ -43,8 +43,8 @@ class PackageInstaller
         $routesFile = file_get_contents($directory . '/routes/web.php');
 
         $toAdd = "Route::get('/quote', function () {
-                return " . $namespace . "Quote::random();
-            });";
+    return " . $namespace . "Quote::random();
+});";
 
         file_put_contents($directory . '/routes/web.php', "\n\n" . $toAdd, FILE_APPEND);
     }
