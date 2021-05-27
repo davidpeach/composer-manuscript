@@ -111,11 +111,17 @@ class ManuscriptCommand extends Command
         $output->writeln("");
         $output->writeln(" 🎼 <info>Thank You for using Manuscript.</info>");
         $output->writeln("");
-        $output->writeln(" 📦 <info>Go to <comment>" . $packageDirectory . "</comment> and start building your package :)</info>");
+        $output->writeln(" 📦 <info>Open <comment>" . $packageDirectory . "</comment> in your text editor and have fun building your package. 😀</info>");
         $output->writeln("");
-        $output->writeln(" 🎮 <info>A playground has also been setup at <comment>" . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your new package pre-installed (symlinked from your local package folder)<info>");
-        $output->writeln("    <info>Any changes made whilst developing your package will be immediately updated " . PHP_EOL . "    in the playground environment.</info>");
+        $output->writeln(" 🎮 <info>A playground has also been setup at <comment>" . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your new package pre-installed (symlinked from your new local package folder)<info>");
         $output->writeln("");
-        $output->writeln("    <info>Run <comment>cd " . $playgroundDirectory . " && php artisan serve</comment> in a separate terminal window " . PHP_EOL . "    to begin the playground environment.</info>" . PHP_EOL);
+        $output->writeln("    <info>Run <comment>cd " . $playgroundDirectory . " && php artisan serve</comment>" . PHP_EOL . "    in a separate terminal window to begin the playground environment.</info>");
+        $output->writeln("");
+        $output->writeln("    <info>Any changes made whilst developing your package will be immediately updated " . PHP_EOL . "    in the playground.</info>");
+        $output->writeln("");
+        $output->writeln("    There is also a sample class added to your new package at <comment>src/Quote.php</comment>.");
+        $output->writeln("");
+        $output->writeln("    Then in the playground a route has been added to directly use that example class.");
+        $output->writeln("    Head to <comment>http://localhost:8000/quote</comment> to see that example in action." . PHP_EOL);
     }
 }
