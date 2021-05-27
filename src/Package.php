@@ -20,6 +20,8 @@ abstract class Package
 
     protected $installDirectory;
 
+    protected $namespace;
+
     public function __construct($input, $output, $helper, $installDirectory)
     {
         $this->input = $input;
