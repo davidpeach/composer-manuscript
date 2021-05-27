@@ -136,7 +136,7 @@ class ManuscriptCommand extends Command
         $output->writeln("");
         $output->writeln(" 📦 <info>Open <comment>" . $packageDirectory . "</comment> in your text editor and have fun building your package. 😀</info>");
         $output->writeln("");
-        $output->writeln(" 🎮 <info>A playground has also been setup at <comment>" . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your new package pre-installed (symlinked from your new local package folder)<info>");
+        $output->writeln(" 🎮 <info>A playground has also been setup at <comment>" . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your package pre-installed (symlinked from your local package's folder)<info>");
         $output->writeln("");
         $output->writeln("    <info>Run <comment>cd " . $playgroundDirectory . " && php artisan serve</comment>" . PHP_EOL . "    in a separate terminal window to begin the playground environment.</info>");
         $output->writeln("");
