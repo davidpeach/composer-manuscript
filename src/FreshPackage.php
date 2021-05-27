@@ -29,19 +29,19 @@ class FreshPackage extends Package
     public function getData()
     {
         $this->data['name'] = $this->determineName();
-        $this->output->writeln('<comment>' . $this->data['name'] . "</comment>\n");
+        $this->output->writeln('  <comment>' . $this->data['name'] . "</comment>\n");
 
         $this->data['description'] = $this->determineDescription();
-        $this->output->writeln('<comment>' . $this->data['description'] . "</comment>\n");
+        $this->output->writeln('  <comment>' . $this->data['description'] . "</comment>\n");
 
         $this->data['author'] = $this->determineAuthor();
-        $this->output->writeln('<comment>' . $this->data['author'] . "</comment>\n");
+        $this->output->writeln('  <comment>' . $this->data['author'] . "</comment>\n");
 
         $this->data['stability'] = $this->determineStability();
-        $this->output->writeln('<comment>' . $this->data['stability'] . "</comment>\n");
+        $this->output->writeln('  <comment>' . $this->data['stability'] . "</comment>\n");
 
         $this->data['license'] = $this->determineLicense();
-        $this->output->writeln('<comment>' . $this->data['license'] . "</comment>\n");
+        $this->output->writeln('  <comment>' . $this->data['license'] . "</comment>\n");
 
         $this->namespace = $this->determineNameSpace();
         $this->folderName = $this->determineFolderName();
@@ -103,14 +103,14 @@ class FreshPackage extends Package
 
     private function determineName(): string
     {
-        $question = new Question('<question>Please enter the name of your package [wow/such-package]</question> : ', 'wow/such-package');
+        $question = new Question(' <question> Please enter the name of your package [wow/such-package] </question> : ', 'wow/such-package');
 
         return $this->helper->ask($this->input, $this->output, $question);
     }
 
     private function determineDescription(): string
     {
-        $question = new Question('<question>Please enter the description of your package</question> : ', '');
+        $question = new Question(' <question> Please enter the description of your package </question> : ', '');
 
         return $this->helper->ask($this->input, $this->output, $question);
     }
@@ -152,7 +152,7 @@ class FreshPackage extends Package
 
         $determinedAuthorDetails = sprintf('%s <%s>', $name, $email);
 
-        $question = new Question('<question>Please confirm the package author details [' . $determinedAuthorDetails . ']</question> : ', $determinedAuthorDetails);
+        $question = new Question(' <question> Please confirm the package author details [' . $determinedAuthorDetails . '] </question> : ', $determinedAuthorDetails);
 
         return $this->helper->ask($this->input, $this->output, $question);
     }
@@ -160,7 +160,7 @@ class FreshPackage extends Package
     private function determineStability(): string
     {
         $question = new ChoiceQuestion(
-            '<question>Please select your minimum stability [stable]</question> : ',
+            ' <question> Please select your minimum stability [stable] </question> : ',
             ['dev', 'alpha', 'beta', 'RC', 'stable'],
             4
         );
@@ -171,7 +171,7 @@ class FreshPackage extends Package
 
     private function determineLicense(): string
     {
-        $question = new Question('<question>Please enter the license for your package [MIT]</question> : ', 'MIT');
+        $question = new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT');
 
         return $this->helper->ask($this->input, $this->output, $question);
     }

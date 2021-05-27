@@ -37,14 +37,14 @@ class Playground
     private function determinePlayground()
     {
         $question = new ChoiceQuestion(
-            'Please select your playground',
+            '  Please select your playground',
             array_keys($this->playgrounds),
             0
         );
         $question->setErrorMessage('Playground %s is invalid.');
 
         $this->chosenPlayground = $this->helper->ask($this->input, $this->output, $question);
-        $this->output->writeln('<comment>' . $this->chosenPlayground . '</comment>');
+        $this->output->writeln('<comment>  Installing ' . $this->chosenPlayground . ' as your playground of choice.</comment>');
 
         return $this->playgrounds[$this->chosenPlayground];
     }
