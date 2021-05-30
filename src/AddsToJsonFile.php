@@ -4,11 +4,11 @@ namespace Davidpeach\Manuscript;
 
 class AddsToJsonFile
 {
-    public static function add(string $pathToFile, array $toAdd)
+    public static function add(string $pathToFile, array $toAdd): void
     {
         $composerArray = json_decode(file_get_contents($pathToFile), true);
 
-        $composerArray = array_merge($composerArray, $toAdd);
+        $composerArray = array_merge_recursive($composerArray, $toAdd);
 
         // Require needs to be an object.
         $composerArray['require'] = new \StdClass;

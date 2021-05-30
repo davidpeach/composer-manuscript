@@ -30,9 +30,9 @@ abstract class Package
         $this->installDirectory = $installDirectory;
     }
 
-    abstract public function getDirectory();
+    abstract public function getPath(): string;
 
-    abstract public function getName();
+    abstract public function getName(): string;
 
-    abstract public function getData();
+    abstract public function getData(): void;
 }

@@ -11,22 +11,22 @@ use Symfony\Component\Process\Process;
 
 class FreshPackage extends Package
 {
-    public function getDirectory()
+    public function getPath(): string
     {
         return $this->installDirectory . '/' . $this->folderName;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->data['name'];
     }
 
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return $this->namespace;
     }
 
-    public function getData()
+    public function getData(): void
     {
         $this->data['name'] = $this->determineName();
         $this->output->writeln('  <comment>' . $this->data['name'] . "</comment>\n");
@@ -47,9 +47,9 @@ class FreshPackage extends Package
         $this->folderName = $this->determineFolderName();
     }
 
-    public function scaffold()
+    public function scaffold(): void
     {
-        $fullPath = $this->getDirectory();
+        $fullPath = $this->getPath();
 
         if (file_exists($fullPath)) {
             throw new \Exception($fullPath . ' already exists', 1);

@@ -4,24 +4,24 @@ namespace Davidpeach\Manuscript;
 
 class ExistingPackage extends Package
 {
-    public function getDirectory()
+    public function getPath(): string
     {
         return getcwd();
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->data['name'];
     }
 
-    public function getNameSpace()
+    public function getNameSpace(): string
     {
         return $this->namespace;
     }
 
-    public function getData()
+    public function getData(): void
     {
-        $composerArray = json_decode(file_get_contents($this->getDirectory() . '/composer.json'), true);
+        $composerArray = json_decode(file_get_contents($this->getPath() . '/composer.json'), true);
         $this->data['name'] = $composerArray['name'];
     }
 }

@@ -8,18 +8,14 @@ use Symfony\Component\Process\Process;
 
 class PackageInstaller
 {
-    public static function install(
-        string $playgroundDirectory,
-        string $packageDirectory,
-        string $packageName
-    )
+    public static function install($package, $playground): void
     {
         AddsToJsonFile::add(
-            $playgroundDirectory . '/composer.json',
+            $playground->getPath() . '/composer.json',
             ['repositories' => [
                 [
                     'type' => 'path',
-                    'url'  =>  realpath($packageDirectory),
+                    'url'  =>  realpath($package->getPath()),
                     'options' => [
                         'symlink' => true,
                     ],
@@ -28,7 +24,7 @@ class PackageInstaller
         );
 
         $process = Process::fromShellCommandline(
-            'cd ' . $playgroundDirectory . ' && composer require ' . $packageName
+            'cd ' . $playground->getPath() . ' && composer require ' . $package->getName()
         );
 
         $process->run();
@@ -38,7 +34,7 @@ class PackageInstaller
         }
     }
 
-    public static function addDemoRoute($directory, $namespace)
+    public static function addDemoRoute($directory, $namespace): void
     {
         $routesFile = file_get_contents($directory . '/routes/web.php');
 
