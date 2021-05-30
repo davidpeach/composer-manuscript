@@ -92,7 +92,7 @@ class ManuscriptCommand extends Command
 
             PackageInstaller::addDemoRoute(
                 $playground->getPath(),
-                $package->getPath()
+                $package->getNamespace()
             );
             $output->writeln("");
             $output->writeln("<comment> ✅ " . $package->getName() . " installed</comment>");

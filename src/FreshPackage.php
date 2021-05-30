@@ -13,7 +13,7 @@ class FreshPackage extends Package
 {
     public function getPath(): string
     {
-        return $this->installDirectory . '/' . $this->folderName;
+        return $this->directory . '/' . $this->folderName;
     }
 
     public function getName(): string

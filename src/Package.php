@@ -18,16 +18,16 @@ abstract class Package
 
     protected $helper;
 
-    protected $installDirectory;
+    protected $directory;
 
     protected $namespace;
 
-    public function __construct($input, $output, $helper, $installDirectory)
+    public function __construct($input, $output, $helper, $directory)
     {
         $this->input = $input;
         $this->output = $output;
         $this->helper = $helper;
-        $this->installDirectory = $installDirectory;
+        $this->directory = $directory;
     }
 
     abstract public function getPath(): string;
