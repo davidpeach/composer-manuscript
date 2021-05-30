@@ -10,7 +10,7 @@ Please install `git` for your system also. Manuscript uses git when trying to de
 
 Please note: this has been developed on a Linux system (Pop! OS 20.04 LTS) and has only been tested on that system. I'd really appreciate any feedback / help in making it work for other operating systems in the future, if anybody would like to help. :)
 
-`composer global require davidpeach/composer-manuscript:1.0`
+`composer global require davidpeach/composer-manuscript:^1.0`
 
 ## Uninstall
 
