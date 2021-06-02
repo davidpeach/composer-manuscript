@@ -18,21 +18,47 @@ abstract class Package
 
     protected $helper;
 
-    protected $installDirectory;
+    protected $directory;
 
     protected $namespace;
 
-    public function __construct($input, $output, $helper, $installDirectory)
+    // new props
+    protected $name;
+
+    protected $path;
+
+    public function __construct($input, $output, $helper, $directory)
     {
         $this->input = $input;
         $this->output = $output;
         $this->helper = $helper;
-        $this->installDirectory = $installDirectory;
+        $this->directory = $directory;
     }
 
-    abstract public function getDirectory();
+    abstract public function getPath(): string;
 
-    abstract public function getName();
+    abstract public function getName(): string;
 
-    abstract public function getData();
+    // needed?
+    abstract public function getData(): void;
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function setPath(string $path): void
+    {
+        $this->path = $path;
+    }
+
+    public function setNamespace(string $namespace): void
+    {
+        $this->namespace = $namespace;
+    }
+
+    public function setDependancies(array $dependancies): void
+    {
+        $this->dependancies = $dependancies;
+    }
 }

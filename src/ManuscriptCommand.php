@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class ManuscriptCommand extends Command
 {
@@ -37,30 +38,48 @@ class ManuscriptCommand extends Command
     {
         $helper = $this->getHelper('question');
         $cwd = getcwd();
-
         $this->isCurrent = $this->determineIfIsCurrent($cwd, $input);
-        $installDirectory = $this->determineInstallDirectory($cwd, $input);
-
+        $directory = $this->determineDirectory($cwd, $input);
         $this->writeIntro($output);
 
         if ($this->isCurrent) {
-            $package = new ExistingPackage($input, $output, $helper, $installDirectory);
+            $package = new ExistingPackage($input, $output, $helper, $directory);
             $package->getData();
         } else {
-            $package = new FreshPackage($input, $output, $helper, $installDirectory);
+            $package = new FreshPackage($input, $output, $helper, $directory);
             $package->getData();
-            $package->scaffold($installDirectory);
+            $package->scaffold($directory);
         }
 
-        $playground = new Playground($input, $output, $helper);
+        $needsNewPlayground = true;
 
-        $playground->install($installDirectory);
+        $playgroundFinder = new PlaygroundFinder;
+        $existingPlaygrounds = $playgroundFinder->discover($directory);
 
-        PackageInstaller::install(
-            $playground->getDirectory(),
-            $package->getDirectory(),
-            $package->getName()
-        );
+        if (! empty($existingPlaygrounds)) {
+
+            $question = new ChoiceQuestion(
+                '  Please select your framework playground, or select "none" to have a fresh one made for you.',
+                array_merge([0 => 'none'], array_keys($existingPlaygrounds)),
+                0
+            );
+            $question->setErrorMessage('Framework playground %s is invalid.');
+
+            $answer = $helper->ask($input, $output, $question);
+
+            if ($answer !== 'none') {
+                $playground = $existingPlaygrounds[$answer];
+                $needsNewPlayground = false;
+            }
+        }
+
+        if ($needsNewPlayground) {
+            $frameworks = new FrameworkChooser($input, $output, $helper);
+            $chosenFramework = $frameworks->choose();
+            $playground = PlaygroundBuilder::build($chosenFramework, $directory);
+        }
+
+        PackageInstaller::install($package, $playground);
 
         if ( ! $this->isCurrent) {
 
@@ -68,18 +87,18 @@ class ManuscriptCommand extends Command
             $output->writeln("<comment> 🥁 Installing " . $package->getName() . " into the playground</comment>");
 
             PackageInstaller::addDemoRoute(
-                $playground->getDirectory(),
+                $playground->getPath(),
                 $package->getNamespace()
             );
             $output->writeln("");
             $output->writeln("<comment> ✅ " . $package->getName() . " installed</comment>");
         }
 
-        $this->writeSummary($output, $package->getDirectory(), $playground->getDirectory());
+        $this->writeSummary($output, $package->getPath(), $playground->getPath());
         return Command::SUCCESS;
     }
 
-    private function determineIfIsCurrent(string $cwd, $input)
+    private function determineIfIsCurrent(string $cwd, $input): bool
     {
         if (! file_exists($cwd . '/composer.json')) {
             return false;
@@ -90,15 +109,15 @@ class ManuscriptCommand extends Command
         return $isCurrent !== false;
     }
 
-    private function determineInstallDirectory(string $cwd, $input)
+    private function determineDirectory(string $cwd, $input): string
     {
         if ($this->isCurrent) {
             return $cwd . '/../';
         }
 
-        $installDirectory = $input->getOption('install-dir');
+        $directory = $input->getOption('install-dir');
 
-        if (! $installDirectory) {
+        if (! $directory) {
             return $cwd . '/';
         }
 
@@ -109,7 +128,7 @@ class ManuscriptCommand extends Command
         return $cwd . '/' . $input->getOption('install-dir') . '/';
     }
 
-    private function writeIntro($output)
+    private function writeIntro($output): void
     {
         $output->writeln("");
         $output->writeln(" 🎼 Manuscript — Composer package scaffolding and environment helper");
@@ -124,7 +143,7 @@ class ManuscriptCommand extends Command
         $output->writeln("");
     }
 
-    private function writeSummary($output, $packageDirectory, $playgroundDirectory)
+    private function writeSummary($output, $packageDirectory, $playgroundDirectory): void
     {
         $packageDirectory = realpath($packageDirectory);
         $playgroundDirectory = realpath($playgroundDirectory);

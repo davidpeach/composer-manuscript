@@ -4,7 +4,8 @@
     "require": {
         "symfony/process": "^5.2",
         "symfony/console": "^5.2",
-        "illuminate/support": "^8.42"
+        "illuminate/support": "^8.42",
+        "symfony/finder": "^5.2"
     },
     "license": "MIT",
     "authors": [

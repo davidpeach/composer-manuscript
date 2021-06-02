@@ -2,76 +2,41 @@
 
 namespace Davidpeach\Manuscript;
 
-use Illuminate\Support\Str;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use Davidpeach\Manuscript\Frameworks\Framework;
 
 class Playground
 {
-    private $playgrounds = [
-        'laravel 6.x' => '--prefer-dist laravel/laravel %s "6.*"',
-        'laravel 7.x' => '--prefer-dist laravel/laravel %s "7.*"',
-        'laravel 8.x' => '--prefer-dist laravel/laravel %s "8.*"',
-    ];
+    private $folderFormat = 'manuscript-playground-%s-%s';
 
-    public function __construct($input, $output, $consoleHelper)
+    private $path;
+
+    public function setBaseDirectory(string $directory): void
     {
-        $this->input  = $input;
-        $this->output = $output;
-        $this->helper = $consoleHelper;
+        $this->baseDirectory = $directory;
     }
 
-    public function install($installDirectory)
+    public function setFramework(Framework $framework): void
     {
-        $this->playground = $this->determinePlayground();
-        $this->playgroundInstallLocation = $this->determinePlaygroundInstallLocation($installDirectory);
-        $this->setupPlaygroundFolder();
+        $this->framework = $framework;
     }
 
-    public function getDirectory()
+    public function determinePath(): void
     {
-        return $this->playgroundInstallLocation;
+        $folder = vsprintf($this->folderFormat, [
+            $this->framework->folderFormat(),
+            time(),
+        ]);
+
+        $this->setPath($this->baseDirectory . $folder);
     }
 
-    private function determinePlayground()
+    public function setPath(string $path): void
     {
-        $question = new ChoiceQuestion(
-            '  Please select your playground',
-            array_keys($this->playgrounds),
-            0
-        );
-        $question->setErrorMessage('Playground %s is invalid.');
-
-        $this->chosenPlayground = $this->helper->ask($this->input, $this->output, $question);
-        $this->output->writeln('<comment>  Installing ' . $this->chosenPlayground . ' as your playground of choice.</comment>');
-
-        return $this->playgrounds[$this->chosenPlayground];
+        $this->path = $path;
     }
 
-    private function determinePlaygroundInstallLocation($installDirectory)
+    public function getPath(): string
     {
-        $folder = Str::slug($this->chosenPlayground) . '-workspace-' . time();
-
-        return $installDirectory . $folder;
-    }
-
-    private function setupPlaygroundFolder()
-    {
-        $installPlaygroundCmd = sprintf(
-            $this->playground,
-            $this->playgroundInstallLocation
-        );
-        $process = Process::fromShellCommandline('composer create-project ' . $installPlaygroundCmd);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-    }
-
-    public function getPlaygroundInstallLocation()
-    {
-        return $this->playgroundInstallLocation;
+        return $this->path;
     }
 }
