@@ -2,7 +2,6 @@
 
 namespace Davidpeach\Manuscript;
 
-use Davidpeach\Manuscript\AddsToJsonFile;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -10,7 +9,7 @@ class PackageInstaller
 {
     public static function install($package, $playground): void
     {
-        AddsToJsonFile::add(
+        ComposerFileManager::add(
             $playground->getPath() . '/composer.json',
             ['repositories' => [
                 [

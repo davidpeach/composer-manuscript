@@ -2,13 +2,11 @@
 
 namespace Davidpeach\Manuscript;
 
-use Davidpeach\Manuscript\FrameworkChooser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Finder\Finder;
 
 class ManuscriptCommand extends Command
 {
@@ -40,10 +38,8 @@ class ManuscriptCommand extends Command
     {
         $helper = $this->getHelper('question');
         $cwd = getcwd();
-
         $this->isCurrent = $this->determineIfIsCurrent($cwd, $input);
         $directory = $this->determineDirectory($cwd, $input);
-
         $this->writeIntro($output);
 
         if ($this->isCurrent) {
