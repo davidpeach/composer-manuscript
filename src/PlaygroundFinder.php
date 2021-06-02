@@ -2,7 +2,6 @@
 
 namespace Davidpeach\Manuscript;
 
-use Davidpeach\Manuscript\PlaygroundBuilder;
 use Symfony\Component\Finder\Finder;
 
 class PlaygroundFinder

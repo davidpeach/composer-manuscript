@@ -24,7 +24,6 @@ class ComposerFileManager
             $toAdd
         );
 
-        // Require needs to be an object.
         $composerArray['require'] = (object) $composerArray['require'];
 
         $updatedComposerJson = json_encode($composerArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);

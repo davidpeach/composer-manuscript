@@ -23,14 +23,6 @@ class ExistingPackage extends Package
     {
         $composerArray = json_decode(file_get_contents($this->getPath() . '/composer.json'), true);
         $this->data['name'] = $composerArray['name'];
-
-        // PackageFinder class to get all other packages.
-            // foreach package, see if it has any of the other packages as dependancy
-            // if it does,
-                // save current dep version to a txt file
-                // change its version to *
-                // composer require
-                // change version back using txt file
     }
 
     private function determineName(array $composerArray)
