@@ -45,6 +45,8 @@ Whether you are scaffolding a new package, or working with an existing one, you 
 
 Manuscript will also install the package into the playground for you, using composer's symlink path option. Which means you can work on your package and see the changes update instantly.
 
+If there is already a playground - or any number of playgrounds - setup in your development directory, you will be first given the option to install your package in one of those. This is helpful if you are working on a number of complimentary packages side by side.
+
 ### Example code included
 I have included a small random quote generator class with fresh packages scaffolded. A route will also be added to the playground that will just return the value of that class's static method. This is just to show you something working from the start.
 
@@ -68,4 +70,24 @@ There are most likely other tools out there that will help you do this, but I ju
 ## Future additions
 I do have some ideas for some small quality of life updates to this package. I will add them as issues in the repository as I finalise my thoughts on them.
 
-Thank You for looking.
+## Known Issues
+
+### Local package version dependancy bug
+
+**Please Note**: There is currently a slightly edge-case issue when Manuscript tries to install multiple local packages you are working on. When one local package has another local package as a dependancy, sometimes the install will fail.
+
+I'll explain the error I found as clearly as I can:
+
+I have 2 packages im working on: **Base Package** and **Child Package**. **Child Package** has the **Base Package** listed as a dependancy at `v0.1.1-alpha`.
+
+I firstly `git clone` both packages in order to work on them locally. Both are cloned down and checked out to the default `main` branch.
+
+I then run `manuscript setup --current` inside each one, but the installation of one fails after the other has installed. This is because the checked out `main` branch of the **Base Package** does not match the require dependancy listed in the **Child Package** of `v0.1.1-alpha`.
+
+**You can fix this** by opening the composer.json file that has the local package dependancy listed in it's require block, and altering the version constraint for that package _before_ installing it. 
+
+For my example I temporarily alter `v0.1.1-alpha` in my **Child Package** to `*`. I then install the packages and revert the version back. Once the install is complete the files in the vendor directory are symlinked to the corresponding development folder. So there is no re-installing necessary.
+
+This is a bug that I am working on ideas for a fix for currently. If you wish to submit a Pull Request with any fixes you know of, please do feel free. :)
+
+### Thank You for looking.
