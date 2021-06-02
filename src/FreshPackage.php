@@ -2,7 +2,7 @@
 
 namespace Davidpeach\Manuscript;
 
-use Davidpeach\Manuscript\AddsToJsonFile;
+use Davidpeach\Manuscript\ComposerFileManager;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -91,7 +91,7 @@ class FreshPackage extends Package
             )
         );
 
-        AddsToJsonFile::add(
+        ComposerFileManager::add(
             $fullPath . '/composer.json',
             ['autoload' => [
                 'psr-4' => [

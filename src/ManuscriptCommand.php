@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class ManuscriptCommand extends Command
 {
@@ -83,7 +85,18 @@ class ManuscriptCommand extends Command
             $playground = PlaygroundBuilder::build($chosenFramework, $directory);
         }
 
+        // Temp Fixing dependany versions
+        $packageFinder = new PackageFinder;
+
+        // Get all packages in directory.
+        $existingPackages = $packageFinder->discover($directory);
+
+        $packageDependancyFixer = new PackageDependancyFixer;
+        $packageDependancyFixer->setPackages($existingPackages);
+
+        $packageDependancyFixer->adjust();
         PackageInstaller::install($package, $playground);
+        $packageDependancyFixer->revert();
 
         if ( ! $this->isCurrent) {
 
