@@ -30,6 +30,13 @@ class ManuscriptCommand extends Command
                 'The current folder is an existing package in development. (No new package will be scaffolded)',
                 false
             )
+            ->addOption(
+                'playground-name',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Give your framework playground folder a specific name. Useful when rebuilding and wanting to keep external links intact. For example nginx configs.',
+                false
+            )
             ->setHelp('This command will enable you to easily scaffold a composer package and have a playground in which to test your package as you build it.')
             ->setDescription('Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
     }
@@ -75,7 +82,8 @@ class ManuscriptCommand extends Command
         if ($needsNewPlayground) {
             $frameworks = new FrameworkChooser($input, $output, $helper);
             $chosenFramework = $frameworks->choose();
-            $playground = PlaygroundBuilder::build($chosenFramework, $directory);
+            $folderNameOverride = $input->getOption('playground-name') ? $input->getOption('playground-name') : null;
+            $playground = PlaygroundBuilder::build($chosenFramework, $directory, $folderNameOverride);
         }
 
         PackageInstaller::install($package, $playground);

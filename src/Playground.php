@@ -10,6 +10,13 @@ class Playground
 
     private $path;
 
+    protected $folderOverride = null;
+
+    public function setFolderOverride(string $folder)
+    {
+        $this->folderOverride = trim($folder, '/');
+    }
+
     public function setBaseDirectory(string $directory): void
     {
         $this->baseDirectory = $directory;
@@ -22,6 +29,11 @@ class Playground
 
     public function determinePath(): void
     {
+        if ($this->folderOverride) {
+            $this->setPath($this->baseDirectory . $this->folderOverride);
+            return;
+        }
+
         $folder = vsprintf($this->folderFormat, [
             $this->framework->folderFormat(),
             time(),

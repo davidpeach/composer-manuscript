@@ -3,23 +3,33 @@
 namespace Davidpeach\Manuscript;
 
 use Davidpeach\Manuscript\Frameworks\Framework;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class PlaygroundBuilder
 {
-    public static function build(Framework $framework, string $directory): Playground
+    public static function build(Framework $framework, string $directory, string $folderNameOverride = null): Playground
     {
         $playground = new Playground;
         $playground->setBaseDirectory($directory);
         $playground->setFramework($framework);
+
+        if ($folderNameOverride) {
+            $playground->setFolderOverride($folderNameOverride);
+        }
+
         $playground->determinePath();
 
         $installCommand = sprintf(
             $framework->getInstallCommmandSegment(),
             $playground->getPath()
         );
+
+        if (is_dir($playground->getPath())) {
+            (new Filesystem)->remove($playground->getPath());
+        }
 
         $process = Process::fromShellCommandline('composer create-project ' . $installCommand);
         $process->run();

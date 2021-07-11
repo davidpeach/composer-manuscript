@@ -5,7 +5,8 @@
         "symfony/process": "^5.2",
         "symfony/console": "^5.2",
         "illuminate/support": "^8.42",
-        "symfony/finder": "^5.2"
+        "symfony/finder": "^5.2",
+        "symfony/filesystem": "^5.3"
     },
     "license": "MIT",
     "authors": [
