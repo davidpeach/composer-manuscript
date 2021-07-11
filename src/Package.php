@@ -39,7 +39,6 @@ abstract class Package
 
     abstract public function getName(): string;
 
-    // needed?
     abstract public function getData(): void;
 
     public function setName(string $name): void

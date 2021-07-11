@@ -37,7 +37,6 @@ class PlaygroundBuilder
 
         $playground = new Playground;
         $playground->setBaseDirectory($file->getPath());
-        // $playground->setFramework(); // determine from folder name
         $playground->setPath($file->getPathname());
         return $playground;
     }

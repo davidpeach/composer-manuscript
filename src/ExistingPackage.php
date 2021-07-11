@@ -24,29 +24,4 @@ class ExistingPackage extends Package
         $composerArray = json_decode(file_get_contents($this->getPath() . '/composer.json'), true);
         $this->data['name'] = $composerArray['name'];
     }
-
-    private function determineName(array $composerArray)
-    {
-        $composerArray = ComposerFileManager::read(
-            $package->getPath()
-        );
-
-        $this->setName($composerArray['name']);
-    }
-
-    private function determineNamespace(array $composerArray)
-    {
-        $composerArray = ComposerFileManager::read(
-            $package->getPath()
-        );
-
-        dump($composerArray, 'HERE');
-    }
-
-    private function determineDependancies(array $composerArray)
-    {
-        $composerArray = ComposerFileManager::read(
-            $package->getPath()
-        );
-    }
 }
