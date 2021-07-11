@@ -56,8 +56,7 @@ class ManuscriptCommand extends Command
         $playgroundFinder = new PlaygroundFinder;
         $existingPlaygrounds = $playgroundFinder->discover($directory);
 
-        if (! empty($existingPlaygrounds)) {
-
+        if (!empty($existingPlaygrounds)) {
             $question = new ChoiceQuestion(
                 '  Please select your framework playground, or select "none" to have a fresh one made for you.',
                 array_merge([0 => 'none'], array_keys($existingPlaygrounds)),
@@ -81,17 +80,16 @@ class ManuscriptCommand extends Command
 
         PackageInstaller::install($package, $playground);
 
-        if ( ! $this->isCurrent) {
-
-            $output->writeln("");
-            $output->writeln("<comment> 🥁 Installing " . $package->getName() . " into the playground</comment>");
+        if (!$this->isCurrent) {
+            $output->writeln('');
+            $output->writeln('<comment> 🥁 Installing ' . $package->getName() . ' into the playground</comment>');
 
             PackageInstaller::addDemoRoute(
                 $playground->getPath(),
                 $package->getNamespace()
             );
-            $output->writeln("");
-            $output->writeln("<comment> ✅ " . $package->getName() . " installed</comment>");
+            $output->writeln('');
+            $output->writeln('<comment> ✅ ' . $package->getName() . ' installed</comment>');
         }
 
         $this->writeSummary($output, $package->getPath(), $playground->getPath());
@@ -100,8 +98,8 @@ class ManuscriptCommand extends Command
 
     private function determineIfIsCurrent(string $cwd, $input): bool
     {
-        if (! file_exists($cwd . '/composer.json')) {
-            return false;
+        if (file_exists($cwd . '/composer.json')) {
+            return true;
         }
 
         $isCurrent = $input->getOption('current');
@@ -117,11 +115,11 @@ class ManuscriptCommand extends Command
 
         $directory = $input->getOption('install-dir');
 
-        if (! $directory) {
+        if (!$directory) {
             return $cwd . '/';
         }
 
-        if (! file_exists($cwd . '/' . $input->getOption('install-dir'))) {
+        if (!file_exists($cwd . '/' . $input->getOption('install-dir'))) {
             return $cwd . '/';
         }
 
@@ -130,17 +128,17 @@ class ManuscriptCommand extends Command
 
     private function writeIntro($output): void
     {
-        $output->writeln("");
-        $output->writeln(" 🎼 Manuscript — Composer package scaffolding and environment helper");
-        $output->writeln("");
+        $output->writeln('');
+        $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
+        $output->writeln('');
 
         if ($this->isCurrent) {
-            $output->writeln(" 👌 Setting up a playground and installing your existing local package into it.");
+            $output->writeln(' 👌 Setting up a playground and installing your existing local package into it.');
         } else {
             $output->writeln(" 👌 Let's scaffold you a fresh composer package for you to start building.");
         }
 
-        $output->writeln("");
+        $output->writeln('');
     }
 
     private function writeSummary($output, $packageDirectory, $playgroundDirectory): void
@@ -148,24 +146,24 @@ class ManuscriptCommand extends Command
         $packageDirectory = realpath($packageDirectory);
         $playgroundDirectory = realpath($playgroundDirectory);
 
-        $output->writeln("");
-        $output->writeln(" 🎉 <info>Setup complete!</info>");
-        $output->writeln("");
-        $output->writeln(" 🎼 <info>Thank You for using Manuscript.</info>");
-        $output->writeln("");
-        $output->writeln(" 📦 <info>Open <comment>" . $packageDirectory . "</comment> in your text editor and have fun building your package. 😀</info>");
-        $output->writeln("");
-        $output->writeln(" 🎮 <info>A playground has also been setup at <comment>" . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your package pre-installed (symlinked from your local package's folder)<info>");
-        $output->writeln("");
-        $output->writeln("    <info>Run <comment>cd " . $playgroundDirectory . " && php artisan serve</comment>" . PHP_EOL . "    in a separate terminal window to begin the playground environment.</info>");
-        $output->writeln("");
-        $output->writeln("    <info>Any changes made whilst developing your package will be immediately updated " . PHP_EOL . "    in the playground.</info>");
-        $output->writeln("");
-        if ( ! $this->isCurrent) {
-            $output->writeln("    There is also a sample class added to your new package at <comment>src/Quote.php</comment>.");
-            $output->writeln("");
-            $output->writeln("    Then in the playground a route has been added to directly use that example class.");
-            $output->writeln("    Head to <comment>http://localhost:8000/quote</comment> to see that example in action." . PHP_EOL);
+        $output->writeln('');
+        $output->writeln(' 🎉 <info>Setup complete!</info>');
+        $output->writeln('');
+        $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
+        $output->writeln('');
+        $output->writeln(' 📦 <info>Open <comment>' . $packageDirectory . '</comment> in your text editor and have fun building your package. 😀</info>');
+        $output->writeln('');
+        $output->writeln(' 🎮 <info>A playground has also been setup at <comment>' . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your package pre-installed (symlinked from your local package's folder)<info>");
+        $output->writeln('');
+        $output->writeln('    <info>Run <comment>cd ' . $playgroundDirectory . ' && php artisan serve</comment>' . PHP_EOL . '    in a separate terminal window to begin the playground environment.</info>');
+        $output->writeln('');
+        $output->writeln('    <info>Any changes made whilst developing your package will be immediately updated ' . PHP_EOL . '    in the playground.</info>');
+        $output->writeln('');
+        if (!$this->isCurrent) {
+            $output->writeln('    There is also a sample class added to your new package at <comment>src/Quote.php</comment>.');
+            $output->writeln('');
+            $output->writeln('    Then in the playground a route has been added to directly use that example class.');
+            $output->writeln('    Head to <comment>http://localhost:8000/quote</comment> to see that example in action.' . PHP_EOL);
         }
     }
 }

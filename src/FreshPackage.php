@@ -2,7 +2,6 @@
 
 namespace Davidpeach\Manuscript;
 
-use Davidpeach\Manuscript\ComposerFileManager;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -62,7 +61,7 @@ class FreshPackage extends Package
         ];
 
         foreach ($this->data as $key => $value) {
-            if (! empty($this->data[$key])) {
+            if (!empty($this->data[$key])) {
                 $composerBuildCommand[] = '--' . $key . '="' . $value . '"';
             }
         }
@@ -112,12 +111,12 @@ class FreshPackage extends Package
     {
         $question = new Question(' <question> Please enter the description of your package </question> : ', '');
 
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask($this->input, $this->output, $question) ?? '';
     }
 
     private function determineAuthor(): string
     {
-        $name  = '';
+        $name = '';
         $email = '';
 
         $process = new Process([
