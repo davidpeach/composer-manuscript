@@ -1,6 +1,6 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
 abstract class Package
 {

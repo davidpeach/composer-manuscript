@@ -1,41 +1,30 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\ExistingPackage;
+use DavidPeach\Manuscript\FrameworkChooser;
+use DavidPeach\Manuscript\PackageInstaller;
+use DavidPeach\Manuscript\PlaygroundBuilder;
+use DavidPeach\Manuscript\PlaygroundFinder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class ManuscriptCommand extends Command
+class ManuscriptPlayCommand extends Command
 {
-    protected static $defaultName = 'setup';
-
-    private $isCurrent;
+    protected static $defaultName = 'play';
 
     protected function configure(): void
     {
         $this
             ->addOption(
-                'install-dir',
+                'package-dir',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'The root directory where your packages in development live. Defaults to the current directory.'
-            )
-            ->addOption(
-                'current',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'The current folder is an existing package in development. (No new package will be scaffolded)',
-                false
-            )
-            ->addOption(
-                'playground-name',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Give your framework playground folder a specific name. Useful when rebuilding and wanting to keep external links intact. For example nginx configs.',
-                false
             )
             ->setHelp('This command will enable you to easily scaffold a composer package and have a playground in which to test your package as you build it.')
             ->setDescription('Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
@@ -44,24 +33,17 @@ class ManuscriptCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $helper = $this->getHelper('question');
-        $cwd = getcwd();
-        $this->isCurrent = $this->determineIfIsCurrent($cwd, $input);
-        $directory = $this->determineDirectory($cwd, $input);
+        $root = ($input->getOption('package-dir') ?? getcwd()) . '/';
+        $playgroundDirectory = $root . '../manuscript-playgrounds/';
         $this->writeIntro($output);
 
-        if ($this->isCurrent) {
-            $package = new ExistingPackage($input, $output, $helper, $directory);
-            $package->getData();
-        } else {
-            $package = new FreshPackage($input, $output, $helper, $directory);
-            $package->getData();
-            $package->scaffold($directory);
-        }
+        $package = new ExistingPackage($input, $output, $helper, $root);
+        $package->getData();
 
         $needsNewPlayground = true;
 
         $playgroundFinder = new PlaygroundFinder;
-        $existingPlaygrounds = $playgroundFinder->discover($directory);
+        $existingPlaygrounds = $playgroundFinder->discover($playgroundDirectory);
 
         if (!empty($existingPlaygrounds)) {
             $question = new ChoiceQuestion(
@@ -82,70 +64,28 @@ class ManuscriptCommand extends Command
         if ($needsNewPlayground) {
             $frameworks = new FrameworkChooser($input, $output, $helper);
             $chosenFramework = $frameworks->choose();
-            $folderNameOverride = $input->getOption('playground-name') ? $input->getOption('playground-name') : null;
-            $playground = PlaygroundBuilder::build($chosenFramework, $directory, $folderNameOverride);
+            $playground = PlaygroundBuilder::build($chosenFramework, $playgroundDirectory);
         }
 
         PackageInstaller::install($package, $playground);
 
-        if (!$this->isCurrent) {
-            $output->writeln('');
-            $output->writeln('<comment> 🥁 Installing ' . $package->getName() . ' into the playground</comment>');
+        $output->writeln('');
+        $output->writeln('<comment> 🥁 Installing ' . $package->getName() . ' into the playground</comment>');
 
-            PackageInstaller::addDemoRoute(
-                $playground->getPath(),
-                $package->getNamespace()
-            );
-            $output->writeln('');
-            $output->writeln('<comment> ✅ ' . $package->getName() . ' installed</comment>');
-        }
+        $output->writeln('');
+        $output->writeln('<comment> ✅ ' . $package->getName() . ' installed</comment>');
 
         $this->writeSummary($output, $package->getPath(), $playground->getPath());
         return Command::SUCCESS;
     }
 
-    private function determineIfIsCurrent(string $cwd, $input): bool
-    {
-        if (file_exists($cwd . '/composer.json')) {
-            return true;
-        }
-
-        $isCurrent = $input->getOption('current');
-
-        return $isCurrent !== false;
-    }
-
-    private function determineDirectory(string $cwd, $input): string
-    {
-        if ($this->isCurrent) {
-            return $cwd . '/../';
-        }
-
-        $directory = $input->getOption('install-dir');
-
-        if (!$directory) {
-            return $cwd . '/';
-        }
-
-        if (!file_exists($cwd . '/' . $input->getOption('install-dir'))) {
-            return $cwd . '/';
-        }
-
-        return $cwd . '/' . $input->getOption('install-dir') . '/';
-    }
 
     private function writeIntro($output): void
     {
         $output->writeln('');
         $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
         $output->writeln('');
-
-        if ($this->isCurrent) {
-            $output->writeln(' 👌 Setting up a playground and installing your existing local package into it.');
-        } else {
-            $output->writeln(" 👌 Let's scaffold you a fresh composer package for you to start building.");
-        }
-
+        $output->writeln(" 👌 Let's scaffold you a fresh composer package for you to start building.");
         $output->writeln('');
     }
 
@@ -167,11 +107,9 @@ class ManuscriptCommand extends Command
         $output->writeln('');
         $output->writeln('    <info>Any changes made whilst developing your package will be immediately updated ' . PHP_EOL . '    in the playground.</info>');
         $output->writeln('');
-        if (!$this->isCurrent) {
-            $output->writeln('    There is also a sample class added to your new package at <comment>src/Quote.php</comment>.');
-            $output->writeln('');
-            $output->writeln('    Then in the playground a route has been added to directly use that example class.');
-            $output->writeln('    Head to <comment>http://localhost:8000/quote</comment> to see that example in action.' . PHP_EOL);
-        }
+        $output->writeln('    There is also a sample class added to your new package at <comment>src/Quote.php</comment>.');
+        $output->writeln('');
+        $output->writeln('    Then in the playground a route has been added to directly use that example class.');
+        $output->writeln('    Head to <comment>http://localhost:8000/quote</comment> to see that example in action.' . PHP_EOL);
     }
 }

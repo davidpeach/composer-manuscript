@@ -1,6 +1,6 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -23,7 +23,7 @@ class PackageInstaller
         );
 
         $process = Process::fromShellCommandline(
-            'cd ' . $playground->getPath() . ' && composer require ' . $package->getName()
+            'cd ' . $playground->getPath() . ' && composer require ' . $package->getName() . ' --with-all-dependencies'
         );
 
         $process->run();

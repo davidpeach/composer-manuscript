@@ -21,10 +21,17 @@
     ],
     "autoload": {
         "psr-4": {
-            "Davidpeach\\Manuscript\\": "src/"
+            "DavidPeach\\Manuscript\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DavidPeach\\Manuscript\\Tests\\": "tests/"
         }
     },
     "require-dev": {
-        "symfony/var-dumper": "^5.2"
+        "symfony/var-dumper": "^5.2",
+        "phpunit/phpunit": "^9.5",
+        "symfony/framework-bundle": "^5.3"
     }
 }

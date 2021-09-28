@@ -1,8 +1,8 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
-use Davidpeach\Manuscript\Frameworks\Framework;
+use DavidPeach\Manuscript\Frameworks\Framework;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -10,15 +10,11 @@ use Symfony\Component\Process\Process;
 
 class PlaygroundBuilder
 {
-    public static function build(Framework $framework, string $directory, string $folderNameOverride = null): Playground
+    public static function build(Framework $framework, string $directory): Playground
     {
         $playground = new Playground;
         $playground->setBaseDirectory($directory);
         $playground->setFramework($framework);
-
-        if ($folderNameOverride) {
-            $playground->setFolderOverride($folderNameOverride);
-        }
 
         $playground->determinePath();
 

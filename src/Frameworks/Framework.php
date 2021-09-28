@@ -1,6 +1,6 @@
 <?php
 
-namespace Davidpeach\Manuscript\Frameworks;
+namespace DavidPeach\Manuscript\Frameworks;
 
 use Illuminate\Support\Str;
 

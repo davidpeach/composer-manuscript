@@ -1,12 +1,12 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
 class ExistingPackage extends Package
 {
     public function getPath(): string
     {
-        return getcwd();
+        return $this->directory;
     }
 
     public function getName(): string

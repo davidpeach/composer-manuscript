@@ -1,6 +1,6 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -33,8 +33,13 @@ class FreshPackage extends Package
         $this->data['description'] = $this->determineDescription();
         $this->output->writeln('  <comment>' . $this->data['description'] . "</comment>\n");
 
-        $this->data['author'] = $this->determineAuthor();
-        $this->output->writeln('  <comment>' . $this->data['author'] . "</comment>\n");
+        $authorName = $this->determineAuthorName();
+        $this->output->writeln('  <comment>' . $authorName . "</comment>\n");
+
+        $authorEmail = $this->determineAuthorEmail();
+        $this->output->writeln('  <comment>' . $authorEmail . "</comment>\n");
+
+        $this->data['author'] = $authorName . ' <' . $authorEmail . '>';
 
         $this->data['stability'] = $this->determineStability();
         $this->output->writeln('  <comment>' . $this->data['stability'] . "</comment>\n");
@@ -66,6 +71,8 @@ class FreshPackage extends Package
             }
         }
 
+        $composerBuildCommand[] = '--autoload="src/"';
+
         $commands = [
             'cd ' . $fullPath,
             implode(' ', $composerBuildCommand),
@@ -79,8 +86,6 @@ class FreshPackage extends Package
             throw new ProcessFailedException($process);
         }
 
-        mkdir($fullPath . '/src');
-
         file_put_contents(
             $fullPath . '/src/Quote.php',
             str_replace(
@@ -88,15 +93,6 @@ class FreshPackage extends Package
                 trim($this->getNamespace(), '\\'),
                 file_get_contents(__DIR__ . '/../stubs/Quote.stub')
             )
-        );
-
-        ComposerFileManager::add(
-            $fullPath . '/composer.json',
-            ['autoload' => [
-                'psr-4' => [
-                    $this->namespace => 'src/',
-                ],
-            ]]
         );
     }
 
@@ -114,44 +110,16 @@ class FreshPackage extends Package
         return $this->helper->ask($this->input, $this->output, $question) ?? '';
     }
 
-    private function determineAuthor(): string
+    private function determineAuthorName(): string
     {
-        $name = '';
-        $email = '';
+        $question = new Question(' <question> Please enter the author name of your package</question> : ', 'name here');
 
-        $process = new Process([
-            'git',
-            'config',
-            '--global',
-            'user.name'
-        ]);
+        return $this->helper->ask($this->input, $this->output, $question);
+    }
 
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $name = trim($process->getOutput(), "\n");
-
-        $process = new Process([
-            'git',
-            'config',
-            '--global',
-            'user.email'
-        ]);
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $email = trim($process->getOutput(), "\n");
-
-        $determinedAuthorDetails = sprintf('%s <%s>', $name, $email);
-
-        $question = new Question(' <question> Please confirm the package author details [' . $determinedAuthorDetails . '] </question> : ', $determinedAuthorDetails);
+    private function determineAuthorEmail(): string
+    {
+        $question = new Question(' <question> Please enter the author email of your package</question> : ', 'email@example.com');
 
         return $this->helper->ask($this->input, $this->output, $question);
     }
@@ -177,7 +145,8 @@ class FreshPackage extends Package
 
     private function determineFolderName(): string
     {
-        return str_replace('/', '-', $this->data['name']);
+        $parts = explode('/', $this->data['name']);
+        return end($parts);
     }
 
     private function determineNameSpace()
