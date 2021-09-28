@@ -2,6 +2,7 @@
     "name": "davidpeach/composer-manuscript",
     "description": "A quick-start tool for building composer packages locally",
     "require": {
+        "php": "^7.4|^8.0",
         "symfony/process": "^5.2",
         "symfony/console": "^5.2",
         "illuminate/support": "^8.42",
