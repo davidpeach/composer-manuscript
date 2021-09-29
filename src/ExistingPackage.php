@@ -1,27 +1,17 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
 class ExistingPackage extends Package
 {
     public function getPath(): string
     {
-        return getcwd();
-    }
-
-    public function getName(): string
-    {
-        return $this->data['name'];
-    }
-
-    public function getNameSpace(): string
-    {
-        return $this->namespace;
+        return $this->directory;
     }
 
     public function getData(): void
     {
-        $composerArray = json_decode(file_get_contents($this->getPath() . '/composer.json'), true);
-        $this->data['name'] = $composerArray['name'];
+        $composerArray = ComposerFileManager::read($this->getPath() . '/composer.json');
+        $this->name = $composerArray['name'];
     }
 }

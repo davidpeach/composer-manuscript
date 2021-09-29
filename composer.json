@@ -2,6 +2,7 @@
     "name": "davidpeach/composer-manuscript",
     "description": "A quick-start tool for building composer packages locally",
     "require": {
+        "php": "^8.0",
         "symfony/process": "^5.2",
         "symfony/console": "^5.2",
         "illuminate/support": "^8.42",
@@ -20,10 +21,17 @@
     ],
     "autoload": {
         "psr-4": {
-            "Davidpeach\\Manuscript\\": "src/"
+            "DavidPeach\\Manuscript\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DavidPeach\\Manuscript\\Tests\\": "tests/"
         }
     },
     "require-dev": {
-        "symfony/var-dumper": "^5.2"
+        "symfony/var-dumper": "^5.2",
+        "phpunit/phpunit": "^9.5",
+        "symfony/framework-bundle": "^5.3"
     }
 }

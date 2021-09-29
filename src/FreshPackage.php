@@ -1,8 +1,7 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -12,63 +11,49 @@ class FreshPackage extends Package
 {
     public function getPath(): string
     {
-        return $this->directory . '/' . $this->folderName;
-    }
-
-    public function getName(): string
-    {
-        return $this->data['name'];
-    }
-
-    public function getNamespace(): string
-    {
-        return $this->namespace;
+        return $this->directory . '/' . $this->determineFolderName();
     }
 
     public function getData(): void
     {
-        $this->data['name'] = $this->determineName();
-        $this->output->writeln('  <comment>' . $this->data['name'] . "</comment>\n");
+        $this->name = $this->determineName();
+        $this->output->writeln('  <comment>' . $this->name . "</comment>\n");
 
-        $this->data['description'] = $this->determineDescription();
-        $this->output->writeln('  <comment>' . $this->data['description'] . "</comment>\n");
+        $this->description = $this->determineDescription();
+        $this->output->writeln('  <comment>' . $this->description . "</comment>\n");
 
-        $this->data['author'] = $this->determineAuthor();
-        $this->output->writeln('  <comment>' . $this->data['author'] . "</comment>\n");
+        $this->authorName = $this->determineAuthorName();
+        $this->output->writeln('  <comment>' . $this->authorName . "</comment>\n");
 
-        $this->data['stability'] = $this->determineStability();
-        $this->output->writeln('  <comment>' . $this->data['stability'] . "</comment>\n");
+        $this->authorEmail = $this->determineAuthorEmail();
+        $this->output->writeln('  <comment>' . $this->authorEmail . "</comment>\n");
 
-        $this->data['license'] = $this->determineLicense();
-        $this->output->writeln('  <comment>' . $this->data['license'] . "</comment>\n");
+        $this->author = $this->authorName . ' <' . $this->authorEmail . '>';
 
-        $this->namespace = $this->determineNameSpace();
-        $this->folderName = $this->determineFolderName();
+        $this->stability = $this->determineStability();
+        $this->output->writeln('  <comment>' . $this->stability . "</comment>\n");
+
+        $this->license = $this->determineLicense();
+        $this->output->writeln('  <comment>' . $this->license . "</comment>\n");
     }
 
     public function scaffold(): void
     {
-        $fullPath = $this->getPath();
+        mkdir($this->getPath());
 
-        if (file_exists($fullPath)) {
-            throw new \Exception($fullPath . ' already exists', 1);
-        }
-
-        mkdir($fullPath);
-
-        $composerBuildCommand = [
+        $composerBuildCommand = implode(' ', [
             'composer init',
-        ];
-
-        foreach ($this->data as $key => $value) {
-            if (!empty($this->data[$key])) {
-                $composerBuildCommand[] = '--' . $key . '="' . $value . '"';
-            }
-        }
+            sprintf('--name="%s"', $this->name),
+            sprintf('--description="%s"', $this->description),
+            sprintf('--author="%s"', $this->author),
+            sprintf('--stability="%s"', $this->stability),
+            sprintf('--license="%s"', $this->license),
+            '--autoload="src/"',
+        ]);
 
         $commands = [
-            'cd ' . $fullPath,
-            implode(' ', $composerBuildCommand),
+            'cd ' . $this->getPath(),
+            $composerBuildCommand,
             'cd ../',
         ];
 
@@ -78,82 +63,42 @@ class FreshPackage extends Package
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
-
-        mkdir($fullPath . '/src');
-
-        file_put_contents(
-            $fullPath . '/src/Quote.php',
-            str_replace(
-                '{#NAMESPACE#}',
-                trim($this->getNamespace(), '\\'),
-                file_get_contents(__DIR__ . '/../stubs/Quote.stub')
-            )
-        );
-
-        ComposerFileManager::add(
-            $fullPath . '/composer.json',
-            ['autoload' => [
-                'psr-4' => [
-                    $this->namespace => 'src/',
-                ],
-            ]]
-        );
     }
 
     private function determineName(): string
     {
-        $question = new Question(' <question> Please enter the name of your package [wow/such-package] </question> : ', 'wow/such-package');
-
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the name of your package [wow/such-package] </question> : ', 'wow/such-package')
+        );
     }
 
     private function determineDescription(): string
     {
-        $question = new Question(' <question> Please enter the description of your package </question> : ', '');
-
-        return $this->helper->ask($this->input, $this->output, $question) ?? '';
+        return $this->helper->ask(
+                $this->input,
+                $this->output,
+                new Question(' <question> Please enter the description of your package </question> : ', '')
+            ) ?? '';
     }
 
-    private function determineAuthor(): string
+    private function determineAuthorName(): string
     {
-        $name = '';
-        $email = '';
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the author name of your package</question> : ', 'name here')
+        );
+    }
 
-        $process = new Process([
-            'git',
-            'config',
-            '--global',
-            'user.name'
-        ]);
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $name = trim($process->getOutput(), "\n");
-
-        $process = new Process([
-            'git',
-            'config',
-            '--global',
-            'user.email'
-        ]);
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $email = trim($process->getOutput(), "\n");
-
-        $determinedAuthorDetails = sprintf('%s <%s>', $name, $email);
-
-        $question = new Question(' <question> Please confirm the package author details [' . $determinedAuthorDetails . '] </question> : ', $determinedAuthorDetails);
-
-        return $this->helper->ask($this->input, $this->output, $question);
+    private function determineAuthorEmail(): string
+    {
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the author email of your package</question> : ', 'email@example.com')
+        );
     }
 
     private function determineStability(): string
@@ -170,22 +115,16 @@ class FreshPackage extends Package
 
     private function determineLicense(): string
     {
-        $question = new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT');
-
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT')
+        );
     }
 
     private function determineFolderName(): string
     {
-        return str_replace('/', '-', $this->data['name']);
-    }
-
-    private function determineNameSpace()
-    {
-        $parts = explode('/', $this->data['name']);
-        $firstPart = Str::studly($parts[0]);
-        $secondPart = Str::studly($parts[1]);
-
-        return implode('\\', [$firstPart, $secondPart]) . '\\';
+        $parts = explode('/', $this->name);
+        return end($parts);
     }
 }

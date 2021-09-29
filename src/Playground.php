@@ -1,14 +1,19 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
-use Davidpeach\Manuscript\Frameworks\Framework;
+use Carbon\Carbon;
+use DavidPeach\Manuscript\Frameworks\Framework;
 
 class Playground
 {
-    private $folderFormat = 'manuscript-playground-%s-%s';
+    private $folderFormat = '%s-%s';
 
     private $path;
+
+    protected $baseDirectory;
+
+    protected $framework;
 
     protected $folderOverride = null;
 
@@ -36,7 +41,7 @@ class Playground
 
         $folder = vsprintf($this->folderFormat, [
             $this->framework->folderFormat(),
-            time(),
+            Carbon::now()->timestamp,
         ]);
 
         $this->setPath($this->baseDirectory . $folder);

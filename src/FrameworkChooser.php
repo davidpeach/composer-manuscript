@@ -1,16 +1,16 @@
 <?php
 
-namespace Davidpeach\Manuscript;
+namespace DavidPeach\Manuscript;
 
-use Davidpeach\Manuscript\Frameworks\Framework;
+use DavidPeach\Manuscript\Frameworks\Framework;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class FrameworkChooser
 {
     private $frameworks = [
-        'laravel 6' => \Davidpeach\Manuscript\Frameworks\Laravel6::class,
-        'laravel 7' => \Davidpeach\Manuscript\Frameworks\Laravel7::class,
-        'laravel 8' => \Davidpeach\Manuscript\Frameworks\Laravel8::class,
+        'laravel6x' => \DavidPeach\Manuscript\Frameworks\Laravel6::class,
+        'laravel7x' => \DavidPeach\Manuscript\Frameworks\Laravel7::class,
+        'laravel8x' => \DavidPeach\Manuscript\Frameworks\Laravel8::class,
     ];
 
     public function __construct($input, $output, $helper)
