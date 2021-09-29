@@ -5,6 +5,7 @@ namespace DavidPeach\Manuscript\Commands;
 use DavidPeach\Manuscript\ExistingPackage;
 use DavidPeach\Manuscript\FrameworkChooser;
 use DavidPeach\Manuscript\PackageInstaller;
+use DavidPeach\Manuscript\Playground;
 use DavidPeach\Manuscript\PlaygroundBuilder;
 use DavidPeach\Manuscript\PlaygroundFinder;
 use Symfony\Component\Console\Command\Command;
@@ -32,22 +33,67 @@ class ManuscriptPlayCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $helper = $this->getHelper('question');
-
         $root = ($input->getOption('package-dir') ?? getcwd()) . '/';
 
-        $playgroundDirectory = $root . '../manuscript-playgrounds/';
+        $this->intro($output);
 
-        $this->writeIntro($output);
+        $playground = $this->getPlayground(
+            $root . '../manuscript-playgrounds/',
+            $input,
+            $output
+        );
 
-        $package = new ExistingPackage($input, $output, $helper, $root);
+        PackageInstaller::install(
+            new ExistingPackage(
+                $input,
+                $output,
+                $this->getHelper('question'),
+                $root
+            ),
+            $playground
+        );
 
-        $package->getData();
+        $this->outro($output);
 
-        $needsNewPlayground = true;
+        return Command::SUCCESS;
+    }
 
-        $playgroundFinder = new PlaygroundFinder;
-        $existingPlaygrounds = $playgroundFinder->discover($playgroundDirectory);
+
+    private function intro($output): void
+    {
+        $output->writeln('');
+        $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
+        $output->writeln('');
+        $output->writeln(" 👌 Let's scaffold you a fresh composer package for you to start building.");
+        $output->writeln('');
+    }
+
+    private function outro($output): void
+    {
+        $output->writeln('');
+        $output->writeln(' 🎮 <info>Playground setup complete!</info>');
+        $output->writeln('');
+        $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
+        $output->writeln('');
+        $output->writeln('    <info>Your package has been installed into the playground.</info>');
+        $output->writeln('    <info>Any changes made to your package whilst developing it updated in the playground automatically.</info>');
+    }
+
+    /**
+     * @param string $playgroundDirectory
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return Playground
+     */
+    protected function getPlayground(
+        string          $playgroundDirectory,
+        InputInterface  $input,
+        OutputInterface $output
+    ): Playground
+    {
+        $playground = null;
+
+        $existingPlaygrounds = (new PlaygroundFinder)->discover($playgroundDirectory);
 
         if (!empty($existingPlaygrounds)) {
             $question = new ChoiceQuestion(
@@ -57,59 +103,26 @@ class ManuscriptPlayCommand extends Command
             );
             $question->setErrorMessage('Framework playground %s is invalid.');
 
-            $answer = $helper->ask($input, $output, $question);
+            $answer = $this->getHelper('question')->ask($input, $output, $question);
 
             if ($answer !== 'none') {
                 $playground = $existingPlaygrounds[$answer];
-                $needsNewPlayground = false;
             }
         }
 
-        if ($needsNewPlayground) {
-            $frameworks = new FrameworkChooser($input, $output, $helper);
-            $chosenFramework = $frameworks->choose();
-            $playground = PlaygroundBuilder::build($chosenFramework, $playgroundDirectory);
+        if (is_null($playground)) {
+            $frameworks = new FrameworkChooser(
+                $input,
+                $output,
+                $this->getHelper('question')
+            );
+
+            $playground = PlaygroundBuilder::build(
+                $frameworks->choose(),
+                $playgroundDirectory
+            );
         }
 
-        PackageInstaller::install($package, $playground);
-
-        $output->writeln('');
-        $output->writeln('<comment> 🥁 Installing ' . $package->getName() . ' into the playground</comment>');
-
-        $output->writeln('');
-        $output->writeln('<comment> ✅ ' . $package->getName() . ' installed</comment>');
-
-        $this->writeSummary($output, $package->getPath(), $playground->getPath());
-        return Command::SUCCESS;
-    }
-
-
-    private function writeIntro($output): void
-    {
-        $output->writeln('');
-        $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
-        $output->writeln('');
-        $output->writeln(" 👌 Let's scaffold you a fresh composer package for you to start building.");
-        $output->writeln('');
-    }
-
-    private function writeSummary($output, $packageDirectory, $playgroundDirectory): void
-    {
-        $packageDirectory = realpath($packageDirectory);
-        $playgroundDirectory = realpath($playgroundDirectory);
-
-        $output->writeln('');
-        $output->writeln(' 🎉 <info>Setup complete!</info>');
-        $output->writeln('');
-        $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
-        $output->writeln('');
-        $output->writeln(' 📦 <info>Open <comment>' . $packageDirectory . '</comment> in your text editor and have fun building your package. 😀</info>');
-        $output->writeln('');
-        $output->writeln(' 🎮 <info>A playground has also been setup at <comment>' . $playgroundDirectory . ' </comment>.' . PHP_EOL . PHP_EOL . "    The playground has your package pre-installed (symlinked from your local package's folder)<info>");
-        $output->writeln('');
-        $output->writeln('    <info>Run <comment>cd ' . $playgroundDirectory . ' && php artisan serve</comment>' . PHP_EOL . '    in a separate terminal window to begin the playground environment.</info>');
-        $output->writeln('');
-        $output->writeln('    <info>Any changes made whilst developing your package will be immediately updated ' . PHP_EOL . '    in the playground.</info>');
-        $output->writeln('');
+        return $playground;
     }
 }

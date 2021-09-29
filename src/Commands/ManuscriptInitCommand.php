@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class ManuscriptInitCommand extends Command
 {
@@ -27,20 +28,28 @@ class ManuscriptInitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $helper = $this->getHelper('question');
-
         $directory = ($input->getOption('install-dir') ?? getcwd()) . '/';
-        $this->writeIntro($output);
 
-        $package = new FreshPackage($input, $output, $helper, $directory);
-        $package->getData();
-        $package->scaffold($directory);
+        $this->intro($output);
 
-        $this->writeSummary($output, $package->getPath());
+        try {
+            (new FreshPackage(
+                $input,
+                $output,
+                $this->getHelper('question'),
+                $directory
+            ))->scaffold();
+        } catch (Throwable $e) {
+            $output->writeln($e->getMessage());
+            return Command::FAILURE;
+        }
+
+        $this->outro($output);
+
         return Command::SUCCESS;
     }
 
-    private function writeIntro($output): void
+    private function intro($output): void
     {
         $output->writeln('');
         $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
@@ -49,14 +58,12 @@ class ManuscriptInitCommand extends Command
         $output->writeln('');
     }
 
-    private function writeSummary($output, $packageDirectory): void
+    private function outro($output): void
     {
         $output->writeln('');
         $output->writeln(' 🎉 <info>Setup complete!</info>');
         $output->writeln('');
         $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
-        $output->writeln('');
-        $output->writeln(' 📦 <info>Open <comment>' . $packageDirectory . '</comment> in your text editor and have fun building your package. 😀</info>');
         $output->writeln('');
     }
 }

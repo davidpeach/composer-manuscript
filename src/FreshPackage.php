@@ -2,7 +2,6 @@
 
 namespace DavidPeach\Manuscript;
 
-use Exception;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -17,52 +16,44 @@ class FreshPackage extends Package
 
     public function getData(): void
     {
-        $this->data['name'] = $this->determineName();
-        $this->output->writeln('  <comment>' . $this->data['name'] . "</comment>\n");
+        $this->name = $this->determineName();
+        $this->output->writeln('  <comment>' . $this->name . "</comment>\n");
 
-        $this->data['description'] = $this->determineDescription();
-        $this->output->writeln('  <comment>' . $this->data['description'] . "</comment>\n");
+        $this->description = $this->determineDescription();
+        $this->output->writeln('  <comment>' . $this->description . "</comment>\n");
 
-        $authorName = $this->determineAuthorName();
-        $this->output->writeln('  <comment>' . $authorName . "</comment>\n");
+        $this->authorName = $this->determineAuthorName();
+        $this->output->writeln('  <comment>' . $this->authorName . "</comment>\n");
 
-        $authorEmail = $this->determineAuthorEmail();
-        $this->output->writeln('  <comment>' . $authorEmail . "</comment>\n");
+        $this->authorEmail = $this->determineAuthorEmail();
+        $this->output->writeln('  <comment>' . $this->authorEmail . "</comment>\n");
 
-        $this->data['author'] = $authorName . ' <' . $authorEmail . '>';
+        $this->author = $this->authorName . ' <' . $this->authorEmail . '>';
 
-        $this->data['stability'] = $this->determineStability();
-        $this->output->writeln('  <comment>' . $this->data['stability'] . "</comment>\n");
+        $this->stability = $this->determineStability();
+        $this->output->writeln('  <comment>' . $this->stability . "</comment>\n");
 
-        $this->data['license'] = $this->determineLicense();
-        $this->output->writeln('  <comment>' . $this->data['license'] . "</comment>\n");
+        $this->license = $this->determineLicense();
+        $this->output->writeln('  <comment>' . $this->license . "</comment>\n");
     }
 
     public function scaffold(): void
     {
-        $fullPath = $this->getPath();
+        mkdir($this->getPath());
 
-        if (file_exists($fullPath)) {
-            throw new Exception($fullPath . ' already exists', 1);
-        }
-
-        mkdir($fullPath);
-
-        $composerBuildCommand = [
+        $composerBuildCommand = implode(' ', [
             'composer init',
-        ];
-
-        foreach ($this->data as $key => $value) {
-            if (!empty($this->data[$key])) {
-                $composerBuildCommand[] = '--' . $key . '="' . $value . '"';
-            }
-        }
-
-        $composerBuildCommand[] = '--autoload="src/"';
+            sprintf('--name="%s"', $this->name),
+            sprintf('--description="%s"', $this->description),
+            sprintf('--author="%s"', $this->author),
+            sprintf('--stability="%s"', $this->stability),
+            sprintf('--license="%s"', $this->license),
+            '--autoload="src/"',
+        ]);
 
         $commands = [
-            'cd ' . $fullPath,
-            implode(' ', $composerBuildCommand),
+            'cd ' . $this->getPath(),
+            $composerBuildCommand,
             'cd ../',
         ];
 
@@ -86,10 +77,10 @@ class FreshPackage extends Package
     private function determineDescription(): string
     {
         return $this->helper->ask(
-            $this->input,
-            $this->output,
+                $this->input,
+                $this->output,
                 new Question(' <question> Please enter the description of your package </question> : ', '')
-        ) ?? '';
+            ) ?? '';
     }
 
     private function determineAuthorName(): string
@@ -133,7 +124,7 @@ class FreshPackage extends Package
 
     private function determineFolderName(): string
     {
-        $parts = explode('/', $this->data['name']);
+        $parts = explode('/', $this->name);
         return end($parts);
     }
 }

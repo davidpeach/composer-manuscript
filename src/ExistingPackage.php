@@ -12,6 +12,6 @@ class ExistingPackage extends Package
     public function getData(): void
     {
         $composerArray = ComposerFileManager::read($this->getPath() . '/composer.json');
-        $this->data['name'] = $composerArray['name'];
+        $this->name = $composerArray['name'];
     }
 }

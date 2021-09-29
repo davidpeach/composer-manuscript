@@ -2,41 +2,39 @@
 
 namespace DavidPeach\Manuscript;
 
-use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class Package
 {
-    protected $data = [
-        'name' => '',
-        'description' => '',
-        'author' => '',
-        'stability' => '',
-        'license' => '',
-    ];
+    public string $name;
 
-    protected InputInterface $input;
+    public string $description;
 
-    protected OutputInterface $output;
+    public string $authorName;
 
-    protected Helper $helper;
+    public string $authorEmail;
 
-    protected string $directory;
+    public string $author;
 
-    public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper, string
-    $directory)
+    public string $stability;
+
+    public string $license;
+
+    public function __construct(
+        protected InputInterface  $input,
+        protected OutputInterface $output,
+        protected QuestionHelper  $helper,
+        protected string          $directory
+    )
     {
-        $this->input = $input;
-        $this->output = $output;
-        $this->helper = $helper;
-        $this->directory = $directory;
+        $this->getData();
     }
 
     public function getName(): string
     {
-        return $this->data['name'];
+        return $this->name;
     }
 
     abstract public function getPath(): string;
