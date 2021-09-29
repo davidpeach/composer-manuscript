@@ -23,7 +23,7 @@ class PackageInstaller
         );
 
         $process = Process::fromShellCommandline(
-            'cd ' . $playground->getPath() . ' && composer require ' . $package->getName() . ' --with-all-dependencies'
+            'cd ' . $playground->getPath() . ' && composer require ' . $package->getName()
         );
 
         $process->run();
