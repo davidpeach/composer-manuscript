@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript;
 
-use Illuminate\Support\Str;
+use Exception;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -12,17 +12,7 @@ class FreshPackage extends Package
 {
     public function getPath(): string
     {
-        return $this->directory . '/' . $this->folderName;
-    }
-
-    public function getName(): string
-    {
-        return $this->data['name'];
-    }
-
-    public function getNamespace(): string
-    {
-        return $this->namespace;
+        return $this->directory . '/' . $this->determineFolderName();
     }
 
     public function getData(): void
@@ -46,9 +36,6 @@ class FreshPackage extends Package
 
         $this->data['license'] = $this->determineLicense();
         $this->output->writeln('  <comment>' . $this->data['license'] . "</comment>\n");
-
-        $this->namespace = $this->determineNameSpace();
-        $this->folderName = $this->determineFolderName();
     }
 
     public function scaffold(): void
@@ -56,7 +43,7 @@ class FreshPackage extends Package
         $fullPath = $this->getPath();
 
         if (file_exists($fullPath)) {
-            throw new \Exception($fullPath . ' already exists', 1);
+            throw new Exception($fullPath . ' already exists', 1);
         }
 
         mkdir($fullPath);
@@ -85,43 +72,42 @@ class FreshPackage extends Package
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
-
-        file_put_contents(
-            $fullPath . '/src/Quote.php',
-            str_replace(
-                '{#NAMESPACE#}',
-                trim($this->getNamespace(), '\\'),
-                file_get_contents(__DIR__ . '/../stubs/Quote.stub')
-            )
-        );
     }
 
     private function determineName(): string
     {
-        $question = new Question(' <question> Please enter the name of your package [wow/such-package] </question> : ', 'wow/such-package');
-
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the name of your package [wow/such-package] </question> : ', 'wow/such-package')
+        );
     }
 
     private function determineDescription(): string
     {
-        $question = new Question(' <question> Please enter the description of your package </question> : ', '');
-
-        return $this->helper->ask($this->input, $this->output, $question) ?? '';
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+                new Question(' <question> Please enter the description of your package </question> : ', '')
+        ) ?? '';
     }
 
     private function determineAuthorName(): string
     {
-        $question = new Question(' <question> Please enter the author name of your package</question> : ', 'name here');
-
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the author name of your package</question> : ', 'name here')
+        );
     }
 
     private function determineAuthorEmail(): string
     {
-        $question = new Question(' <question> Please enter the author email of your package</question> : ', 'email@example.com');
-
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the author email of your package</question> : ', 'email@example.com')
+        );
     }
 
     private function determineStability(): string
@@ -138,23 +124,16 @@ class FreshPackage extends Package
 
     private function determineLicense(): string
     {
-        $question = new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT');
-
-        return $this->helper->ask($this->input, $this->output, $question);
+        return $this->helper->ask(
+            $this->input,
+            $this->output,
+            new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT')
+        );
     }
 
     private function determineFolderName(): string
     {
         $parts = explode('/', $this->data['name']);
         return end($parts);
-    }
-
-    private function determineNameSpace()
-    {
-        $parts = explode('/', $this->data['name']);
-        $firstPart = Str::studly($parts[0]);
-        $secondPart = Str::studly($parts[1]);
-
-        return implode('\\', [$firstPart, $secondPart]) . '\\';
     }
 }

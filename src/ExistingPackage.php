@@ -9,19 +9,9 @@ class ExistingPackage extends Package
         return $this->directory;
     }
 
-    public function getName(): string
-    {
-        return $this->data['name'];
-    }
-
-    public function getNameSpace(): string
-    {
-        return $this->namespace;
-    }
-
     public function getData(): void
     {
-        $composerArray = json_decode(file_get_contents($this->getPath() . '/composer.json'), true);
+        $composerArray = ComposerFileManager::read($this->getPath() . '/composer.json');
         $this->data['name'] = $composerArray['name'];
     }
 }

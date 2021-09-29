@@ -33,11 +33,15 @@ class ManuscriptPlayCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $helper = $this->getHelper('question');
+
         $root = ($input->getOption('package-dir') ?? getcwd()) . '/';
+
         $playgroundDirectory = $root . '../manuscript-playgrounds/';
+
         $this->writeIntro($output);
 
         $package = new ExistingPackage($input, $output, $helper, $root);
+
         $package->getData();
 
         $needsNewPlayground = true;
@@ -107,9 +111,5 @@ class ManuscriptPlayCommand extends Command
         $output->writeln('');
         $output->writeln('    <info>Any changes made whilst developing your package will be immediately updated ' . PHP_EOL . '    in the playground.</info>');
         $output->writeln('');
-        $output->writeln('    There is also a sample class added to your new package at <comment>src/Quote.php</comment>.');
-        $output->writeln('');
-        $output->writeln('    Then in the playground a route has been added to directly use that example class.');
-        $output->writeln('    Head to <comment>http://localhost:8000/quote</comment> to see that example in action.' . PHP_EOL);
     }
 }

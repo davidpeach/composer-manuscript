@@ -31,6 +31,7 @@ class ManuscriptInitCommand extends Command
 
         $directory = ($input->getOption('install-dir') ?? getcwd()) . '/';
         $this->writeIntro($output);
+
         $package = new FreshPackage($input, $output, $helper, $directory);
         $package->getData();
         $package->scaffold($directory);

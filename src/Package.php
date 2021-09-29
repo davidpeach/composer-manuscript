@@ -2,6 +2,11 @@
 
 namespace DavidPeach\Manuscript;
 
+use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 abstract class Package
 {
     protected $data = [
@@ -12,22 +17,16 @@ abstract class Package
         'license' => '',
     ];
 
-    protected $input;
+    protected InputInterface $input;
 
-    protected $output;
+    protected OutputInterface $output;
 
-    protected $helper;
+    protected Helper $helper;
 
-    protected $directory;
+    protected string $directory;
 
-    protected $namespace;
-
-    // new props
-    protected $name;
-
-    protected $path;
-
-    public function __construct($input, $output, $helper, $directory)
+    public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper, string
+    $directory)
     {
         $this->input = $input;
         $this->output = $output;
@@ -35,29 +34,12 @@ abstract class Package
         $this->directory = $directory;
     }
 
+    public function getName(): string
+    {
+        return $this->data['name'];
+    }
+
     abstract public function getPath(): string;
 
-    abstract public function getName(): string;
-
     abstract public function getData(): void;
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function setPath(string $path): void
-    {
-        $this->path = $path;
-    }
-
-    public function setNamespace(string $namespace): void
-    {
-        $this->namespace = $namespace;
-    }
-
-    public function setDependancies(array $dependancies): void
-    {
-        $this->dependancies = $dependancies;
-    }
 }
