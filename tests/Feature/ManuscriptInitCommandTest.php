@@ -4,6 +4,7 @@ namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\ManuscriptInitCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -50,6 +51,11 @@ class ManuscriptInitCommandTest extends TestCase
         $commandTester->execute([
             '--install-dir' => $this->directory,
         ]);
+
+        $this->assertEquals(
+            Command::SUCCESS,
+            $commandTester->getStatusCode()
+        );
 
         $this->assertTrue(
             $this->fs->exists($this->directory . '/package-name/composer.json')
@@ -102,6 +108,41 @@ class ManuscriptInitCommandTest extends TestCase
 
         $this->assertTrue(
             $this->fs->exists($this->directory . '/package-name/src')
+        );
+    }
+
+    /** @test */
+    public function it_wont_generate_a_package_if_the_folder_name_already_exists()
+    {
+        // Create the expected folder before running command.
+        $this->fs->mkdir($this->directory . '/package-name');
+
+        $command = new ManuscriptInitCommand;
+        $command->setHelperSet(new HelperSet([new QuestionHelper]));
+
+        $commandTester = new CommandTester($command);
+
+        $commandTester->setInputs([
+            'manuscript-test/package-name',
+            'This is the manuscript test package',
+            'David Peach',
+            'test@example.com',
+            'stable',
+            'MIT',
+        ]);
+
+        $commandTester->execute([
+            '--install-dir' => $this->directory,
+        ]);
+
+        $this->assertEquals(
+            Command::FAILURE,
+            $commandTester->getStatusCode()
+        );
+
+        // The composer file shouldn't be there as the folder already existed.
+        $this->assertFalse(
+            $this->fs->exists($this->directory . '/package-name/composer.json')
         );
     }
 }
