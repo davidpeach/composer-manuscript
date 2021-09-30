@@ -113,15 +113,15 @@ class ManuscriptPlayCommand extends Command
         if (!empty($existingPlaygrounds)) {
 
             $question = new ChoiceQuestion(
-                '  Please select your framework playground, or select "none" to have a fresh one made for you.',
-                array_merge([0 => 'none'], array_keys($existingPlaygrounds)),
+                '  Please select your framework playground, or select "new" to have a fresh one made for you.',
+                array_merge([0 => 'new'], array_keys($existingPlaygrounds)),
                 0
             );
             $question->setErrorMessage('Framework playground %s is invalid.');
 
             $answer = $this->getHelper('question')->ask($input, $output, $question);
 
-            if ($answer !== 'none') {
+            if ($answer !== 'new') {
                 $playground = $existingPlaygrounds[$answer];
             }
         }
