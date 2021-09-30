@@ -64,7 +64,7 @@ class ManuscriptPlayCommand extends Command
             $playground
         );
 
-        $this->outro($output);
+        $this->outro($output, $playground);
 
         return Command::SUCCESS;
     }
@@ -79,14 +79,15 @@ class ManuscriptPlayCommand extends Command
         $output->writeln('');
     }
 
-    private function outro($output): void
+    private function outro($output, Playground $playground): void
     {
         $output->writeln('');
         $output->writeln(' 🎮 <info>Playground setup complete!</info>');
         $output->writeln('');
         $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
         $output->writeln('');
-        $output->writeln('    <info>Your package has been installed into the playground.</info>');
+        $output->writeln('    <info>Your package has been installed into the playground at <comment>' .
+            realpath($playground->getPath()) . '</comment>.</info>');
         $output->writeln('    <info>Any changes made to your package whilst developing it will be updated in the playground automatically.</info>');
         $output->writeln('');
     }

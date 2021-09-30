@@ -27,7 +27,7 @@ class PlaygroundBuilder
         $playground->setPath($directory . $folder);
 
         $installCommand = sprintf(
-            $framework->getInstallCommmandSegment(),
+            $framework->getInstallCommandSegment(),
             $playground->getPath()
         );
 

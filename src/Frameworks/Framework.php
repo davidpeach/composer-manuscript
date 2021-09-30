@@ -11,7 +11,7 @@ abstract class Framework
         return $this->name;
     }
 
-    public function getInstallCommmandSegment(): string
+    public function getInstallCommandSegment(): string
     {
         return $this->installCommmandSegment;
     }
