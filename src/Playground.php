@@ -56,4 +56,10 @@ class Playground
     {
         return $this->path;
     }
+
+    public function getFolderName(): string
+    {
+        $fullPathParts = explode('/', $this->getPath());
+        return end($fullPathParts);
+    }
 }

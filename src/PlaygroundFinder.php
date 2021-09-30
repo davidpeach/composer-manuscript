@@ -12,14 +12,14 @@ class PlaygroundFinder
 
         $finder->depth('== 0')
             ->directories()
-            ->name('manuscript-playground-*')
+            ->name('*')
             ->in($directory);
 
         $currentPlaygrounds = [];
 
         foreach ($finder as $file) {
             $playground = PlaygroundBuilder::hydrate($file);
-            $currentPlaygrounds[$playground->getPath()] = $playground;
+            $currentPlaygrounds[$playground->getFolderName()] = $playground;
         }
 
         return $currentPlaygrounds;

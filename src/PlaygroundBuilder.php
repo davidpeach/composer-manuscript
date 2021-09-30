@@ -3,7 +3,6 @@
 namespace DavidPeach\Manuscript;
 
 use DavidPeach\Manuscript\Frameworks\Framework;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -23,10 +22,6 @@ class PlaygroundBuilder
             $playground->getPath()
         );
 
-        if (is_dir($playground->getPath())) {
-            (new Filesystem)->remove($playground->getPath());
-        }
-
         $process = Process::fromShellCommandline('composer create-project ' . $installCommand);
         $process->run();
 
@@ -37,10 +32,8 @@ class PlaygroundBuilder
         return $playground;
     }
 
-    public static function hydrate(SplFileInfo $file)
+    public static function hydrate(SplFileInfo $file): Playground
     {
-        $path = $file->getPathname();
-
         $playground = new Playground;
         $playground->setBaseDirectory($file->getPath());
         $playground->setPath($file->getPathname());

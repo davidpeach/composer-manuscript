@@ -9,7 +9,6 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class ManuscriptPlayCommandTest extends TestCase
 {
@@ -21,12 +20,10 @@ class ManuscriptPlayCommandTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->directory = realpath(__DIR__ . '/../test-environments/play-command-test-env') . '/';
+        $this->directory = realpath(__DIR__ . '/../test-environments/play-command-test-env');
 
         $this->fs = new Filesystem;
-        $this->fs->remove(
-            (new Finder)->directories()->in($this->directory . 'manuscript-playgrounds/')
-        );
+        $this->fs->remove($this->directory . '/manuscript-playgrounds');
 
         parent::setUp();
     }
@@ -46,14 +43,18 @@ class ManuscriptPlayCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--package-dir' => $this->directory . 'test-package/',
+            '--package-dir' => $this->directory . '/test-package',
         ]);
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . 'manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp)
+            $this->fs->exists($this->directory . '/manuscript-playgrounds')
         );
 
-        $composerFile = $this->directory . 'manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp . '/composer.json';
+        $this->assertTrue(
+            $this->fs->exists($this->directory . '/manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp)
+        );
+
+        $composerFile = $this->directory . '/manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp . '/composer.json';
         $composerFileArray = json_decode(file_get_contents($composerFile), true);
         $this->assertArrayHasKey('manuscript-test/test-package', $composerFileArray['require']);
 
@@ -63,7 +64,7 @@ class ManuscriptPlayCommandTest extends TestCase
         $this->assertEquals('path', $composerFileArray['repositories'][0]['type']);
 
         $this->assertArrayHasKey('url', $composerFileArray['repositories'][0]);
-        $this->assertEquals($this->directory . 'test-package', $composerFileArray['repositories'][0]['url']);
+        $this->assertEquals($this->directory . '/test-package', $composerFileArray['repositories'][0]['url']);
 
         $this->assertArrayHasKey('options', $composerFileArray['repositories'][0]);
         $this->assertArrayHasKey('symlink', $composerFileArray['repositories'][0]['options']);
@@ -71,7 +72,7 @@ class ManuscriptPlayCommandTest extends TestCase
 
         $this->assertTrue(
             $this->fs->exists(
-                $this->directory . 'manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp . '/vendor/manuscript-test/test-package'
+                $this->directory . '/manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp . '/vendor/manuscript-test/test-package'
             )
         );
     }

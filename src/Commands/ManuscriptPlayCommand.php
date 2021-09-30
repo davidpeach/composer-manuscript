@@ -8,6 +8,7 @@ use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\Playground;
 use DavidPeach\Manuscript\PlaygroundBuilder;
 use DavidPeach\Manuscript\PlaygroundFinder;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,6 +37,12 @@ class ManuscriptPlayCommand extends Command
         $root = ($input->getOption('package-dir') ?? getcwd()) . '/';
 
         $this->intro($output);
+
+        $fs = new Filesystem;
+
+        if (! $fs->exists($root . '../manuscript-playgrounds/')) {
+            $fs->mkdir($root . '../manuscript-playgrounds/');
+        }
 
         $playground = $this->getPlayground(
             $root . '../manuscript-playgrounds/',
@@ -96,6 +103,7 @@ class ManuscriptPlayCommand extends Command
         $existingPlaygrounds = (new PlaygroundFinder)->discover($playgroundDirectory);
 
         if (!empty($existingPlaygrounds)) {
+
             $question = new ChoiceQuestion(
                 '  Please select your framework playground, or select "none" to have a fresh one made for you.',
                 array_merge([0 => 'none'], array_keys($existingPlaygrounds)),
