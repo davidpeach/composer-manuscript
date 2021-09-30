@@ -37,6 +37,12 @@ abstract class Package
         return $this->name;
     }
 
+    public function folderName(): string
+    {
+        $parts = explode('/', $this->name);
+        return end($parts);
+    }
+
     abstract public function getPath(): string;
 
     abstract public function getData(): void;

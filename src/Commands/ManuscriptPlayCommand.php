@@ -4,6 +4,7 @@ namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\ExistingPackage;
 use DavidPeach\Manuscript\FrameworkChooser;
+use DavidPeach\Manuscript\Package;
 use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\Playground;
 use DavidPeach\Manuscript\PlaygroundBuilder;
@@ -44,19 +45,22 @@ class ManuscriptPlayCommand extends Command
             $fs->mkdir($root . '../manuscript-playgrounds/');
         }
 
+        $package = new ExistingPackage(
+            $input,
+            $output,
+            $this->getHelper('question'),
+            $root
+        );
+
         $playground = $this->getPlayground(
             $root . '../manuscript-playgrounds/',
             $input,
-            $output
+            $output,
+            $package
         );
 
         PackageInstaller::install(
-            new ExistingPackage(
-                $input,
-                $output,
-                $this->getHelper('question'),
-                $root
-            ),
+            $package,
             $playground
         );
 
@@ -90,12 +94,14 @@ class ManuscriptPlayCommand extends Command
      * @param string $playgroundDirectory
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @param Package $package
      * @return Playground
      */
     protected function getPlayground(
         string          $playgroundDirectory,
         InputInterface  $input,
-        OutputInterface $output
+        OutputInterface $output,
+        Package $package
     ): Playground
     {
         $playground = null;
@@ -125,7 +131,7 @@ class ManuscriptPlayCommand extends Command
                 $this->getHelper('question')
             );
 
-            $playground = PlaygroundBuilder::build(
+            $playground = (new PlaygroundBuilder)->forPackage($package)->build(
                 $frameworks->choose(),
                 $playgroundDirectory
             );

@@ -9,13 +9,21 @@ use Symfony\Component\Process\Process;
 
 class PlaygroundBuilder
 {
-    public static function build(Framework $framework, string $directory): Playground
+    private Package $package;
+
+    public function build(Framework $framework, string $directory): Playground
     {
         $playground = new Playground;
         $playground->setBaseDirectory($directory);
         $playground->setFramework($framework);
+        $playground->setPackage($this->package);
 
-        $playground->determinePath();
+        $folder = vsprintf($playground->getFolderFormat(), [
+            $framework->folderFormat(),
+            $this->package->folderName(),
+        ]);
+
+        $playground->setPath($directory . $folder);
 
         $installCommand = sprintf(
             $framework->getInstallCommmandSegment(),
@@ -38,5 +46,12 @@ class PlaygroundBuilder
         $playground->setBaseDirectory($file->getPath());
         $playground->setPath($file->getPathname());
         return $playground;
+    }
+
+    public function forPackage(Package $package): self
+    {
+        $this->package = $package;
+
+        return $this;
     }
 }

@@ -11,7 +11,7 @@ class FreshPackage extends Package
 {
     public function getPath(): string
     {
-        return $this->directory . '/' . $this->determineFolderName();
+        return $this->directory . '/' . $this->folderName();
     }
 
     public function getData(): void
@@ -120,11 +120,5 @@ class FreshPackage extends Package
             $this->output,
             new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT')
         );
-    }
-
-    private function determineFolderName(): string
-    {
-        $parts = explode('/', $this->name);
-        return end($parts);
     }
 }

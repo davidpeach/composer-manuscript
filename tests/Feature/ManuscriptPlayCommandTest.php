@@ -51,10 +51,10 @@ class ManuscriptPlayCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp)
+            $this->fs->exists($this->directory . '/manuscript-playgrounds/laravel-8-test-package')
         );
 
-        $composerFile = $this->directory . '/manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp . '/composer.json';
+        $composerFile = $this->directory . '/manuscript-playgrounds/laravel-8-test-package/composer.json';
         $composerFileArray = json_decode(file_get_contents($composerFile), true);
         $this->assertArrayHasKey('manuscript-test/test-package', $composerFileArray['require']);
 
@@ -72,7 +72,7 @@ class ManuscriptPlayCommandTest extends TestCase
 
         $this->assertTrue(
             $this->fs->exists(
-                $this->directory . '/manuscript-playgrounds/laravel-8-' . Carbon::now()->timestamp . '/vendor/manuscript-test/test-package'
+                $this->directory . '/manuscript-playgrounds/laravel-8-test-package/vendor/manuscript-test/test-package'
             )
         );
     }

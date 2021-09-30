@@ -2,25 +2,19 @@
 
 namespace DavidPeach\Manuscript;
 
-use Carbon\Carbon;
 use DavidPeach\Manuscript\Frameworks\Framework;
 
 class Playground
 {
-    private $folderFormat = '%s-%s';
+    private string $folderFormat = '%s-%s';
 
-    private $path;
+    private string $path;
 
-    protected $baseDirectory;
+    protected string $baseDirectory;
 
-    protected $framework;
+    protected Framework $framework;
 
-    protected $folderOverride = null;
-
-    public function setFolderOverride(string $folder)
-    {
-        $this->folderOverride = trim($folder, '/');
-    }
+    protected Package $package;
 
     public function setBaseDirectory(string $directory): void
     {
@@ -30,21 +24,6 @@ class Playground
     public function setFramework(Framework $framework): void
     {
         $this->framework = $framework;
-    }
-
-    public function determinePath(): void
-    {
-        if ($this->folderOverride) {
-            $this->setPath($this->baseDirectory . $this->folderOverride);
-            return;
-        }
-
-        $folder = vsprintf($this->folderFormat, [
-            $this->framework->folderFormat(),
-            Carbon::now()->timestamp,
-        ]);
-
-        $this->setPath($this->baseDirectory . $folder);
     }
 
     public function setPath(string $path): void
@@ -61,5 +40,15 @@ class Playground
     {
         $fullPathParts = explode('/', $this->getPath());
         return end($fullPathParts);
+    }
+
+    public function setPackage(Package $package)
+    {
+        $this->package = $package;
+    }
+
+    public function getFolderFormat(): string
+    {
+        return $this->folderFormat;
     }
 }
