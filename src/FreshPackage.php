@@ -2,10 +2,13 @@
 
 namespace DavidPeach\Manuscript;
 
+use Exception;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 class FreshPackage extends Package
 {
@@ -13,7 +16,7 @@ class FreshPackage extends Package
 
     public function getPath(): string
     {
-        return $this->directory . '/' . $this->folderName();
+        return $this->directory . $this->folderName();
     }
 
     public function getData(): void
@@ -43,7 +46,18 @@ class FreshPackage extends Package
 
     public function scaffold(): void
     {
-        mkdir($this->getPath());
+        try {
+            $fs = new Filesystem;
+
+            if ($fs->exists($this->getPath())) {
+                throw new Exception("Package folder name already exists");
+            }
+
+            $fs->mkdir($this->getPath());
+        } catch (Throwable $e) {
+            throw $e;
+        }
+
 
         $composerBuildCommand = implode(' ', [
             'composer init',
@@ -86,7 +100,7 @@ class FreshPackage extends Package
         return $this->helper->ask(
                 $this->input,
                 $this->output,
-                new Question(' <question> Please enter the description of your package </question> : ', '')
+                new Question(' <question> Please enter the description of your package </question> : ', 'Default description set by Manuscript')
             ) ?? '';
     }
 

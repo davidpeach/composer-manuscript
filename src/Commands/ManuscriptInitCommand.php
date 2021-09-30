@@ -3,6 +3,7 @@
 namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\FreshPackage;
+use DavidPeach\Manuscript\Package;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -33,18 +34,19 @@ class ManuscriptInitCommand extends Command
         $this->intro($output);
 
         try {
-            (new FreshPackage(
+            $package = (new FreshPackage(
                 $input,
                 $output,
                 $this->getHelper('question'),
                 $directory
-            ))->scaffold();
+            ));
+            $package->scaffold();
         } catch (Throwable $e) {
-            $output->writeln($e->getMessage());
+            $output->writeln(' <error> ' . $e->getMessage() . ' </error>');
             return Command::FAILURE;
         }
 
-        $this->outro($output);
+        $this->outro($output, $package);
 
         return Command::SUCCESS;
     }
@@ -58,12 +60,14 @@ class ManuscriptInitCommand extends Command
         $output->writeln('');
     }
 
-    private function outro($output): void
+    private function outro($output, Package $package): void
     {
         $output->writeln('');
-        $output->writeln(' 🎉 <info>Setup complete!</info>');
+        $output->writeln(' 🎉 <info>Fresh package setup complete!</info>');
         $output->writeln('');
         $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
+        $output->writeln('');
+        $output->writeln(' @ <info> Your new package is set up at <comment>' . $package->getPath() . ' </comment></info>');
         $output->writeln('');
     }
 }

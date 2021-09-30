@@ -87,7 +87,8 @@ class ManuscriptPlayCommand extends Command
         $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
         $output->writeln('');
         $output->writeln('    <info>Your package has been installed into the playground.</info>');
-        $output->writeln('    <info>Any changes made to your package whilst developing it updated in the playground automatically.</info>');
+        $output->writeln('    <info>Any changes made to your package whilst developing it will be updated in the playground automatically.</info>');
+        $output->writeln('');
     }
 
     /**
