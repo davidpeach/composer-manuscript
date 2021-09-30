@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Playground;
 
 use Symfony\Component\Finder\Finder;
 

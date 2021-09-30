@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript;
 
+use DavidPeach\Manuscript\Playground\Playground;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

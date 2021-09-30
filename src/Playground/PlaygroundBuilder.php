@@ -1,8 +1,9 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Playground;
 
 use DavidPeach\Manuscript\Frameworks\Framework;
+use DavidPeach\Manuscript\Package;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;

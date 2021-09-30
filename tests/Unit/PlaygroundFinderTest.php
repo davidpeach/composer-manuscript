@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\PlaygroundFinder;
+use DavidPeach\Manuscript\Playground\PlaygroundFinder;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
