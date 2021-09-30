@@ -9,6 +9,8 @@ use Symfony\Component\Process\Process;
 
 class FreshPackage extends Package
 {
+    private GitCredentials $gitCredentials;
+
     public function getPath(): string
     {
         return $this->directory . '/' . $this->folderName();
@@ -16,6 +18,8 @@ class FreshPackage extends Package
 
     public function getData(): void
     {
+        $this->gitCredentials = new GitCredentials;
+
         $this->name = $this->determineName();
         $this->output->writeln('  <comment>' . $this->name . "</comment>\n");
 
@@ -70,7 +74,10 @@ class FreshPackage extends Package
         return $this->helper->ask(
             $this->input,
             $this->output,
-            new Question(' <question> Please enter the name of your package [wow/such-package] </question> : ', 'wow/such-package')
+            new Question(
+                ' <question> Please enter the name of your package [' . $this->gitCredentials->guessNamespace('your-namespace') . '/package-name] </question> : ',
+                $this->gitCredentials->guessNamespace('your-namespace') . '/package-name'
+            )
         );
     }
 
@@ -88,7 +95,11 @@ class FreshPackage extends Package
         return $this->helper->ask(
             $this->input,
             $this->output,
-            new Question(' <question> Please enter the author name of your package</question> : ', 'name here')
+            new Question(
+                ' <question> Please enter the author name of your package [' . $this->gitCredentials->getName
+                ('Your Name') . ']</question> : ',
+                $this->gitCredentials->getName('Your Name')
+            )
         );
     }
 
@@ -97,7 +108,10 @@ class FreshPackage extends Package
         return $this->helper->ask(
             $this->input,
             $this->output,
-            new Question(' <question> Please enter the author email of your package</question> : ', 'email@example.com')
+            new Question(
+                ' <question> Please enter the author email of your package [ ' . $this->gitCredentials->getEmail('email@example.com') . ' ]</question> : ',
+                $this->gitCredentials->getEmail('email@example.com')
+            )
         );
     }
 
