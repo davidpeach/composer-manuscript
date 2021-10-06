@@ -8,7 +8,7 @@
         "illuminate/support": "^8.42",
         "symfony/finder": "^5.2",
         "symfony/filesystem": "^5.3",
-        "knplabs/github-api": "dev-master",
+        "knplabs/github-api": "dev-master@dev",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.0"
     },
@@ -37,5 +37,5 @@
         "phpunit/phpunit": "^9.5",
         "symfony/framework-bundle": "^5.3"
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
