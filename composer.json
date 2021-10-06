@@ -2,15 +2,7 @@
     "name": "davidpeach/composer-manuscript",
     "description": "A quick-start tool for building composer packages locally",
     "require": {
-        "php": "^8.0",
-        "symfony/process": "^5.2",
-        "symfony/console": "^5.2",
-        "illuminate/support": "^8.42",
-        "symfony/finder": "^5.2",
-        "symfony/filesystem": "^5.3",
-        "knplabs/github-api": "dev-master",
-        "guzzlehttp/guzzle": "^7.0.1",
-        "http-interop/http-factory-guzzle": "^1.0"
+        "php": "^8.0"
     },
     "license": "MIT",
     "authors": [
@@ -20,7 +12,7 @@
         }
     ],
     "bin": [
-        "bin/manuscript"
+        "build/manuscript"
     ],
     "autoload": {
         "psr-4": {
@@ -35,7 +27,14 @@
     "require-dev": {
         "symfony/var-dumper": "^5.2",
         "phpunit/phpunit": "^9.5",
-        "symfony/framework-bundle": "^5.3"
-    },
-    "minimum-stability": "dev"
+        "symfony/framework-bundle": "^5.3",
+        "symfony/process": "^5.2",
+        "symfony/console": "^5.2",
+        "illuminate/support": "^8.42",
+        "symfony/finder": "^5.2",
+        "symfony/filesystem": "^5.3",
+        "knplabs/github-api": "dev-master",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "http-interop/http-factory-guzzle": "^1.0"
+    }
 }
