@@ -73,7 +73,7 @@ class FreshPackage extends Package
     private function determineName(): string
     {
         $question = sprintf(
-            '<question>Please enter the name of your package [%s/package-name] </question> : ',
+            '<question>Please enter the full name of your package with namespace [%s/package-name] </question> : ',
             $this->gitCredentials->guessNamespace('your-namespace'),
         );
 
