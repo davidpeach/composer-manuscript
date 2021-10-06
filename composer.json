@@ -36,5 +36,6 @@
         "symfony/var-dumper": "^5.2",
         "phpunit/phpunit": "^9.5",
         "symfony/framework-bundle": "^5.3"
-    }
+    },
+    "minimum-stability": "dev"
 }
