@@ -9,6 +9,7 @@ use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\Playground\Playground;
 use DavidPeach\Manuscript\Playground\PlaygroundBuilder;
 use DavidPeach\Manuscript\Playground\PlaygroundFinder;
+use DavidPeach\Manuscript\QuestionAsker;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,12 +46,19 @@ class ManuscriptPlayCommand extends Command
             $fs->mkdir($root . '../manuscript-playgrounds/');
         }
 
-        $package = new ExistingPackage(
+        $questionAsker = new QuestionAsker(
             $input,
             $output,
-            $this->getHelper('question'),
-            $root
+            $this->getHelper('question')
         );
+
+        $package = new ExistingPackage(
+            $root,
+            $questionAsker
+        );
+        $package->setPath($root);
+        $package->getData();
+
 
         $playground = $this->getPlayground(
             $root . '../manuscript-playgrounds/',

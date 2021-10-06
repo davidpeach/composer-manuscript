@@ -4,6 +4,8 @@ namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\FreshPackage;
 use DavidPeach\Manuscript\Package;
+use DavidPeach\Manuscript\QuestionAsker;
+use DavidPeach\Manuscript\SpatiePackage;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +28,12 @@ class ManuscriptInitCommand extends Command
                 false
             )
             ->addOption(
+                'type',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Create a new laravel package using Spatie\'s excellent skeleton.',
+            )
+            ->addOption(
                 'install-dir',
                 'i',
                 InputOption::VALUE_OPTIONAL,
@@ -41,14 +49,13 @@ class ManuscriptInitCommand extends Command
 
         $this->intro($output);
 
+        $questionAsker = new QuestionAsker($input, $output, $this->getHelper('question'));
+
         try {
-            $package = (new FreshPackage(
-                $input,
-                $output,
-                $this->getHelper('question'),
-                $directory
-            ));
-            $package->scaffold();
+            $package = match ($input->getOption('type')) {
+                null => (new FreshPackage($directory, $questionAsker))->getData()->scaffold()->package(),
+                'spatie' => (new SpatiePackage($directory, $questionAsker))->scaffold()->package(),
+            };
         } catch (Throwable $e) {
             $output->writeln(' <error> ' . $e->getMessage() . ' </error>');
             return Command::FAILURE;

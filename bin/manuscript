@@ -10,5 +10,6 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
 $app = new Symfony\Component\Console\Application('Manuscript', '3.0.0');
 $app->add(new DavidPeach\Manuscript\Commands\ManuscriptInitCommand);
 $app->add(new DavidPeach\Manuscript\Commands\ManuscriptPlayCommand);
+$app->add(new DavidPeach\Manuscript\Commands\ManuscriptClearPlaygroundsCommand);
 
 $app->run();
