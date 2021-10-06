@@ -12,7 +12,7 @@
         }
     ],
     "bin": [
-        "build/manuscript"
+        "bin/manuscript"
     ],
     "autoload": {
         "psr-4": {
