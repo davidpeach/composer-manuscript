@@ -10,7 +10,7 @@ Please first install [Composer](https://getcomposer.org/download/) from the offi
 
 Please note: this has been developed on a Linux system (Pop! OS 20.04 LTS) and has only been tested on that system. I'd really appreciate any feedback / help in making it work for other operating systems in the future, if anybody would like to help. :)
 
-`composer global require davidpeach/composer-manuscript:^3.0`
+`composer global require davidpeach/composer-manuscript:^4.0`
 
 ### Uninstall
 
@@ -18,7 +18,9 @@ Please note: this has been developed on a Linux system (Pop! OS 20.04 LTS) and h
 
 ## Usage
 
-### Scaffolding an empty fresh composer package
+### Creating a new package
+
+#### Create a composer package
 
 ```bash
 # Change directory into the folder where all of your development packages will live
@@ -29,9 +31,27 @@ manuscript init
 manuscript init --install-dir=/full/path/to/other/folder
 ```
 
-You will be asked to enter the full `namespace/package-name` that you want your package to have, as well as some other settings that will be used to generate your new package's composer file.
+Follow the terminal prompts to complete the command.
 
-### Playground setup
+#### Create a Laravel package (using [Spatie’s Laravel Package Skeleton](https://github.com/spatie/package-skeleton-laravel)
+
+This command will initialize a new repository in your github account, using the excellent Laravel package skeleton by Spatie.
+
+It will then clone it to your local machine and begin Spatie’s configure script.
+
+```bash
+# Change directory into the folder where all of your development packages will live
+cd ~/your/package/development/folder
+manuscript init --type=spatie
+
+# You can also specify an install directory with the --install-dir flag
+manuscript init --type=spatie --install-dir=/full/path/to/other/folder
+```
+
+### Create a local Laravel installation “playground” for testing and playing.
+Note: when running one of the `init` commands above, you can also pass the `--play` flag to automatically run the 
+play command once the package is generated.
+
 Whether you have just scaffolded a new package, or working with an existing one, you can have manuscript create a 
 coding playground for you to manually work with it (only `Laravel` versions `6.x`, `7.x` and `8.x` are supported 
 currently).
@@ -44,6 +64,9 @@ cd ~/your/package/development/existing-package
 
 # Run the play command
 manuscript play
+
+# Running as part of the init command
+manuscript init --type=spatie --play
 ```
 
 ## What is Manuscript?
@@ -52,11 +75,12 @@ Manuscript is a tool to quickly set up a local environment for developing a PHP 
 
 Manuscript can:
  - Setup a bare-bones composer package structure for you.
- - Download your chosen PHP framework for you to manually test your package.
- - Install a composer package into the framework using `composer require`, with the `symlink` composer option in the 
+ - Setup a Laravel composer package using Spatie's excellent Laravel Package Skeleton.
+ - Download your chosen PHP framework for you to manually test your package. (Laravel 6, 7 or 8 currently)
+ - Install your composer package into the framework using `composer require`, with the `symlink` composer option in the 
    framework's composer file.
 
-You will then be able to develop your package whilst it is installed in a framework setting.
+You will then be able to develop your package whilst it is installed in a local framework setting.
 And because it is symlinked from your package development directory, you will see the changes reflected immediately.
 
 ## Why build Manuscript?
@@ -66,7 +90,8 @@ I wanted an easy-to-install, easy-to-use tool that would set up everything I nee
 There are most likely other tools out there that will help you do this, but I just wanted to have a go at building something myself and sharing it back out there.
 
 ## Future additions
-I do have some ideas for some small quality of life updates to this package. I will add them as issues in the repository as I finalise my thoughts on them.
+I do have some ideas for some small quality of life updates to this package. I will add them as [issues](https://github.com/davidpeach/composer-manuscript/issues) in the 
+repository as I finalise my thoughts on them.
 
 ## Known Issues
 
