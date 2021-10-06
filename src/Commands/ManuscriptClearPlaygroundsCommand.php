@@ -42,8 +42,11 @@ class ManuscriptClearPlaygroundsCommand extends Command
         $playgrounds = $finder->discover($root . '/manuscript-playgrounds');
 
         foreach ($playgrounds as $playground) {
+            $output->writeln('<info>' . $playground->getFolderName() . ' removed.</info>');
             $fs->remove($playground->getPath());
         }
+
+        $output->writeln('<info>All framework playgrounds removed.</info>');
 
         return Command::SUCCESS;
     }
