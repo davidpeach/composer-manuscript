@@ -4,6 +4,6 @@ namespace DavidPeach\Manuscript\Frameworks;
 
 class Laravel6 extends Framework
 {
-    protected $name = 'Laravel 6';
-    protected $installCommmandSegment = '--prefer-dist laravel/laravel %s "6.*"';
+    protected string $name = 'Laravel 6';
+    protected string $installCommandSegment = '--prefer-dist laravel/laravel %s "6.*"';
 }

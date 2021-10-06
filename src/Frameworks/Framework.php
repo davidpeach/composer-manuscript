@@ -13,7 +13,7 @@ abstract class Framework
 
     public function getInstallCommandSegment(): string
     {
-        return $this->installCommmandSegment;
+        return $this->installCommandSegment;
     }
 
     public function folderFormat(): string

@@ -3,8 +3,6 @@
 namespace DavidPeach\Manuscript;
 
 use Exception;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -14,37 +12,24 @@ class FreshPackage extends Package
 {
     private GitCredentials $gitCredentials;
 
-    public function getPath(): string
-    {
-        return $this->directory . $this->folderName();
-    }
-
-    public function getData(): void
+    public function getData(): self
     {
         $this->gitCredentials = new GitCredentials;
 
         $this->name = $this->determineName();
-        $this->output->writeln('  <comment>' . $this->name . "</comment>\n");
-
         $this->description = $this->determineDescription();
-        $this->output->writeln('  <comment>' . $this->description . "</comment>\n");
-
         $this->authorName = $this->determineAuthorName();
-        $this->output->writeln('  <comment>' . $this->authorName . "</comment>\n");
-
         $this->authorEmail = $this->determineAuthorEmail();
-        $this->output->writeln('  <comment>' . $this->authorEmail . "</comment>\n");
-
         $this->author = $this->authorName . ' <' . $this->authorEmail . '>';
-
         $this->stability = $this->determineStability();
-        $this->output->writeln('  <comment>' . $this->stability . "</comment>\n");
-
         $this->license = $this->determineLicense();
-        $this->output->writeln('  <comment>' . $this->license . "</comment>\n");
+
+        $this->setPath($this->directory . $this->folderName());
+
+        return $this;
     }
 
-    public function scaffold(): void
+    public function scaffold(): self
     {
         try {
             $fs = new Filesystem;
@@ -81,72 +66,73 @@ class FreshPackage extends Package
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+
+        return $this;
     }
 
     private function determineName(): string
     {
-        return $this->helper->ask(
-            $this->input,
-            $this->output,
-            new Question(
-                ' <question> Please enter the name of your package [' . $this->gitCredentials->guessNamespace('your-namespace') . '/package-name] </question> : ',
-                $this->gitCredentials->guessNamespace('your-namespace') . '/package-name'
-            )
+        $question = sprintf(
+            '<question>Please enter the name of your package [%s/package-name] </question> : ',
+            $this->gitCredentials->guessNamespace('your-namespace'),
         );
+
+        $answer = sprintf(
+            '%s/package-name',
+            $this->gitCredentials->guessNamespace('your-namespace'),
+        );
+
+        return $this->questions->question($question)->defaultAnswer($answer)->ask();
     }
 
     private function determineDescription(): string
     {
-        return $this->helper->ask(
-                $this->input,
-                $this->output,
-                new Question(' <question> Please enter the description of your package </question> : ', 'Default description set by Manuscript')
-            ) ?? '';
+        $question = '<question> Please enter the description of your package </question> : ';
+
+        $answer = 'Default description set by Manuscript';
+
+        return $this->questions->question($question)->defaultAnswer($answer)->ask();
     }
 
     private function determineAuthorName(): string
     {
-        return $this->helper->ask(
-            $this->input,
-            $this->output,
-            new Question(
-                ' <question> Please enter the author name of your package [' . $this->gitCredentials->getName
-                ('Your Name') . ']</question> : ',
-                $this->gitCredentials->getName('Your Name')
-            )
+        $question = sprintf(
+            ' <question> Please enter the author name of your package [%s]</question> : ',
+            $this->gitCredentials->getName('Your Name')
         );
+
+        $answer = $this->gitCredentials->getName('Your Name');
+
+        return $this->questions->question($question)->defaultAnswer($answer)->ask();
     }
 
     private function determineAuthorEmail(): string
     {
-        return $this->helper->ask(
-            $this->input,
-            $this->output,
-            new Question(
-                ' <question> Please enter the author email of your package [ ' . $this->gitCredentials->getEmail('email@example.com') . ' ]</question> : ',
-                $this->gitCredentials->getEmail('email@example.com')
-            )
+        $question = sprintf(
+            ' <question> Please enter the author email of your package [%s]</question> : ',
+            $this->gitCredentials->getEmail('email@example.com')
         );
+
+        $answer = $this->gitCredentials->getEmail('email@example.com');
+
+        return $this->questions->question($question)->defaultAnswer($answer)->ask();
     }
 
     private function determineStability(): string
     {
-        $question = new ChoiceQuestion(
-            ' <question> Please select your minimum stability [stable] </question> : ',
-            ['dev', 'alpha', 'beta', 'RC', 'stable'],
-            4
-        );
-        $question->setErrorMessage('Minimum Stability %s is invalid.');
+        $question = ' <question> Please select your minimum stability [stable] </question> : ';
 
-        return $this->helper->ask($this->input, $this->output, $question);
+        $answer = 'stable';
+
+        return $this->questions->question($question)->defaultAnswer($answer)->ask();
     }
 
     private function determineLicense(): string
     {
-        return $this->helper->ask(
-            $this->input,
-            $this->output,
-            new Question(' <question> Please enter the license for your package [MIT] </question> : ', 'MIT')
-        );
+        $question = '<question> Please enter the license for your package [MIT] </question>';
+
+        $answer = 'MIT';
+
+        return $this->questions->question($question)->defaultAnswer($answer)->ask();
     }
 }
