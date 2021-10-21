@@ -2,3 +2,5 @@
 vendor
 tests/test-environments/**/manuscript-playgrounds/**
 .idea
+build
+/manuscript-*.phar
