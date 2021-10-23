@@ -12,14 +12,24 @@ $out = 'manuscript';
 
 passthru('
 cp bin/manuscript-entry bin/manuscript &&
+
 rm -rf build && mkdir build &&
 cp -r bin/ src/ composer.json composer.lock LICENSE build/ && rm build/bin/build.php &&
-composer install -d build/ &&
+
+cd build &&
+composer install --no-dev &&
+composer remove --dev symfony/framework-bundle &&
+composer remove --dev symfony/var-dumper &&
+composer remove --dev phpunit/phpunit &&
+cd - >/dev/null &&
+
 cd build/vendor && rm -rf */*/tests/ */*/src/tests/ */*/docs/ */*/*.md */*/composer.* */*/phpunit.* */*/.gitignore */*/.*.yml */*/*.xml && cd - >/dev/null &&
 cd build/vendor/symfony/ && rm -rf */Symfony/Component/*/Tests/ */Symfony/Component/*/*.md */Symfony/Component/*/composer.* */Symfony/Component/*/phpunit.* */Symfony/Component/*/.gitignore && cd ->/dev/null &&
-phar-composer build build/ ' . escapeshellarg($out) . ' &&
+
+vendor/bin/phar-composer build build/ ' . escapeshellarg($out) . ' &&
+
 mv ' . escapeshellarg($out) . ' bin/manuscript &&
 chmod a+x bin/manuscript &&
-echo -n "Reported version is: " && php bin/manuscript --version', $code);
 
+echo -n "Reported version is: " && php bin/manuscript --version', $code);
 exit($code);
