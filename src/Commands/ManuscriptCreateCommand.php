@@ -13,9 +13,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
-class ManuscriptInitCommand extends Command
+class ManuscriptCreateCommand extends Command
 {
-    protected static $defaultName = 'init';
+    protected static $defaultName = 'create';
 
     protected function configure(): void
     {

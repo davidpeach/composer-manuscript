@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Feature;
 
-use DavidPeach\Manuscript\Commands\ManuscriptInitCommand;
+use DavidPeach\Manuscript\Commands\ManuscriptCreateCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -21,7 +21,7 @@ class ManuscriptCreateCommandTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->directory = realpath(__DIR__ . '/../test-environments/init-command-test-env/');
+        $this->directory = realpath(__DIR__ . '/../test-environments/create-command-test-env/');
 
         $this->fs = new Filesystem;
         $this->fs->remove(
@@ -34,7 +34,7 @@ class ManuscriptCreateCommandTest extends TestCase
     /** @test */
     public function it_generates_a_new_bare_bones_composer_package()
     {
-        $command = new ManuscriptInitCommand;
+        $command = new ManuscriptCreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
@@ -117,7 +117,7 @@ class ManuscriptCreateCommandTest extends TestCase
         // Create the expected folder before running command.
         $this->fs->mkdir($this->directory . '/package-name');
 
-        $command = new ManuscriptInitCommand;
+        $command = new ManuscriptCreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
