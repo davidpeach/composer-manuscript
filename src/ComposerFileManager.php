@@ -8,19 +8,19 @@ class ComposerFileManager
 {
     const COMPOSER_FILE_NAME = 'composer.json';
 
-    public static function read(string $pathToFile): array
+    public function read(string $pathToFile): array
     {
         if (! Str::endsWith($pathToFile, self::COMPOSER_FILE_NAME)) {
-            Str::finish($pathToFile, '/') . self::COMPOSER_FILE_NAME;
+            $pathToFile = Str::finish($pathToFile, '/') . self::COMPOSER_FILE_NAME;
         }
 
         return json_decode(file_get_contents($pathToFile), true);
     }
 
-    public static function add(string $pathToFile, array $toAdd): void
+    public function add(string $pathToFile, array $toAdd): void
     {
         $composerArray = array_merge_recursive(
-            self::read($pathToFile),
+            $this->read($pathToFile),
             $toAdd
         );
 

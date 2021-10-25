@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
+use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Playground\PlaygroundFinder;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -9,7 +10,7 @@ use Symfony\Component\Finder\Finder;
 
 class PlaygroundFinderTest extends TestCase
 {
-    private string $directory;
+    private string $root;
 
     private Filesystem $fs;
 
@@ -18,11 +19,11 @@ class PlaygroundFinderTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->directory = realpath(__DIR__ . '/../test-environments/playground-finder');
+        $this->root = realpath(__DIR__ . '/../test-environments/playground-finder');
 
         $this->fs = new Filesystem;
         $this->fs->remove(
-            (new Finder)->directories()->in($this->directory)
+            (new Finder)->directories()->in($this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY)
         );
 
         parent::setUp();
@@ -31,11 +32,15 @@ class PlaygroundFinderTest extends TestCase
     /** @test */
     public function it_can_discover_existing_framework_playgrounds_in_the_manuscript_playground_directory()
     {
-        $this->fs->mkdir( $this->directory . '/playground-1');
-        $this->fs->mkdir( $this->directory . '/playground-2');
-        $this->fs->mkdir( $this->directory . '/playground-3');
+        $this->fs->mkdir( $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-1');
+        $this->fs->mkdir( $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-2');
+        $this->fs->mkdir( $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-3');
 
-        $existingPlaygrounds = (new PlaygroundFinder)->discover($this->directory);
+        $composerMock = $this->createMock(ComposerFileManager::class);
+        $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
+
+
+        $existingPlaygrounds = (new PlaygroundFinder($composerMock))->discover($this->root);
 
         $this->assertIsArray($existingPlaygrounds);
 

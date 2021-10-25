@@ -11,6 +11,10 @@ class Playground
 
     private string $path;
 
+    private string $name;
+
+    private string $folderName;
+
     protected string $baseDirectory;
 
     protected Framework $framework;
@@ -27,6 +31,16 @@ class Playground
         $this->framework = $framework;
     }
 
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function setPath(string $path): void
     {
         $this->path = $path;
@@ -37,10 +51,14 @@ class Playground
         return $this->path;
     }
 
+    public function setFolderName(string $folderName):void
+    {
+        $this->folderName = $folderName;
+    }
+
     public function getFolderName(): string
     {
-        $fullPathParts = explode('/', $this->getPath());
-        return end($fullPathParts);
+        return $this->folderName;
     }
 
     public function setPackage(Package $package)

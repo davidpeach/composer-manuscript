@@ -22,7 +22,8 @@ abstract class Package
 
     public function __construct(
         protected string          $directory,
-        protected QuestionAsker   $questions
+        protected QuestionAsker   $questions,
+        protected ComposerFileManager $composerFileManager
     )
     {}
 

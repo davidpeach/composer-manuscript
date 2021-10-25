@@ -23,7 +23,7 @@ class ManuscriptPlayCommandTest extends TestCase
         $this->directory = realpath(__DIR__ . '/../test-environments/play-command-test-env');
 
         $this->fs = new Filesystem;
-        $this->fs->remove($this->directory . '/manuscript-playgrounds');
+        $this->fs->remove($this->directory . '/playgrounds');
 
         parent::setUp();
     }
@@ -47,14 +47,14 @@ class ManuscriptPlayCommandTest extends TestCase
         ]);
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/manuscript-playgrounds')
+            $this->fs->exists($this->directory . '/playgrounds')
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/manuscript-playgrounds/laravel-8-test-package')
+            $this->fs->exists($this->directory . '/playgrounds/laravel-8-test-package')
         );
 
-        $composerFile = $this->directory . '/manuscript-playgrounds/laravel-8-test-package/composer.json';
+        $composerFile = $this->directory . '/playgrounds/laravel-8-test-package/composer.json';
         $composerFileArray = json_decode(file_get_contents($composerFile), true);
         $this->assertArrayHasKey('manuscript-test/test-package', $composerFileArray['require']);
 
@@ -72,7 +72,7 @@ class ManuscriptPlayCommandTest extends TestCase
 
         $this->assertTrue(
             $this->fs->exists(
-                $this->directory . '/manuscript-playgrounds/laravel-8-test-package/vendor/manuscript-test/test-package'
+                $this->directory . '/playgrounds/laravel-8-test-package/vendor/manuscript-test/test-package'
             )
         );
     }

@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\FreshPackage;
 use DavidPeach\Manuscript\Package;
 use DavidPeach\Manuscript\QuestionAsker;
@@ -53,8 +54,8 @@ class ManuscriptCreateCommand extends Command
 
         try {
             $package = match ($input->getOption('type')) {
-                null => (new FreshPackage($directory, $questionAsker))->getData()->scaffold()->package(),
-                'spatie' => (new SpatiePackage($directory, $questionAsker))->scaffold()->package(),
+                null => (new FreshPackage($directory, $questionAsker, new ComposerFileManager))->getData()->scaffold()->package(),
+                'spatie' => (new SpatiePackage($directory, $questionAsker, new ComposerFileManager))->scaffold()->package(),
             };
         } catch (Throwable $e) {
             $output->writeln(' <error> ' . $e->getMessage() . ' </error>');

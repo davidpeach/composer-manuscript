@@ -8,9 +8,12 @@ use Symfony\Component\Process\Process;
 
 class PackageInstaller
 {
-    public static function install(Package $package, Playground $playground): void
+    public function __construct(private ComposerFileManager $composerFileManager)
+    {}
+
+    public function install(Package $package, Playground $playground): void
     {
-        ComposerFileManager::add(
+        $this->composerFileManager->add(
             $playground->getPath() . '/composer.json',
             ['repositories' => [
                 [

@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\ExistingPackage;
 use DavidPeach\Manuscript\FrameworkChooser;
 use DavidPeach\Manuscript\Package;
@@ -36,14 +37,14 @@ class ManuscriptPlayCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $root = ($input->getOption('package-dir') ?? getcwd()) . '/';
+        $root = ($input->getOption('package-dir') ?? getcwd());
 
         $this->intro($output);
 
         $fs = new Filesystem;
 
-        if (! $fs->exists($root . '../manuscript-playgrounds/')) {
-            $fs->mkdir($root . '../manuscript-playgrounds/');
+        if (! $fs->exists($root . '/../playgrounds/')) {
+            $fs->mkdir($root . '/../playgrounds/');
         }
 
         $questionAsker = new QuestionAsker(
@@ -54,20 +55,21 @@ class ManuscriptPlayCommand extends Command
 
         $package = new ExistingPackage(
             $root,
-            $questionAsker
+            $questionAsker,
+            new ComposerFileManager
         );
         $package->setPath($root);
         $package->getData();
 
 
         $playground = $this->getPlayground(
-            $root . '../manuscript-playgrounds/',
+            $root,
             $input,
             $output,
             $package
         );
 
-        PackageInstaller::install(
+        (new PackageInstaller(new ComposerFileManager))->install(
             $package,
             $playground
         );
@@ -101,14 +103,14 @@ class ManuscriptPlayCommand extends Command
     }
 
     /**
-     * @param string $playgroundDirectory
+     * @param string $root
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param Package $package
      * @return Playground
      */
     protected function getPlayground(
-        string          $playgroundDirectory,
+        string          $root,
         InputInterface  $input,
         OutputInterface $output,
         Package $package
@@ -116,7 +118,7 @@ class ManuscriptPlayCommand extends Command
     {
         $playground = null;
 
-        $existingPlaygrounds = (new PlaygroundFinder)->discover($playgroundDirectory);
+        $existingPlaygrounds = (new PlaygroundFinder(new ComposerFileManager))->discover($root . '/../');
 
         if (!empty($existingPlaygrounds)) {
 
@@ -143,7 +145,7 @@ class ManuscriptPlayCommand extends Command
 
             $playground = (new PlaygroundBuilder)->forPackage($package)->build(
                 $frameworks->choose(),
-                $playgroundDirectory
+                $root . '/../' . PlaygroundFinder::PLAYGROUND_DIRECTORY
             );
         }
 

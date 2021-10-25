@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Playground\PlaygroundFinder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,14 +33,16 @@ class ManuscriptClearPlaygroundsCommand extends Command
 
         $fs = new Filesystem;
 
-        if (! $fs->exists($root . '/manuscript-playgrounds')) {
+        if (! $fs->exists($root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY)) {
             $output->writeln('<error>Manuscript Playgrounds directory not found. No action taken.</error>');
             return Command::INVALID;
         }
 
-        $finder = new PlaygroundFinder;
+        $finder = new PlaygroundFinder(
+            new ComposerFileManager
+        );
 
-        $playgrounds = $finder->discover($root . '/manuscript-playgrounds');
+        $playgrounds = $finder->discover($root);
 
         foreach ($playgrounds as $playground) {
             $output->writeln('<info>' . $playground->getFolderName() . ' removed.</info>');
