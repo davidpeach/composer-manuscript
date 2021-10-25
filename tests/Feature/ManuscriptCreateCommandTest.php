@@ -11,7 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
-class ManuscriptInitCommandTest extends TestCase
+class ManuscriptCreateCommandTest extends TestCase
 {
     private Filesystem $fs;
     private string $directory;
