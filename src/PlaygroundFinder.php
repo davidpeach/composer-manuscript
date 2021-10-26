@@ -1,16 +1,12 @@
 <?php
 
-namespace DavidPeach\Manuscript\Playground;
+namespace DavidPeach\Manuscript;
 
-use DavidPeach\Manuscript\ComposerFileManager;
 use Symfony\Component\Finder\Finder;
 
 class PlaygroundFinder
 {
     const PLAYGROUND_DIRECTORY = 'playgrounds';
-
-    public function __construct(private ComposerFileManager $composerFileManager)
-    {}
 
     public function discover(string $root): array
     {
@@ -26,17 +22,8 @@ class PlaygroundFinder
         $currentPlaygrounds = [];
 
         foreach ($finder as $file) {
-
-            $composerData = $this->composerFileManager->read($file->getPathname());
-
-            $playground = new Playground;
-            $playground->setName($composerData['name']);
-            $playground->setBaseDirectory($file->getPath());
-            $playground->setPath($file->getPathname());
-            $playground->setFolderName($file->getFilename());
-
+            $playground = (new PackageModelFactory(new ComposerFileManager))->fromPath($file->getPathname());
             $currentPlaygrounds[$playground->getFolderName()] = $playground;
-
         }
 
         return $currentPlaygrounds;

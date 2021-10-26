@@ -4,7 +4,7 @@ namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\ManuscriptClearPlaygroundsCommand;
 use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\Playground\PlaygroundFinder;
+use DavidPeach\Manuscript\PlaygroundFinder;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;

@@ -20,7 +20,7 @@ class ManuscriptPlayCommandTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->directory = realpath(__DIR__ . '/../test-environments/play-command-test-env');
+        $this->directory = realpath(__DIR__ . '/../test-environments/commands/play');
 
         $this->fs = new Filesystem;
         $this->fs->remove($this->directory . '/playgrounds');
@@ -43,7 +43,7 @@ class ManuscriptPlayCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--package-dir' => $this->directory . '/test-package',
+            '--package-dir' => $this->directory . '/packages/test-package',
         ]);
 
         $this->assertTrue(
@@ -51,10 +51,10 @@ class ManuscriptPlayCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/playgrounds/laravel-8-test-package')
+            $this->fs->exists($this->directory . '/playgrounds/laravel-8-872812800')
         );
 
-        $composerFile = $this->directory . '/playgrounds/laravel-8-test-package/composer.json';
+        $composerFile = $this->directory . '/playgrounds/laravel-8-872812800/composer.json';
         $composerFileArray = json_decode(file_get_contents($composerFile), true);
         $this->assertArrayHasKey('manuscript-test/test-package', $composerFileArray['require']);
 
@@ -64,7 +64,7 @@ class ManuscriptPlayCommandTest extends TestCase
         $this->assertEquals('path', $composerFileArray['repositories'][0]['type']);
 
         $this->assertArrayHasKey('url', $composerFileArray['repositories'][0]);
-        $this->assertEquals($this->directory . '/test-package', $composerFileArray['repositories'][0]['url']);
+        $this->assertEquals($this->directory . '/packages/test-package', $composerFileArray['repositories'][0]['url']);
 
         $this->assertArrayHasKey('options', $composerFileArray['repositories'][0]);
         $this->assertArrayHasKey('symlink', $composerFileArray['repositories'][0]['options']);
@@ -72,7 +72,7 @@ class ManuscriptPlayCommandTest extends TestCase
 
         $this->assertTrue(
             $this->fs->exists(
-                $this->directory . '/playgrounds/laravel-8-test-package/vendor/manuscript-test/test-package'
+                $this->directory . '/playgrounds/laravel-8-872812800/vendor/manuscript-test/test-package'
             )
         );
     }

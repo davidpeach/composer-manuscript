@@ -6,7 +6,6 @@ use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
 use DavidPeach\Manuscript\QuestionAsker;
-use DavidPeach\Manuscript\SpatiePackage;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;

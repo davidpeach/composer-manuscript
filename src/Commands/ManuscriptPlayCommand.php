@@ -3,14 +3,12 @@
 namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\ExistingPackage;
 use DavidPeach\Manuscript\FrameworkChooser;
-use DavidPeach\Manuscript\Package;
+use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
-use DavidPeach\Manuscript\Playground\Playground;
-use DavidPeach\Manuscript\Playground\PlaygroundBuilder;
-use DavidPeach\Manuscript\Playground\PlaygroundFinder;
-use DavidPeach\Manuscript\QuestionAsker;
+use DavidPeach\Manuscript\PackageModel;
+use DavidPeach\Manuscript\PackageModelFactory;
+use DavidPeach\Manuscript\PlaygroundFinder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,30 +41,18 @@ class ManuscriptPlayCommand extends Command
 
         $fs = new Filesystem;
 
-        if (! $fs->exists($root . '/../playgrounds/')) {
-            $fs->mkdir($root . '/../playgrounds/');
+        // check if target dir is a manuscript one
+
+        if (! $fs->exists($root . '/../../playgrounds/')) {
+            $fs->mkdir($root . '/../../playgrounds/');
         }
 
-        $questionAsker = new QuestionAsker(
-            $input,
-            $output,
-            $this->getHelper('question')
-        );
-
-        $package = new ExistingPackage(
-            $root,
-            $questionAsker,
-            new ComposerFileManager
-        );
-        $package->setPath($root);
-        $package->getData();
-
+        $package = (new PackageModelFactory(new ComposerFileManager()))->fromPath($root);
 
         $playground = $this->getPlayground(
-            $root . '/../',
+            $root . '/../../',
             $input,
-            $output,
-            $package
+            $output
         );
 
         (new PackageInstaller(new ComposerFileManager))->install(
@@ -89,7 +75,7 @@ class ManuscriptPlayCommand extends Command
         $output->writeln('');
     }
 
-    private function outro($output, Playground $playground): void
+    private function outro($output, PackageModel $playground): void
     {
         $output->writeln('');
         $output->writeln(' 🎮 <info>Playground setup complete!</info>');
@@ -106,19 +92,17 @@ class ManuscriptPlayCommand extends Command
      * @param string $root
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @param Package $package
-     * @return Playground
+     * @return PackageModel
      */
     protected function getPlayground(
         string          $root,
         InputInterface  $input,
         OutputInterface $output,
-        Package $package
-    ): Playground
+    ): PackageModel
     {
         $playground = null;
 
-        $existingPlaygrounds = (new PlaygroundFinder(new ComposerFileManager))->discover($root);
+        $existingPlaygrounds = (new PlaygroundFinder)->discover($root);
 
         if (!empty($existingPlaygrounds)) {
 
@@ -137,16 +121,21 @@ class ManuscriptPlayCommand extends Command
         }
 
         if (is_null($playground)) {
+
             $frameworks = new FrameworkChooser(
                 $input,
                 $output,
                 $this->getHelper('question')
             );
 
-            $playground = (new PlaygroundBuilder)->forPackage($package)->build(
-                $frameworks->choose(),
-                $root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY
-            );
+            $chosenFramework = $frameworks->choose();
+
+            $playground = (new PlaygroundPackageBuilder(
+                $root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY,
+                $chosenFramework)
+            )->build();
+
+            $playground = (new PackageModelFactory(new ComposerFileManager()))->fromPath($playground);
         }
 
         return $playground;

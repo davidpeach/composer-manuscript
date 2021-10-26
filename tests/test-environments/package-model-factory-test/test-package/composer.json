@@ -1,0 +1,14 @@
+{
+  "name": "manuscript/model-factory-unit-test",
+  "description": "A composer file for the model factory unit test",
+  "require": {
+    "php": "^8.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Peach",
+      "email": "mail@davidpeach.co.uk"
+    }
+  ]
+}

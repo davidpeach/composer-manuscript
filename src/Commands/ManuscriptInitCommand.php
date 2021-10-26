@@ -3,7 +3,7 @@
 namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\Config;
-use DavidPeach\Manuscript\Playground\PlaygroundFinder;
+use DavidPeach\Manuscript\PlaygroundFinder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

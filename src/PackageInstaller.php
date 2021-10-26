@@ -2,7 +2,6 @@
 
 namespace DavidPeach\Manuscript;
 
-use DavidPeach\Manuscript\Playground\Playground;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -11,7 +10,7 @@ class PackageInstaller
     public function __construct(private ComposerFileManager $composerFileManager)
     {}
 
-    public function install(Package $package, Playground $playground): void
+    public function install(PackageModel $package, PackageModel $playground): void
     {
         $this->composerFileManager->add(
             $playground->getPath() . '/composer.json',
