@@ -63,7 +63,7 @@ class ManuscriptPlayCommand extends Command
 
 
         $playground = $this->getPlayground(
-            $root,
+            $root . '/../',
             $input,
             $output,
             $package
@@ -118,7 +118,7 @@ class ManuscriptPlayCommand extends Command
     {
         $playground = null;
 
-        $existingPlaygrounds = (new PlaygroundFinder(new ComposerFileManager))->discover($root . '/../');
+        $existingPlaygrounds = (new PlaygroundFinder(new ComposerFileManager))->discover($root);
 
         if (!empty($existingPlaygrounds)) {
 
@@ -145,7 +145,7 @@ class ManuscriptPlayCommand extends Command
 
             $playground = (new PlaygroundBuilder)->forPackage($package)->build(
                 $frameworks->choose(),
-                $root . '/../' . PlaygroundFinder::PLAYGROUND_DIRECTORY
+                $root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY
             );
         }
 

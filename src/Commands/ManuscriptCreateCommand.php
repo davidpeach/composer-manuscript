@@ -46,7 +46,7 @@ class ManuscriptCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = ($input->getOption('install-dir') ?? getcwd()) . '/';
+        $root = ($input->getOption('install-dir') ?? getcwd()) . '/';
 
         $this->intro($output);
 
@@ -54,8 +54,8 @@ class ManuscriptCreateCommand extends Command
 
         try {
             $package = match ($input->getOption('type')) {
-                null => (new FreshPackage($directory, $questionAsker, new ComposerFileManager))->getData()->scaffold()->package(),
-                'spatie' => (new SpatiePackage($directory, $questionAsker, new ComposerFileManager))->scaffold()->package(),
+                null => (new FreshPackage($root, $questionAsker, new ComposerFileManager))->getData()->scaffold()->package(),
+                'spatie' => (new SpatiePackage($root, $questionAsker, new ComposerFileManager))->scaffold()->package(),
             };
         } catch (Throwable $e) {
             $output->writeln(' <error> ' . $e->getMessage() . ' </error>');
