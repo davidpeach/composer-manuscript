@@ -1,21 +1,34 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\PackageBuilders;
 
-use Exception;
+use DavidPeach\Manuscript\GitCredentials;
+use DavidPeach\Manuscript\QuestionAsker;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Throwable;
+use Exception;
 
-class FreshPackage extends Package
+class BasicPackageBuilder implements PackageBuilderContract
 {
-    private GitCredentials $gitCredentials;
+    private string $name;
+    private string $description;
+    private string $authorName;
+    private string $authorEmail;
+    private string $author;
+    private string $stability;
+    private string $license;
+    private string $path;
 
-    public function getData(): self
+    public function __construct(
+        private string $root,
+        private QuestionAsker $questions,
+        private GitCredentials $gitCredentials,
+    ){}
+
+    public function build(): string
     {
-        $this->gitCredentials = new GitCredentials;
-
         $this->name = $this->determineName();
         $this->description = $this->determineDescription();
         $this->authorName = $this->determineAuthorName();
@@ -24,25 +37,20 @@ class FreshPackage extends Package
         $this->stability = $this->determineStability();
         $this->license = $this->determineLicense();
 
-        $this->setPath($this->directory . $this->folderName());
+        $parts = explode('/', $this->name);
+        $this->path = $this->root . '/' . end($parts);
 
-        return $this;
-    }
-
-    public function scaffold(): self
-    {
         try {
             $fs = new Filesystem;
 
-            if ($fs->exists($this->getPath())) {
+            if ($fs->exists($this->path)) {
                 throw new Exception("Package folder name already exists");
             }
 
-            $fs->mkdir($this->getPath());
+            $fs->mkdir($this->path);
         } catch (Throwable $e) {
             throw $e;
         }
-
 
         $composerBuildCommand = implode(' ', [
             'composer init',
@@ -55,7 +63,7 @@ class FreshPackage extends Package
         ]);
 
         $commands = [
-            'cd ' . $this->getPath(),
+            'cd ' . $this->path,
             $composerBuildCommand,
             'cd ../',
         ];
@@ -67,7 +75,7 @@ class FreshPackage extends Package
             throw new ProcessFailedException($process);
         }
 
-        return $this;
+        return $this->path;
     }
 
     private function determineName(): string

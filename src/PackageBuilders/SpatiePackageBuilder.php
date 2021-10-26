@@ -1,13 +1,19 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\PackageBuilders;
 
-use Exception;
+use DavidPeach\Manuscript\Config;
+use DavidPeach\Manuscript\GitCredentials;
+use DavidPeach\Manuscript\GithubPackageFromTemplate;
+use DavidPeach\Manuscript\GithubRepository;
+use DavidPeach\Manuscript\Helpers;
+use DavidPeach\Manuscript\QuestionAsker;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Throwable;
+use Exception;
 
-class SpatiePackage extends Package
+class SpatiePackageBuilder implements PackageBuilderContract
 {
     const TEMPLATE_OWNER = 'spatie';
 
@@ -15,12 +21,14 @@ class SpatiePackage extends Package
 
     static int $attempts = 0;
 
-    public function getData(): self
-    {
-        return $this;
-    }
+    private string $path;
 
-    public function scaffold(): self
+    public function __construct(
+        private string $root,
+        private QuestionAsker $questions,
+    ){}
+
+    public function build(): string
     {
         $config = (new Config(
             Helpers::determineHomeDirectory(),
@@ -43,7 +51,7 @@ class SpatiePackage extends Package
 
             self::$attempts += 1;
 
-            return $this->scaffold();
+            return $this->build();
         }
 
         $guessedNamespace = (new GitCredentials)->guessNamespace('your-namespace');
@@ -74,27 +82,27 @@ class SpatiePackage extends Package
 
         $githubRepository = (new GithubRepository)
             ->setRemoteUrl($newRepository['git_url'])
-            ->setLocalDirectory($this->directory . '/' . $newRepository['name'])
+            ->setLocalDirectory($this->root . '/' . $newRepository['name'])
             ->clone();
 
         if ($githubRepository->clonedSuccessfully()) {
-            $this->setPath($githubRepository->getLocalDirectory());
+            $this->path = $githubRepository->getLocalDirectory();
         } else {
             throw new Exception("Error cloning repository.");
         }
 
         // Run the Spatie package configure script.
         $commands = [
-            'cd ' . $this->getPath(),
+            'cd ' . $this->path,
             'php configure.php',
-            'cd ' . $this->directory,
+            'cd ' . $this->root,
         ];
 
         $process = Process::fromShellCommandline(implode(' && ', $commands));
         $process->setTty(true);
         $process->run();
 
-        return $this;
+        return $this->path;
     }
 
     private function askForToken(): string

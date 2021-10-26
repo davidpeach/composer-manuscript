@@ -2,9 +2,9 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\FreshPackage;
-use DavidPeach\Manuscript\Package;
+use DavidPeach\Manuscript\GitCredentials;
+use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
+use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
 use DavidPeach\Manuscript\QuestionAsker;
 use DavidPeach\Manuscript\SpatiePackage;
 use Symfony\Component\Console\Command\Command;
@@ -46,29 +46,29 @@ class ManuscriptCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $root = ($input->getOption('install-dir') ?? getcwd()) . '/';
+        $root = $input->getOption('install-dir') ?? getcwd(). '/packages';
 
         $this->intro($output);
 
         $questionAsker = new QuestionAsker($input, $output, $this->getHelper('question'));
 
         try {
-            $package = match ($input->getOption('type')) {
-                null => (new FreshPackage($root, $questionAsker, new ComposerFileManager))->getData()->scaffold()->package(),
-                'spatie' => (new SpatiePackage($root, $questionAsker, new ComposerFileManager))->scaffold()->package(),
+            $packagePath = match ($input->getOption('type')) {
+                null => (new BasicPackageBuilder($root, $questionAsker, new GitCredentials))->build(),
+                'spatie' => (new SpatiePackageBuilder($root, $questionAsker))->build(),
             };
         } catch (Throwable $e) {
             $output->writeln(' <error> ' . $e->getMessage() . ' </error>');
             return Command::FAILURE;
         }
 
-        $this->outro($output, $package);
+        $this->outro($output, $packagePath);
 
         if ($input->getOption('play') === null) {
             try {
                 $command = $this->getApplication()->find('play');
                 $command->run(
-                    new ArrayInput(['--package-dir'  => $package->getPath(),]),
+                    new ArrayInput(['--package-dir'  => $packagePath,]),
                     $output
                 );
             } catch (Throwable $e) {
@@ -88,14 +88,14 @@ class ManuscriptCreateCommand extends Command
         $output->writeln('');
     }
 
-    private function outro($output, Package $package): void
+    private function outro($output, string $packagePath): void
     {
         $output->writeln('');
         $output->writeln(' 🎉 <info>Fresh package setup complete!</info>');
         $output->writeln('');
         $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
         $output->writeln('');
-        $output->writeln(' @ <info> Your new package is set up at <comment>' . $package->getPath() . ' </comment></info>');
+        $output->writeln(' @ <info> Your new package is set up at <comment>' . $packagePath . ' </comment></info>');
         $output->writeln('');
     }
 }
