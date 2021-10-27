@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ManuscriptClearPlaygroundsCommand extends Command
+class ClearPlaygroundsCommand extends Command
 {
     protected static $defaultName = 'clear-playgrounds';
 
@@ -30,6 +30,8 @@ class ManuscriptClearPlaygroundsCommand extends Command
     {
         $root = ($input->getOption('install-dir') ?? getcwd());
 
+        // check if is a manuscript root
+
         $fs = new Filesystem;
 
         if (! $fs->exists($root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY)) {
@@ -37,13 +39,11 @@ class ManuscriptClearPlaygroundsCommand extends Command
             return Command::INVALID;
         }
 
-        $finder = new PlaygroundFinder;
-
-        $playgrounds = $finder->discover($root);
+        $playgrounds = (new PlaygroundFinder)->discover($root);
 
         foreach ($playgrounds as $playground) {
-            $output->writeln('<info>' . $playground->getFolderName() . ' removed.</info>');
             $fs->remove($playground->getPath());
+            $output->writeln('<info>' . $playground->getFolderName() . ' removed.</info>');
         }
 
         $output->writeln('<info>All framework playgrounds removed.</info>');

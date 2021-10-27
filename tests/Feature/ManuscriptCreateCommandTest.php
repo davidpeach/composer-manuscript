@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Feature;
 
-use DavidPeach\Manuscript\Commands\ManuscriptCreateCommand;
+use DavidPeach\Manuscript\Commands\CreateCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -34,7 +34,7 @@ class ManuscriptCreateCommandTest extends TestCase
     /** @test */
     public function it_generates_a_new_bare_bones_composer_package()
     {
-        $command = new ManuscriptCreateCommand;
+        $command = new CreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
@@ -117,7 +117,7 @@ class ManuscriptCreateCommandTest extends TestCase
         // Create the expected folder before running command.
         $this->fs->mkdir($this->directory . '/package-name');
 
-        $command = new ManuscriptCreateCommand;
+        $command = new CreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);

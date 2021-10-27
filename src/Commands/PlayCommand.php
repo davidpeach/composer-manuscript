@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class ManuscriptPlayCommand extends Command
+class PlayCommand extends Command
 {
     protected static $defaultName = 'play';
 
@@ -35,22 +35,26 @@ class ManuscriptPlayCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $root = ($input->getOption('package-dir') ?? getcwd());
+        $packageDirectory = ($input->getOption('package-dir') ?? getcwd());
+
+        // check if this is a composer package.
+
+        $root = $packageDirectory . '/../..';
+
+        // check if root is a manuscript root
 
         $this->intro($output);
 
         $fs = new Filesystem;
 
-        // check if target dir is a manuscript one
-
-        if (! $fs->exists($root . '/../../playgrounds/')) {
-            $fs->mkdir($root . '/../../playgrounds/');
+        if (! $fs->exists($root . '/playgrounds')) {
+            $fs->mkdir($root . '/playgrounds');
         }
 
-        $package = (new PackageModelFactory(new ComposerFileManager()))->fromPath($root);
+        $package = (new PackageModelFactory(new ComposerFileManager()))->fromPath($packageDirectory);
 
         $playground = $this->getPlayground(
-            $root . '/../../',
+            $root,
             $input,
             $output
         );

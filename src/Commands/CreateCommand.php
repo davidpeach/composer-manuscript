@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
@@ -11,9 +12,10 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
 
-class ManuscriptCreateCommand extends Command
+class CreateCommand extends Command
 {
     protected static $defaultName = 'create';
 
@@ -47,14 +49,18 @@ class ManuscriptCreateCommand extends Command
     {
         $root = $input->getOption('install-dir') ?? getcwd(). '/packages';
 
+        // check if is a manuscript root
+
         $this->intro($output);
 
         $questionAsker = new QuestionAsker($input, $output, $this->getHelper('question'));
 
+        $config = (new Config($root, new Filesystem));
+
         try {
             $packagePath = match ($input->getOption('type')) {
                 null => (new BasicPackageBuilder($root, $questionAsker, new GitCredentials))->build(),
-                'spatie' => (new SpatiePackageBuilder($root, $questionAsker))->build(),
+                'spatie' => (new SpatiePackageBuilder($root, $questionAsker, $config))->build(),
             };
         } catch (Throwable $e) {
             $output->writeln(' <error> ' . $e->getMessage() . ' </error>');

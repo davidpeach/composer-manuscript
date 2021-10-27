@@ -12,14 +12,6 @@ use Exception;
 
 class BasicPackageBuilder implements PackageBuilderContract
 {
-    private string $name;
-    private string $description;
-    private string $authorName;
-    private string $authorEmail;
-    private string $author;
-    private string $stability;
-    private string $license;
-    private string $path;
 
     public function __construct(
         private string $root,
@@ -29,41 +21,41 @@ class BasicPackageBuilder implements PackageBuilderContract
 
     public function build(): string
     {
-        $this->name = $this->determineName();
-        $this->description = $this->determineDescription();
-        $this->authorName = $this->determineAuthorName();
-        $this->authorEmail = $this->determineAuthorEmail();
-        $this->author = $this->authorName . ' <' . $this->authorEmail . '>';
-        $this->stability = $this->determineStability();
-        $this->license = $this->determineLicense();
+        $name = $this->determineName();
+        $description = $this->determineDescription();
+        $authorName = $this->determineAuthorName();
+        $authorEmail = $this->determineAuthorEmail();
+        $author = $authorName . ' <' . $authorEmail . '>';
+        $stability = $this->determineStability();
+        $license = $this->determineLicense();
 
-        $parts = explode('/', $this->name);
-        $this->path = $this->root . '/' . end($parts);
+        $parts = explode('/', $name);
+        $path = $this->root . '/' . end($parts);
 
         try {
             $fs = new Filesystem;
 
-            if ($fs->exists($this->path)) {
+            if ($fs->exists($path)) {
                 throw new Exception("Package folder name already exists");
             }
 
-            $fs->mkdir($this->path);
+            $fs->mkdir($path);
         } catch (Throwable $e) {
             throw $e;
         }
 
         $composerBuildCommand = implode(' ', [
             'composer init',
-            sprintf('--name="%s"', $this->name),
-            sprintf('--description="%s"', $this->description),
-            sprintf('--author="%s"', $this->author),
-            sprintf('--stability="%s"', $this->stability),
-            sprintf('--license="%s"', $this->license),
+            sprintf('--name="%s"', $name),
+            sprintf('--description="%s"', $description),
+            sprintf('--author="%s"', $author),
+            sprintf('--stability="%s"', $stability),
+            sprintf('--license="%s"', $license),
             '--autoload="src/"',
         ]);
 
         $commands = [
-            'cd ' . $this->path,
+            'cd ' . $path,
             $composerBuildCommand,
             'cd ../',
         ];
@@ -75,7 +67,7 @@ class BasicPackageBuilder implements PackageBuilderContract
             throw new ProcessFailedException($process);
         }
 
-        return $this->path;
+        return $path;
     }
 
     private function determineName(): string

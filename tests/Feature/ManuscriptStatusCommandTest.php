@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Feature;
 
-use DavidPeach\Manuscript\Commands\ManuscriptStatusCommand;
+use DavidPeach\Manuscript\Commands\StatusCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
@@ -25,7 +25,7 @@ class ManuscriptStatusCommandTest extends TestCase
     {
         $directory = $this->root . '/root-with-playgrounds';
 
-        $command = new ManuscriptStatusCommand;
+        $command = new StatusCommand;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             '--install-dir' => $directory,

@@ -23,8 +23,7 @@ class QuestionAsker
         private InputInterface $input,
         private OutputInterface $output,
         private QuestionHelper $helper
-    )
-    {}
+    ){}
 
     public function question(string $question): self
     {

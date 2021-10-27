@@ -6,9 +6,7 @@ use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\GithubPackageFromTemplate;
 use DavidPeach\Manuscript\GithubRepository;
-use DavidPeach\Manuscript\Helpers;
 use DavidPeach\Manuscript\QuestionAsker;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Exception;
@@ -21,21 +19,15 @@ class SpatiePackageBuilder implements PackageBuilderContract
 
     static int $attempts = 0;
 
-    private string $path;
-
     public function __construct(
         private string $root,
         private QuestionAsker $questions,
+        private Config $config
     ){}
 
     public function build(): string
     {
-        $config = (new Config(
-            Helpers::determineHomeDirectory(),
-            new Filesystem())
-        );
-
-        $token = $config->gitPersonalAccessToken() ?? $this->askForToken();
+        $token = $this->config->gitPersonalAccessToken() ?? $this->askForToken();
 
         $newGithubPackage = new GithubPackageFromTemplate($token);
 
@@ -47,7 +39,7 @@ class SpatiePackageBuilder implements PackageBuilderContract
             }
 
             $token = $this->askForToken();
-            $config->updateConfig('git_personal_access_token', $token);
+            $this->config->updateConfig('git_personal_access_token', $token);
 
             self::$attempts += 1;
 
@@ -86,14 +78,14 @@ class SpatiePackageBuilder implements PackageBuilderContract
             ->clone();
 
         if ($githubRepository->clonedSuccessfully()) {
-            $this->path = $githubRepository->getLocalDirectory();
+            $path = $githubRepository->getLocalDirectory();
         } else {
             throw new Exception("Error cloning repository.");
         }
 
         // Run the Spatie package configure script.
         $commands = [
-            'cd ' . $this->path,
+            'cd ' . $path,
             'php configure.php',
             'cd ' . $this->root,
         ];
@@ -102,7 +94,7 @@ class SpatiePackageBuilder implements PackageBuilderContract
         $process->setTty(true);
         $process->run();
 
-        return $this->path;
+        return $path;
     }
 
     private function askForToken(): string

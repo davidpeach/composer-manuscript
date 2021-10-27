@@ -7,8 +7,9 @@ use Symfony\Component\Process\Process;
 
 class PackageInstaller
 {
-    public function __construct(private ComposerFileManager $composerFileManager)
-    {}
+    public function __construct(
+        private ComposerFileManager $composerFileManager
+    ){}
 
     public function install(PackageModel $package, PackageModel $playground): void
     {

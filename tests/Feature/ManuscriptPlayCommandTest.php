@@ -3,7 +3,7 @@
 namespace DavidPeach\Manuscript\Tests\Feature;
 
 use Carbon\Carbon;
-use DavidPeach\Manuscript\Commands\ManuscriptPlayCommand;
+use DavidPeach\Manuscript\Commands\PlayCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -31,7 +31,7 @@ class ManuscriptPlayCommandTest extends TestCase
     /** @test */
     public function it_installs_a_laravel_playground_and_installs_the_package_into_the_playground_with_path_symlink()
     {
-        $command = new ManuscriptPlayCommand;
+        $command = new PlayCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         Carbon::setTestNow('29th August 1997');

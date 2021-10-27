@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Feature;
 
-use DavidPeach\Manuscript\Commands\ManuscriptClearPlaygroundsCommand;
+use DavidPeach\Manuscript\Commands\ClearPlaygroundsCommand;
 use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\PlaygroundFinder;
 use DavidPeach\Manuscript\Tests\TestCase;
@@ -65,7 +65,7 @@ class ManuscriptClearPlaygroundsCommandTest extends TestCase
         $composerMock = $this->createMock(ComposerFileManager::class);
         $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
 
-        $command = new ManuscriptClearPlaygroundsCommand;
+        $command = new ClearPlaygroundsCommand;
 
         $commandTester = new CommandTester($command);
 

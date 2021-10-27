@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Feature;
 
-use DavidPeach\Manuscript\Commands\ManuscriptInitCommand;
+use DavidPeach\Manuscript\Commands\InitCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
@@ -31,7 +31,7 @@ class ManuscriptInitCommandTest extends TestCase
         $this->fs->remove($directory . '/packages');
         $this->fs->remove($directory . '/.manuscript');
 
-        $command = new ManuscriptInitCommand;
+        $command = new InitCommand;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             '--install-dir' => $directory,
@@ -55,7 +55,7 @@ class ManuscriptInitCommandTest extends TestCase
     {
         $directory = $this->directory . '/existing';
 
-        $command = new ManuscriptInitCommand;
+        $command = new InitCommand;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             '--install-dir' => $directory,

@@ -2,17 +2,16 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\PlaygroundFinder;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
-class ManuscriptInitCommand extends Command
+class StatusCommand extends Command
 {
-    protected static $defaultName = 'init';
+    protected static $defaultName = 'status';
 
     protected function configure(): void
     {
@@ -30,21 +29,25 @@ class ManuscriptInitCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $root = ($input->getOption('install-dir') ?? getcwd());
-        $fs = new Filesystem;
 
-        if ($fs->exists($root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY)) {
-            $output->writeln('Playgrounds directory already exists. No action taken.');
-        } else {
-            $fs->mkdir($root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY);
+        // check if root is a manuscript root
+
+        $playgrounds = (new PlaygroundFinder)->discover($root);
+        $tableRows = [];
+
+        foreach ($playgrounds as $playground) {
+            $tableRows[] = [
+                $playground->getName()
+            ];
         }
 
-        if ($fs->exists($root . '/packages')) {
-            $output->writeln('Packages directory already exists. No action taken.');
-        } else {
-            $fs->mkdir($root . '/packages');
-        }
-
-        new Config($root, $fs);
+        $output->writeln('Playgrounds');
+        $table = new Table($output);
+        $table
+            ->setHeaders(['Title'])
+            ->setRows($tableRows)
+        ;
+        $table->render();
 
         return Command::SUCCESS;
     }

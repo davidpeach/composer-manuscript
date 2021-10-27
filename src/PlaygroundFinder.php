@@ -21,8 +21,10 @@ class PlaygroundFinder
 
         $currentPlaygrounds = [];
 
+        $modelFactory = new PackageModelFactory(new ComposerFileManager);
+
         foreach ($finder as $file) {
-            $playground = (new PackageModelFactory(new ComposerFileManager))->fromPath($file->getPathname());
+            $playground = $modelFactory->fromPath($file->getPathname());
             $currentPlaygrounds[$playground->getFolderName()] = $playground;
         }
 

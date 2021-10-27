@@ -19,10 +19,11 @@ class FrameworkChooser
         'laravel8x' => Laravel8::class,
     ];
 
-    public function __construct(private InputInterface $input, private OutputInterface $output, private QuestionHelper
-    $helper)
-    {
-    }
+    public function __construct(
+        private InputInterface $input,
+        private OutputInterface $output,
+        private QuestionHelper $helper
+    ){}
 
     public function choose(): Framework
     {
@@ -34,6 +35,7 @@ class FrameworkChooser
         $question->setErrorMessage('Framework %s is invalid.');
 
         $chosenFramework = $this->helper->ask($this->input, $this->output, $question);
+
         $this->output->writeln('<comment>  Installing ' . $chosenFramework . ' as your framework of choice.</comment>');
 
         return new $this->frameworks[$chosenFramework];
