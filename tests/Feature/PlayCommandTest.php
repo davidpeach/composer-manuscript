@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ManuscriptPlayCommandTest extends TestCase
+class PlayCommandTest extends TestCase
 {
     private Filesystem $fs;
     private string $directory;

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
-class ManuscriptCreateCommandTest extends TestCase
+class CreateCommandTest extends TestCase
 {
     private Filesystem $fs;
     private string $directory;
@@ -21,11 +21,11 @@ class ManuscriptCreateCommandTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->directory = realpath(__DIR__ . '/../test-environments/create-command-test-env/');
+        $this->directory = realpath(__DIR__ . '/../test-environments/commands/create');
 
         $this->fs = new Filesystem;
         $this->fs->remove(
-            (new Finder)->directories()->in($this->directory)
+            (new Finder)->directories()->in($this->directory . '/packages')
         );
 
         parent::setUp();
@@ -49,7 +49,7 @@ class ManuscriptCreateCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--install-dir' => $this->directory,
+            '--install-dir' => $this->directory . '/packages',
         ]);
 
         $this->assertEquals(
@@ -58,11 +58,11 @@ class ManuscriptCreateCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/package-name/composer.json')
+            $this->fs->exists($this->directory . '/packages/package-name/composer.json')
         );
 
         $composerArray = json_decode(
-            file_get_contents($this->directory . '/package-name/composer.json'),
+            file_get_contents($this->directory . '/packages/package-name/composer.json'),
             true
         );
 
@@ -107,7 +107,7 @@ class ManuscriptCreateCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/package-name/src')
+            $this->fs->exists($this->directory . '/packages/package-name/src')
         );
     }
 
@@ -115,7 +115,7 @@ class ManuscriptCreateCommandTest extends TestCase
     public function it_wont_generate_a_package_if_the_folder_name_already_exists()
     {
         // Create the expected folder before running command.
-        $this->fs->mkdir($this->directory . '/package-name');
+        $this->fs->mkdir($this->directory . '/packages/package-name');
 
         $command = new CreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
@@ -132,7 +132,7 @@ class ManuscriptCreateCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--install-dir' => $this->directory,
+            '--install-dir' => $this->directory . '/packages',
         ]);
 
         $this->assertEquals(
@@ -142,7 +142,7 @@ class ManuscriptCreateCommandTest extends TestCase
 
         // The composer file shouldn't be there as the folder already existed.
         $this->assertFalse(
-            $this->fs->exists($this->directory . '/package-name/composer.json')
+            $this->fs->exists($this->directory . '/packages/package-name/composer.json')
         );
     }
 }

@@ -8,7 +8,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
-class ManuscriptInitCommandTest extends TestCase
+class InitCommandTest extends TestCase
 {
     private string $directory;
 

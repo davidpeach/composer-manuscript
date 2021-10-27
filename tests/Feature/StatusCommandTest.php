@@ -7,7 +7,7 @@ use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ManuscriptStatusCommandTest extends TestCase
+class StatusCommandTest extends TestCase
 {
     private string $root;
 

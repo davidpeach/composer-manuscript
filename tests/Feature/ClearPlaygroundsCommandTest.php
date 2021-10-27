@@ -9,7 +9,7 @@ use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ManuscriptClearPlaygroundsCommandTest extends TestCase
+class ClearPlaygroundsCommandTest extends TestCase
 {
     private Filesystem $fs;
     private string $root;
