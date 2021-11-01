@@ -47,9 +47,16 @@ class CreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $root = $input->getOption('install-dir') ?? getcwd(). '/packages';
+        $root = $input->getOption('install-dir') ?? getcwd();
 
-        // check if is a manuscript root
+        $fs = new Filesystem;
+
+        if (! $fs->exists($root . '/.manuscript')) {
+            $output->writeln('Not a manuscript directory. No action taken.');
+            return Command::INVALID;
+        }
+
+        $packagesDirectory = $root . '/packages';
 
         $this->intro($output);
 
@@ -59,8 +66,8 @@ class CreateCommand extends Command
 
         try {
             $packagePath = match ($input->getOption('type')) {
-                null => (new BasicPackageBuilder($root, $questionAsker, new GitCredentials))->build(),
-                'spatie' => (new SpatiePackageBuilder($root, $questionAsker, $config))->build(),
+                null => (new BasicPackageBuilder($packagesDirectory, $questionAsker, new GitCredentials))->build(),
+                'spatie' => (new SpatiePackageBuilder($packagesDirectory, $questionAsker, $config))->build(),
             };
         } catch (Throwable $e) {
             $output->writeln(' <error> ' . $e->getMessage() . ' </error>');

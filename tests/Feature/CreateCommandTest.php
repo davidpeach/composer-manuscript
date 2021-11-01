@@ -25,7 +25,7 @@ class CreateCommandTest extends TestCase
 
         $this->fs = new Filesystem;
         $this->fs->remove(
-            (new Finder)->directories()->in($this->directory . '/packages')
+            (new Finder)->directories()->in($this->directory . '/valid/packages')
         );
 
         parent::setUp();
@@ -47,9 +47,9 @@ class CreateCommandTest extends TestCase
             'stable',
             'MIT',
         ]);
-
+//        dd($this->directory . '/valid');
         $commandTester->execute([
-            '--install-dir' => $this->directory . '/packages',
+            '--install-dir' => $this->directory . '/valid',
         ]);
 
         $this->assertEquals(
@@ -58,11 +58,11 @@ class CreateCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/packages/package-name/composer.json')
+            $this->fs->exists($this->directory . '/valid/packages/package-name/composer.json')
         );
 
         $composerArray = json_decode(
-            file_get_contents($this->directory . '/packages/package-name/composer.json'),
+            file_get_contents($this->directory . '/valid/packages/package-name/composer.json'),
             true
         );
 
@@ -107,7 +107,7 @@ class CreateCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/packages/package-name/src')
+            $this->fs->exists($this->directory . '/valid/packages/package-name/src')
         );
     }
 
@@ -115,7 +115,7 @@ class CreateCommandTest extends TestCase
     public function it_wont_generate_a_package_if_the_folder_name_already_exists()
     {
         // Create the expected folder before running command.
-        $this->fs->mkdir($this->directory . '/packages/package-name');
+        $this->fs->mkdir($this->directory . '/valid/packages/package-name');
 
         $command = new CreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
@@ -132,7 +132,7 @@ class CreateCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--install-dir' => $this->directory . '/packages',
+            '--install-dir' => $this->directory . '/valid',
         ]);
 
         $this->assertEquals(
@@ -142,7 +142,28 @@ class CreateCommandTest extends TestCase
 
         // The composer file shouldn't be there as the folder already existed.
         $this->assertFalse(
-            $this->fs->exists($this->directory . '/packages/package-name/composer.json')
+            $this->fs->exists($this->directory . '/valid/packages/package-name/composer.json')
+        );
+    }
+
+    /** @test */
+    public function it_wont_generate_a_package_if_not_ran_from_inside_a_manuscript_root()
+    {
+        $command = new CreateCommand;
+        $command->setHelperSet(new HelperSet([new QuestionHelper]));
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            '--install-dir' => $this->directory . '/invalid',
+        ], ['capture_stderr_separately' => true]);
+
+        $this->assertEquals(
+            Command::INVALID,
+            $commandTester->getStatusCode()
+        );
+
+        $this->assertStringContainsString(
+            'Not a manuscript directory. No action taken.',
+            $commandTester->getDisplay()
         );
     }
 }
