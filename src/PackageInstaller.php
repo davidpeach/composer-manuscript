@@ -2,38 +2,55 @@
 
 namespace DavidPeach\Manuscript;
 
+use DavidPeach\Manuscript\Exceptions\ComposerFileNotFoundException;
+use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class PackageInstaller
 {
     public function __construct(
-        private ComposerFileManager $composerFileManager
+        private ComposerFileManager $composer
     ){}
 
+    /**
+     * @param PackageModel $package
+     * @param PackageModel $playground
+     * @throws PackageInstallFailedException
+     */
     public function install(PackageModel $package, PackageModel $playground): void
     {
-        $this->composerFileManager->add(
-            $playground->getPath() . '/composer.json',
-            ['repositories' => [
-                [
-                    'type' => 'path',
-                    'url'  =>  realpath($package->getPath()),
-                    'options' => [
-                        'symlink' => true,
-                    ],
-                ]
-            ]]
-        );
+        try {
+            $this->composer->add(
+                pathToFile: $playground->getPath() . '/composer.json',
+                toAdd: ['repositories' => [
+                    [
+                        'type' => 'path',
+                        'url'  =>  realpath($package->getPath()),
+                        'options' => [
+                            'symlink' => true,
+                        ],
+                    ]
+                ]]
+            );
 
-        $process = Process::fromShellCommandline(
-            'cd ' . $playground->getPath() . ' && composer require ' . $package->getName()
-        );
+            $process = Process::fromShellCommandline(
+                command: 'cd ' . $playground->getPath() . ' && composer require ' . $package->getName()
+            );
 
-        $process->run();
+            $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            if (!$process->isSuccessful()) {
+                throw new ProcessFailedException(process: $process);
+            }
+
+        } catch (ComposerFileNotFoundException $e) {
+            throw new PackageInstallFailedException(
+                message: 'Failed to install package.',
+                code: $e->getCode(),
+                previous: $e
+            );
         }
+
     }
 }

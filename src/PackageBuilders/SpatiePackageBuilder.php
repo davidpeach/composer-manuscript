@@ -6,7 +6,7 @@ use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\GithubPackageFromTemplate;
 use DavidPeach\Manuscript\GithubRepository;
-use DavidPeach\Manuscript\QuestionAsker;
+use DavidPeach\Manuscript\Feedback;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Exception;
@@ -20,67 +20,68 @@ class SpatiePackageBuilder implements PackageBuilderContract
     static int $attempts = 0;
 
     public function __construct(
-        private string $root,
-        private QuestionAsker $questions,
-        private Config $config
+        private string   $root,
+        private Feedback $feedback,
+        private Config   $config
     ){}
 
     public function build(): string
     {
         $token = $this->config->gitPersonalAccessToken() ?? $this->askForToken();
 
-        $newGithubPackage = new GithubPackageFromTemplate($token);
+        $newGithubPackage = new GithubPackageFromTemplate(token: $token);
 
         try {
             $newGithubPackage->validateToken();
-        } catch(Throwable $e) {
+        } catch(Throwable) {
             if (self::$attempts > 2) {
-                throw new Exception("Failed 3 times to validate your Github Personal Access Token.");
+                throw new Exception(message: "Failed 3 times to validate your Github Personal Access Token.");
             }
 
             $token = $this->askForToken();
-            $this->config->updateConfig('git_personal_access_token', $token);
+            $this->config->updateConfig(key: 'git_personal_access_token', value: $token);
 
             self::$attempts += 1;
 
             return $this->build();
         }
 
-        $guessedNamespace = (new GitCredentials)->guessNamespace('your-namespace');
+        $guessedNamespace = (new GitCredentials)->guessNamespace();
 
-        $question = sprintf(
-            ' <question> Please enter your GitHub username / package namespace [%s] </question> : ',
-            $guessedNamespace,
+        $question = vsprintf(
+            format: 'Please enter your GitHub username / package namespace [%s]',
+            values: [$guessedNamespace],
         );
-        $namespace = $this->questions->question($question)->defaultAnswer($guessedNamespace)->ask();
+        $namespace = $this->feedback->ask(question: $question, defaultAnswer: $guessedNamespace);
 
-        $repositoryName = $this->questions->question(
-            ' <question> Please enter the name of your new repository [my-new-repository] </question> : '
-        )->defaultAnswer('my-new-repository')->ask();
+        $repositoryName = $this->feedback->ask(
+            question: 'Please enter the name of your new repository [my-new-repository]',
+            defaultAnswer: 'my-new-repository'
+        );
 
         $newGithubPackage
-            ->setTemplateOwner(self::TEMPLATE_OWNER)
-            ->setTemplateRepository(self::TEMPLATE_REPOSITORY)
-            ->setNamespace($namespace)
-            ->setNewRepositoryName($repositoryName);
+            ->setTemplateOwner(templateOwner: self::TEMPLATE_OWNER)
+            ->setTemplateRepository(templateRepository: self::TEMPLATE_REPOSITORY)
+            ->setNamespace(namespace: $namespace)
+            ->setNewRepositoryName(repo: $repositoryName);
 
         try {
             $newRepository = $newGithubPackage->createRepository();
         } catch (Throwable $e) {
             throw new Exception(
-                'Error creating repository in Github. Original exception:' . $e->getMessage()
+                message: 'Error creating repository in Github. Original exception:' . $e->getMessage()
             );
         }
 
         $githubRepository = (new GithubRepository)
-            ->setRemoteUrl($newRepository['git_url'])
-            ->setLocalDirectory($this->root . '/' . $newRepository['name'])
+            ->setRemoteUrl(remoteUrl: $newRepository['git_url'])
+            ->setLocalDirectory(localDirectory: $this->root . '/' . $newRepository['name'])
             ->clone();
 
         if ($githubRepository->clonedSuccessfully()) {
             $path = $githubRepository->getLocalDirectory();
         } else {
-            throw new Exception("Error cloning repository.");
+            throw new Exception(message: "Error cloning repository.");
         }
 
         // Run the Spatie package configure script.
@@ -90,8 +91,8 @@ class SpatiePackageBuilder implements PackageBuilderContract
             'cd ' . $this->root,
         ];
 
-        $process = Process::fromShellCommandline(implode(' && ', $commands));
-        $process->setTty(true);
+        $process = Process::fromShellCommandline(implode(separator: ' && ', array: $commands));
+        $process->setTty(tty: true);
         $process->run();
 
         return $path;
@@ -99,14 +100,14 @@ class SpatiePackageBuilder implements PackageBuilderContract
 
     private function askForToken(): string
     {
-        $question = ' <question> Please enter your GitHub personal access token</question>';
+        $question = 'Please enter your GitHub personal access token';
 
         if (self::$attempts > 0) {
-            $question .= ' <comment> ' . self::$attempts . ' failed attempt(s) to validate GitHub personal access token </comment>';
+            $question .= self::$attempts . ' failed attempt(s) to validate GitHub personal access token';
         }
 
         $question .= ' : ';
 
-        return $this->questions->question($question)->defaultAnswer('')->ask();
+        return $this->feedback->ask(question: $question, defaultAnswer: '');
     }
 }

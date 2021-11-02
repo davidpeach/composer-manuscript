@@ -4,7 +4,7 @@ namespace DavidPeach\Manuscript;
 
 use Symfony\Component\Finder\Finder;
 
-class PlaygroundFinder
+class Playgrounds
 {
     const PLAYGROUND_DIRECTORY = 'playgrounds';
 
@@ -14,17 +14,17 @@ class PlaygroundFinder
 
         $finder = new Finder;
 
-        $finder->depth('== 0')
+        $finder->depth(levels: '== 0')
             ->directories()
-            ->name('*')
-            ->in($directory);
+            ->name(patterns: '*')
+            ->in(dirs: $directory);
 
         $currentPlaygrounds = [];
 
-        $modelFactory = new PackageModelFactory(new ComposerFileManager);
+        $modelFactory = new PackageModelFactory(composer: new ComposerFileManager);
 
         foreach ($finder as $file) {
-            $playground = $modelFactory->fromPath($file->getPathname());
+            $playground = $modelFactory->fromPath(pathToPackage: $file->getPathname());
             $currentPlaygrounds[$playground->getFolderName()] = $playground;
         }
 

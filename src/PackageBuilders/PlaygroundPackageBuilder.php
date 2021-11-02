@@ -10,27 +10,32 @@ use Symfony\Component\Process\Process;
 class PlaygroundPackageBuilder implements PackageBuilderContract
 {
     public function __construct(
-        private string $root,
+        private string    $root,
         private Framework $framework,
-    ){}
+    )
+    {
+    }
 
     public function build(): string
     {
-        $folder = vsprintf('%s-%s', [
-            $this->framework->folderFormat(),
-            Carbon::now()->timestamp,
-        ]);
-
-        $installCommand = sprintf(
-            $this->framework->getInstallCommandSegment(),
-            $this->root . '/' . $folder
+        $folder = vsprintf(
+            format: '%s-%s',
+            values: [
+                $this->framework->folderFormat(),
+                Carbon::now()->timestamp,
+            ]
         );
 
-        $process = Process::fromShellCommandline('composer create-project ' . $installCommand);
+        $installCommand = vsprintf(
+            format: $this->framework->getInstallCommandSegment(),
+            values: [$this->root . '/' . $folder]
+        );
+
+        $process = Process::fromShellCommandline(command: 'composer create-project ' . $installCommand);
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(process: $process);
         }
 
         return $this->root . '/' . $folder;

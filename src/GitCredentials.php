@@ -6,13 +6,13 @@ use Symfony\Component\Process\Process;
 
 class GitCredentials
 {
-    private string $name = '';
+    private string $name = 'Your Name';
 
-    private string $email = '';
+    private string $email = 'email@example.com';
 
     public function __construct()
     {
-        $process = new Process([
+        $process = new Process(command: [
             'git',
             'config',
             '--global',
@@ -22,11 +22,10 @@ class GitCredentials
         $process->run();
 
         if ($process->isSuccessful()) {
-            $this->setName(trim($process->getOutput(), "\n"));
+            $this->setName(name: trim(string: $process->getOutput(), characters: "\n"));
         }
 
-
-        $process = new Process([
+        $process = new Process(command: [
             'git',
             'config',
             '--global',
@@ -36,48 +35,34 @@ class GitCredentials
         $process->run();
 
         if ($process->isSuccessful()) {
-            $this->setEmail(trim($process->getOutput(), "\n"));
+            $this->setEmail(email: trim(string: $process->getOutput(), characters: "\n"));
         }
     }
 
-    private function setName(string $name)
+    private function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    public function getName(string $fallback): string
+    public function getName(): string
     {
-        if (empty($this->name)) {
-            return $fallback;
-        }
-
         return $this->name;
     }
 
-    private function setEmail(string $email)
+    private function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    public function getEmail(string $fallback): string
+    public function getEmail(): string
     {
-        if (empty($this->email)) {
-            return $fallback;
-        }
-
         return $this->email;
     }
 
-    public function guessNamespace(string $fallback): string
+    public function guessNamespace(): string
     {
-        $possibleNamespace = strtolower(
-            str_replace(' ', '', $this->name)
+        return strtolower(
+            str_replace(search: ' ', replace: '', subject: $this->name)
         );
-
-        if (! empty($possibleNamespace)){
-            return $possibleNamespace;
-        }
-
-        return $fallback;
     }
 }

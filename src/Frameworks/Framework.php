@@ -18,6 +18,6 @@ abstract class Framework
 
     public function folderFormat(): string
     {
-        return  Str::slug($this->getName());
+        return  Str::slug(title: $this->getName());
     }
 }

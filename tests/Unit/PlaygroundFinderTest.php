@@ -3,7 +3,7 @@
 namespace DavidPeach\Manuscript\Tests\Unit;
 
 use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\PlaygroundFinder;
+use DavidPeach\Manuscript\Playgrounds;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -23,7 +23,7 @@ class PlaygroundFinderTest extends TestCase
 
         $this->fs = new Filesystem;
         $this->fs->remove(
-            (new Finder)->directories()->in($this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY)
+            (new Finder)->directories()->in($this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY)
         );
 
         parent::setUp();
@@ -34,21 +34,21 @@ class PlaygroundFinderTest extends TestCase
     {
         $composerStubContents = file_get_contents(__DIR__ . '/../test-environments/stubs/composer.json');
 
-        $this->fs->mkdir( $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-1');
+        $this->fs->mkdir( $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-1');
         file_put_contents(
-            $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-1/composer.json',
+            $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-1/composer.json',
             $composerStubContents
         );
 
-        $this->fs->mkdir( $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-2');
+        $this->fs->mkdir( $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-2');
         file_put_contents(
-            $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-2/composer.json',
+            $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-2/composer.json',
             $composerStubContents
         );
 
-        $this->fs->mkdir( $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-3');
+        $this->fs->mkdir( $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-3');
         file_put_contents(
-            $this->root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY . '/playground-3/composer.json',
+            $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-3/composer.json',
             $composerStubContents
         );
 
@@ -56,7 +56,7 @@ class PlaygroundFinderTest extends TestCase
         $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
 
 
-        $existingPlaygrounds = (new PlaygroundFinder($composerMock))->discover($this->root);
+        $existingPlaygrounds = (new Playgrounds($composerMock))->discover($this->root);
 
         $this->assertIsArray($existingPlaygrounds);
 

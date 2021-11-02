@@ -19,8 +19,8 @@ class Config
     public function getConfigData()
     {
         return json_decode(
-            file_get_contents($this->getFullConfigPath()),
-            true
+            json: file_get_contents(filename: $this->getFullConfigPath()),
+            associative: true
         );
     }
 
@@ -36,16 +36,16 @@ class Config
          $configData = $this->getConfigData();
 
          $configData[$key] = $value;
-         file_put_contents($configFile, json_encode($configData));
+         file_put_contents(filename: $configFile, data: json_encode(value: $configData));
     }
 
     private function ensureConfigExists()
     {
         $configFile = $this->getFullConfigPath();
 
-        if (!$this->filesystem->exists($configFile)) {
-            $this->filesystem->touch($configFile);
-            $this->updateConfig('init', []);
+        if (!$this->filesystem->exists(files: $configFile)) {
+            $this->filesystem->touch(files: $configFile);
+            $this->updateConfig(key: 'init', value: []);
         }
     }
 

@@ -6,10 +6,6 @@ use DavidPeach\Manuscript\Frameworks\Framework;
 use DavidPeach\Manuscript\Frameworks\Laravel6;
 use DavidPeach\Manuscript\Frameworks\Laravel7;
 use DavidPeach\Manuscript\Frameworks\Laravel8;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class FrameworkChooser
 {
@@ -20,23 +16,20 @@ class FrameworkChooser
     ];
 
     public function __construct(
-        private InputInterface $input,
-        private OutputInterface $output,
-        private QuestionHelper $helper
+        private Feedback $feedback
     ){}
 
     public function choose(): Framework
     {
-        $question = new ChoiceQuestion(
-            '  Please select your framework',
-            array_keys($this->frameworks),
-            0
+        $chosenFramework = $this->feedback->choose(
+            question: 'Please select your framework',
+            choices: array_keys($this->frameworks),
+            defaultKey: 0
         );
-        $question->setErrorMessage('Framework %s is invalid.');
 
-        $chosenFramework = $this->helper->ask($this->input, $this->output, $question);
-
-        $this->output->writeln('<comment>  Installing ' . $chosenFramework . ' as your framework of choice.</comment>');
+        $this->feedback->print(
+            lines: ['<comment>  Installing ' . $chosenFramework . ' as your framework of choice.</comment>']
+        );
 
         return new $this->frameworks[$chosenFramework];
     }

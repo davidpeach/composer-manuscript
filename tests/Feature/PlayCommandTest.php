@@ -5,6 +5,7 @@ namespace DavidPeach\Manuscript\Tests\Feature;
 use Carbon\Carbon;
 use DavidPeach\Manuscript\Commands\PlayCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -74,6 +75,37 @@ class PlayCommandTest extends TestCase
             $this->fs->exists(
                 $this->directory . '/playgrounds/laravel-8-872812800/vendor/manuscript-test/test-package'
             )
+        );
+    }
+
+    /** @test */
+    public function it_wont_attempt_to_execute_the_play_command_if_not_run_in_a_composer_package()
+    {
+        $invalidPackage = $this->directory . '/packages/invalid-package';
+
+        $command = new PlayCommand;
+        $command->setHelperSet(new HelperSet([new QuestionHelper]));
+
+        Carbon::setTestNow('29th August 1997');
+
+        $commandTester = new CommandTester($command);
+
+        $commandTester->setInputs([
+            'laravel8x',
+        ]);
+
+        $commandTester->execute([
+            '--package-dir' => $invalidPackage,
+        ]);
+
+        $this->assertEquals(
+            Command::INVALID,
+            $commandTester->getStatusCode()
+        );
+
+        $this->assertStringContainsString(
+            'Not a valid composer package. No action taken.',
+            $commandTester->getDisplay()
         );
     }
 }

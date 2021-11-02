@@ -3,74 +3,99 @@
 namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\ComposerFileManager;
+use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
+use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
+use DavidPeach\Manuscript\Feedback;
 use DavidPeach\Manuscript\FrameworkChooser;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\PackageModel;
 use DavidPeach\Manuscript\PackageModelFactory;
-use DavidPeach\Manuscript\PlaygroundFinder;
+use DavidPeach\Manuscript\Playgrounds;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PlayCommand extends Command
 {
     protected static $defaultName = 'play';
 
+    private Feedback $feedback;
+
     protected function configure(): void
     {
         $this
             ->addOption(
-                'package-dir',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'The root directory where your packages in development live. Defaults to the current directory.'
+                name: 'package-dir',
+                shortcut: 'p',
+                mode: InputOption::VALUE_OPTIONAL,
+                description: 'The root directory where your packages in development live. Defaults to the current directory.'
             )
-            ->setHelp('This command will enable you to easily scaffold a composer package and have a playground in which to test your package as you build it.')
-            ->setDescription('Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
+            ->setHelp(help: 'This command will enable you to easily scaffold a composer package and have a playground in which to test your package as you build it.')
+            ->setDescription(description: 'Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $packageDirectory = ($input->getOption('package-dir') ?? getcwd());
+        $packageDirectory = ($input->getOption(name: 'package-dir') ?? getcwd());
 
-        // check if this is a composer package.
+        $this->feedback = new Feedback(input: $input, output: $output);
+
+        try {
+            $package = (new PackageModelFactory(composer: new ComposerFileManager))
+                ->fromPath(pathToPackage: $packageDirectory);
+        } catch (PackageModelNotCreatedException) {
+            $this->feedback->print(lines: ['Not a valid composer package. No action taken.']);
+            return Command::INVALID;
+        }
 
         $root = $packageDirectory . '/../..';
 
-        // check if root is a manuscript root
-
-        $this->intro($output);
-
         $fs = new Filesystem;
 
-        if (! $fs->exists($root . '/playgrounds')) {
-            $fs->mkdir($root . '/playgrounds');
+        if (!$fs->exists(files: $root . '/.manuscript')) {
+            $this->feedback->print(lines: ['Not a manuscript directory. No action taken.']);
+            return Command::INVALID;
         }
 
-        $package = (new PackageModelFactory(new ComposerFileManager()))->fromPath($packageDirectory);
+        $this->intro(output: $output);
 
-        $playground = $this->getPlayground(
-            $root,
-            $input,
-            $output
-        );
+        if (!$fs->exists(files: $root . '/playgrounds')) {
+            $fs->mkdir(dirs: $root . '/playgrounds');
+        }
 
-        (new PackageInstaller(new ComposerFileManager))->install(
-            $package,
-            $playground
-        );
+        try {
+            $playground = $this->getPlayground(root: $root);
+        } catch (PackageModelNotCreatedException) {
+            $this->feedback->print(lines: ['Error setting up a package playground']);
+            return Command::FAILURE;
+        }
 
-        $this->outro($output, $playground);
+        try {
+            (new PackageInstaller(composer: new ComposerFileManager))->install(
+                package: $package,
+                playground: $playground
+            );
+        } catch (PackageInstallFailedException | ProcessFailedException) {
+            $this->feedback->print(lines: ['Error installing the package into the playground']);
+            return Command::FAILURE;
+        }
+
+        $this->outro(output: $output, playground: $playground);
 
         return Command::SUCCESS;
     }
 
 
-    private function intro($output): void
+    private function intro(OutputInterface $output): void
     {
         $output->writeln('');
         $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
@@ -79,7 +104,7 @@ class PlayCommand extends Command
         $output->writeln('');
     }
 
-    private function outro($output, PackageModel $playground): void
+    private function outro(OutputInterface $output, PackageModel $playground): void
     {
         $output->writeln('');
         $output->writeln(' 🎮 <info>Playground setup complete!</info>');
@@ -94,30 +119,22 @@ class PlayCommand extends Command
 
     /**
      * @param string $root
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return PackageModel
+     * @throws PackageModelNotCreatedException
      */
-    protected function getPlayground(
-        string          $root,
-        InputInterface  $input,
-        OutputInterface $output,
-    ): PackageModel
+    protected function getPlayground(string $root): PackageModel
     {
         $playground = null;
 
-        $existingPlaygrounds = (new PlaygroundFinder)->discover($root);
+        $existingPlaygrounds = (new Playgrounds)->discover(root: $root);
 
         if (!empty($existingPlaygrounds)) {
 
-            $question = new ChoiceQuestion(
-                '  Please select your framework playground, or select "new" to have a fresh one made for you.',
-                array_merge([0 => 'new'], array_keys($existingPlaygrounds)),
-                0
+            $answer = $this->feedback->choose(
+                question: 'Please select your framework playground, or select "new" to have a fresh one made for you.',
+                choices: array_merge([0 => 'new'], array_keys($existingPlaygrounds)),
+                defaultKey: 0
             );
-            $question->setErrorMessage('Framework playground %s is invalid.');
-
-            $answer = $this->getHelper('question')->ask($input, $output, $question);
 
             if ($answer !== 'new') {
                 $playground = $existingPlaygrounds[$answer];
@@ -126,20 +143,17 @@ class PlayCommand extends Command
 
         if (is_null($playground)) {
 
-            $frameworks = new FrameworkChooser(
-                $input,
-                $output,
-                $this->getHelper('question')
-            );
+            $frameworks = new FrameworkChooser(feedback: $this->feedback);
 
             $chosenFramework = $frameworks->choose();
 
-            $playground = (new PlaygroundPackageBuilder(
-                $root . '/' . PlaygroundFinder::PLAYGROUND_DIRECTORY,
-                $chosenFramework)
-            )->build();
+            $pathToPlayground = (new PlaygroundPackageBuilder(
+                root: $root . '/' . Playgrounds::PLAYGROUND_DIRECTORY,
+                framework: $chosenFramework
+            ))->build();
 
-            $playground = (new PackageModelFactory(new ComposerFileManager()))->fromPath($playground);
+            return (new PackageModelFactory(composer: new ComposerFileManager))
+                ->fromPath(pathToPackage: $pathToPlayground);
         }
 
         return $playground;

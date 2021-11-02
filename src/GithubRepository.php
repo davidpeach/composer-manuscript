@@ -33,7 +33,7 @@ class GithubRepository
 
     public function clone(): self
     {
-        $process = new Process([
+        $process = new Process(command: [
             'git',
             'clone',
             $this->remoteUrl,
