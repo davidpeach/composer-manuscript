@@ -16,6 +16,9 @@ class PlaygroundPackageBuilder implements PackageBuilderContract
     {
     }
 
+    /**
+     * @return string
+     */
     public function build(): string
     {
         $folder = vsprintf(

@@ -66,7 +66,7 @@ class PlayCommand extends Command
             return Command::INVALID;
         }
 
-        $this->intro(output: $output);
+        $this->intro();
 
         if (!$fs->exists(files: $root . '/playgrounds')) {
             $fs->mkdir(dirs: $root . '/playgrounds');
@@ -89,32 +89,30 @@ class PlayCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->outro(output: $output, playground: $playground);
+        $this->outro(playground: $playground);
 
         return Command::SUCCESS;
     }
 
-
-    private function intro(OutputInterface $output): void
+    private function intro(): void
     {
-        $output->writeln('');
-        $output->writeln(' 🎼 Manuscript — Composer package scaffolding and environment helper');
-        $output->writeln('');
-        $output->writeln(" 👌 Let's scaffold you a fresh composer package for you to start building.");
-        $output->writeln('');
+        $this->feedback->print(lines: [
+            '🎼 Manuscript — Composer package scaffolding and environment helper',
+            '👌 Let\'s scaffold you a fresh composer package for you to start building.',
+        ]);
     }
 
-    private function outro(OutputInterface $output, PackageModel $playground): void
+    /**
+     * @param PackageModel $playground
+     */
+    private function outro(PackageModel $playground): void
     {
-        $output->writeln('');
-        $output->writeln(' 🎮 <info>Playground setup complete!</info>');
-        $output->writeln('');
-        $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
-        $output->writeln('');
-        $output->writeln('    <info>Your package has been installed into the playground at <comment>' .
-            realpath($playground->getPath()) . '</comment>.</info>');
-        $output->writeln('    <info>Any changes made to your package whilst developing it will be updated in the playground automatically.</info>');
-        $output->writeln('');
+        $this->feedback->print(lines: [
+            '🎮 Playground setup complete!',
+            '🎼 Thank You for using Manuscript.',
+            'Your package has been installed into the playground at ' . realpath($playground->getPath()),
+            'Any changes made to your package whilst developing it will be updated in the playground automatically.',
+        ]);
     }
 
     /**

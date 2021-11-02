@@ -16,7 +16,10 @@ class Config
         $this->ensureConfigExists();
     }
 
-    public function getConfigData()
+    /**
+     * @return array | null
+     */
+    public function getConfigData(): array|null
     {
         return json_decode(
             json: file_get_contents(filename: $this->getFullConfigPath()),
@@ -24,13 +27,20 @@ class Config
         );
     }
 
+    /**
+     * @return string
+     */
     public function gitPersonalAccessToken(): string
     {
         return $this->getConfigData()['git_personal_access_token'] ?? false;
 
     }
 
-    public function updateConfig($key, string|array $value)
+    /**
+     * @param $key
+     * @param string|array $value
+     */
+    public function updateConfig($key, string|array $value): void
     {
          $configFile = $this->getFullConfigPath();
          $configData = $this->getConfigData();
@@ -39,7 +49,7 @@ class Config
          file_put_contents(filename: $configFile, data: json_encode(value: $configData));
     }
 
-    private function ensureConfigExists()
+    private function ensureConfigExists(): void
     {
         $configFile = $this->getFullConfigPath();
 
@@ -49,6 +59,9 @@ class Config
         }
     }
 
+    /**
+     * @return string
+     */
     private function getFullConfigPath(): string
     {
         return $this->directory . '/' . self::MANUSCRIPT_CONFIG;

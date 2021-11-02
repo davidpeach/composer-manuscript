@@ -23,8 +23,14 @@ class SpatiePackageBuilder implements PackageBuilderContract
         private string   $root,
         private Feedback $feedback,
         private Config   $config
-    ){}
+    )
+    {
+    }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function build(): string
     {
         $token = $this->config->gitPersonalAccessToken() ?? $this->askForToken();
@@ -33,7 +39,7 @@ class SpatiePackageBuilder implements PackageBuilderContract
 
         try {
             $newGithubPackage->validateToken();
-        } catch(Throwable) {
+        } catch (Throwable) {
             if (self::$attempts > 2) {
                 throw new Exception(message: "Failed 3 times to validate your Github Personal Access Token.");
             }
@@ -98,6 +104,9 @@ class SpatiePackageBuilder implements PackageBuilderContract
         return $path;
     }
 
+    /**
+     * @return string
+     */
     private function askForToken(): string
     {
         $question = 'Please enter your GitHub personal access token';

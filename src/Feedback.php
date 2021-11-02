@@ -19,7 +19,12 @@ class Feedback
         private OutputInterface $output,
     ){}
 
-    public function ask(string $question, string $defaultAnswer)
+    /**
+     * @param string $question
+     * @param string $defaultAnswer
+     * @return string
+     */
+    public function ask(string $question, string $defaultAnswer): string
     {
         return (new QuestionHelper)->ask(
             input: $this->input,
@@ -31,7 +36,13 @@ class Feedback
         );
     }
 
-    public function choose(string $question, array $choices, int $defaultKey)
+    /**
+     * @param string $question
+     * @param array $choices
+     * @param int $defaultKey
+     * @return string
+     */
+    public function choose(string $question, array $choices, int $defaultKey): string
     {
         $question = new ChoiceQuestion(
             question: $question,
@@ -44,7 +55,10 @@ class Feedback
         return (new QuestionHelper)->ask(input: $this->input, output: $this->output, question: $question);
     }
 
-    public function print(array $lines)
+    /**
+     * @param array $lines
+     */
+    public function print(array $lines): void
     {
         $this->output->writeln(messages: $lines);
     }

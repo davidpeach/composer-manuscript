@@ -19,6 +19,8 @@ class CreateCommand extends Command
 {
     protected static $defaultName = 'create';
 
+    private Feedback $feedback;
+
     protected function configure(): void
     {
         $this
@@ -45,11 +47,16 @@ class CreateCommand extends Command
             ->setDescription(description: 'Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $root = $input->getOption(name: 'install-dir') ?? getcwd();
 
-        $feedback = new Feedback(input: $input, output: $output);
+        $this->feedback = new Feedback(input: $input, output: $output);
 
         $fs = new Filesystem;
 
@@ -60,7 +67,7 @@ class CreateCommand extends Command
 
         $packagesDirectory = $root . '/packages';
 
-        $this->intro(output: $output);
+        $this->intro();
 
         $config = (new Config(directory: $root, filesystem: new Filesystem));
 
@@ -68,21 +75,21 @@ class CreateCommand extends Command
             $packagePath = match ($input->getOption(name: 'type')) {
                 null => (new BasicPackageBuilder(
                     root: $packagesDirectory,
-                    feedback: $feedback,
+                    feedback: $this->feedback,
                     gitCredentials: new GitCredentials
                 ))->build(),
                 'spatie' => (new SpatiePackageBuilder(
                     root: $packagesDirectory,
-                    feedback: $feedback,
+                    feedback: $this->feedback,
                     config: $config
                 ))->build(),
             };
         } catch (Throwable $e) {
-            $output->writeln(messages: $e->getMessage());
+            $this->feedback->print(lines: [$e->getMessage()]);
             return Command::FAILURE;
         }
 
-        $this->outro(output: $output, packagePath: $packagePath);
+        $this->outro(packagePath: $packagePath);
 
         if ($input->getOption(name: 'play') === null) {
             try {
@@ -92,29 +99,27 @@ class CreateCommand extends Command
                     output: $output
                 );
             } catch (Throwable) {
-                $output->writeln(messages: 'Apologies, but there seems to be an error with the playground setup.');
+                $this->feedback->print(lines: ['Apologies, but there seems to be an error with the playground setup.']);
             }
         }
 
         return Command::SUCCESS;
     }
 
-    private function intro(OutputInterface $output): void
+    private function intro(): void
     {
-        $output->writeln([
+        $this->feedback->print(lines: [
             '🎼 Manuscript — Composer package scaffolding and environment helper',
             '👌 Let\'s scaffold you a fresh composer package for you to start building.',
         ]);
     }
 
-    private function outro(OutputInterface $output, string $packagePath): void
+    private function outro(string $packagePath): void
     {
-        $output->writeln('');
-        $output->writeln(' 🎉 <info>Fresh package setup complete!</info>');
-        $output->writeln('');
-        $output->writeln(' 🎼 <info>Thank You for using Manuscript.</info>');
-        $output->writeln('');
-        $output->writeln(' @ <info> Your new package is set up at <comment>' . $packagePath . ' </comment></info>');
-        $output->writeln('');
+        $this->feedback->print(lines: [
+            '🎉 Fresh package setup complete!',
+            '🎼 Thank You for using Manuscript.',
+            '@ Your new package is set up at ' . $packagePath,
+        ]);
     }
 }

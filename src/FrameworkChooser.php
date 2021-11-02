@@ -19,6 +19,9 @@ class FrameworkChooser
         private Feedback $feedback
     ){}
 
+    /**
+     * @return Framework
+     */
     public function choose(): Framework
     {
         $chosenFramework = $this->feedback->choose(
@@ -28,7 +31,7 @@ class FrameworkChooser
         );
 
         $this->feedback->print(
-            lines: ['<comment>  Installing ' . $chosenFramework . ' as your framework of choice.</comment>']
+            lines: ['Installing ' . $chosenFramework . ' as your framework of choice.']
         );
 
         return new $this->frameworks[$chosenFramework];

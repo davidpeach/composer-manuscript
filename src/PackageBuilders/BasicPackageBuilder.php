@@ -21,6 +21,10 @@ class BasicPackageBuilder implements PackageBuilderContract
     {
     }
 
+    /**
+     * @return string
+     * @throws Throwable
+     */
     public function build(): string
     {
         $name = $this->determineName();
@@ -74,6 +78,9 @@ class BasicPackageBuilder implements PackageBuilderContract
         return $path;
     }
 
+    /**
+     * @return string
+     */
     private function determineName(): string
     {
         $question = vsprintf(
@@ -93,6 +100,9 @@ class BasicPackageBuilder implements PackageBuilderContract
         return $this->feedback->ask(question: $question, defaultAnswer: $answer);
     }
 
+    /**
+     * @return string
+     */
     private function determineDescription(): string
     {
         $question = 'Please enter the description of your package : ';
@@ -100,6 +110,9 @@ class BasicPackageBuilder implements PackageBuilderContract
         return $this->feedback->ask(question: $question, defaultAnswer: 'Default description set by Manuscript');
     }
 
+    /**
+     * @return string
+     */
     private function determineAuthorName(): string
     {
         $question = vsprintf(
@@ -112,6 +125,9 @@ class BasicPackageBuilder implements PackageBuilderContract
         return $this->feedback->ask(question: $question, defaultAnswer: $this->gitCredentials->getName());
     }
 
+    /**
+     * @return string
+     */
     private function determineAuthorEmail(): string
     {
         $question = vsprintf(
@@ -124,6 +140,9 @@ class BasicPackageBuilder implements PackageBuilderContract
         return $this->feedback->ask(question: $question, defaultAnswer: $this->gitCredentials->getEmail());
     }
 
+    /**
+     * @return string
+     */
     private function determineStability(): string
     {
         $question = 'Please select your minimum stability [stable]';
@@ -131,6 +150,9 @@ class BasicPackageBuilder implements PackageBuilderContract
         return $this->feedback->ask(question: $question, defaultAnswer: 'stable');
     }
 
+    /**
+     * @return string
+     */
     private function determineLicense(): string
     {
         $question = 'Please enter the license for your package [MIT]';

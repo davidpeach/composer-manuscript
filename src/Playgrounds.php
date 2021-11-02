@@ -8,6 +8,11 @@ class Playgrounds
 {
     const PLAYGROUND_DIRECTORY = 'playgrounds';
 
+    /**
+     * @param string $root
+     * @return array
+     * @throws Exceptions\PackageModelNotCreatedException
+     */
     public function discover(string $root): array
     {
         $directory = $root . '/' . self::PLAYGROUND_DIRECTORY;

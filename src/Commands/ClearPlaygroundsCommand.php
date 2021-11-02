@@ -27,6 +27,11 @@ class ClearPlaygroundsCommand extends Command
             ->setDescription(description: 'Whether you pass the install-dir option, or default to the current directory, this command will look for a directory called "manuscript-playgrounds", and empty it out.');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $root = ($input->getOption(name: 'install-dir') ?? getcwd());
