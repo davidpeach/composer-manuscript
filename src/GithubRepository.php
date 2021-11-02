@@ -12,6 +12,10 @@ class GithubRepository
 
     private bool $clonedSuccessfully;
 
+    /**
+     * @param string $localDirectory
+     * @return $this
+     */
     public function setLocalDirectory(string $localDirectory): self
     {
         $this->localDirectory = $localDirectory;
@@ -19,11 +23,18 @@ class GithubRepository
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getLocalDirectory(): string
     {
         return $this->localDirectory;
     }
 
+    /**
+     * @param string $remoteUrl
+     * @return $this
+     */
     public function setRemoteUrl(string $remoteUrl): self
     {
         $this->remoteUrl = $remoteUrl;
@@ -31,9 +42,12 @@ class GithubRepository
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function clone(): self
     {
-        $process = new Process([
+        $process = new Process(command: [
             'git',
             'clone',
             $this->remoteUrl,
@@ -52,6 +66,9 @@ class GithubRepository
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function clonedSuccessfully(): bool
     {
         return $this->clonedSuccessfully;

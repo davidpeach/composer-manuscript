@@ -21,9 +21,13 @@ class GithubPackageFromTemplate
     public function __construct(string $token)
     {
         $this->api = new Client;
-        $this->api->authenticate($token, null, Client::AUTH_ACCESS_TOKEN);
+        $this->api->authenticate(tokenOrLogin: $token, authMethod: Client::AUTH_ACCESS_TOKEN);
     }
 
+    /**
+     * @param string $namespace
+     * @return $this
+     */
     public function setNamespace(string $namespace): self
     {
         $this->namespace = $namespace;
@@ -31,6 +35,10 @@ class GithubPackageFromTemplate
         return $this;
     }
 
+    /**
+     * @param string $repo
+     * @return $this
+     */
     public function setNewRepositoryName(string $repo): self
     {
         $this->repositoryName = $repo;
@@ -38,6 +46,10 @@ class GithubPackageFromTemplate
         return $this;
     }
 
+    /**
+     * @param string $templateOwner
+     * @return $this
+     */
     public function setTemplateOwner(string $templateOwner): self
     {
         $this->templateOwner = $templateOwner;
@@ -45,6 +57,10 @@ class GithubPackageFromTemplate
         return $this;
     }
 
+    /**
+     * @param string $templateRepository
+     * @return $this
+     */
     public function setTemplateRepository(string $templateRepository): self
     {
         $this->templateRepository = $templateRepository;
@@ -52,18 +68,21 @@ class GithubPackageFromTemplate
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function createRepository(): array
     {
-        $repositoryData = $this->api->api('repo')->createFromTemplate(
-            $this->templateOwner,
-            $this->templateRepository,
-            [
+        $repositoryData = $this->api->api(name: 'repo')->createFromTemplate(
+            templateOwner: $this->templateOwner,
+            templateRepo: $this->templateRepository,
+            parameters: [
                 'name' => $this->repositoryName,
                 'owner' => $this->namespace,
             ]
         );
 
-        sleep(self::GITHUB_WAIT_SECONDS);
+        sleep(seconds: self::GITHUB_WAIT_SECONDS);
 
         return $repositoryData;
     }
