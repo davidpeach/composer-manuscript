@@ -6,6 +6,7 @@ use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,11 +61,12 @@ class CreateCommand extends BaseCommand
                     gitCredentials: new GitCredentials,
                     io: $this->io,
                 ))->build(),
-                'spatie' => (new SpatiePackageBuilder(
+                'laravel' => (new SpatiePackageBuilder(
                     root: $packagesDirectory,
                     io: $this->io,
                     config: $this->config
                 ))->build(),
+                default => throw new LogicException('Unknown package type')
             };
         } catch (Throwable $e) {
             $this->io->error(message: $e->getMessage());
