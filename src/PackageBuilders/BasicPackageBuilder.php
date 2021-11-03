@@ -3,7 +3,6 @@
 namespace DavidPeach\Manuscript\PackageBuilders;
 
 use DavidPeach\Manuscript\GitCredentials;
-use DavidPeach\Manuscript\Feedback;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
