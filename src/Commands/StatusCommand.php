@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class StatusCommand extends Command
+class StatusCommand extends BaseCommand
 {
     protected static $defaultName = 'status';
 
@@ -17,8 +17,8 @@ class StatusCommand extends Command
     {
         $this
             ->addOption(
-                name: 'install-dir',
-                shortcut: 'i',
+                name: 'dir',
+                shortcut: 'd',
                 mode: InputOption::VALUE_OPTIONAL,
                 description: 'The root directory where your packages in development live. Defaults to the current directory.'
             )
@@ -28,11 +28,10 @@ class StatusCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $root = ($input->getOption(name: 'install-dir') ?? getcwd());
-
-        // check if root is a manuscript root
+        $root = ($input->getOption(name: 'dir') ?? getcwd());
 
         $playgrounds = (new Playgrounds)->discover(root: $root);
+
         $tableRows = [];
 
         foreach ($playgrounds as $playground) {

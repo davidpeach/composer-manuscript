@@ -4,6 +4,7 @@ namespace DavidPeach\Manuscript\PackageBuilders;
 
 use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\Feedback;
+use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -15,8 +16,8 @@ class BasicPackageBuilder implements PackageBuilderContract
 
     public function __construct(
         private string         $root,
-        private Feedback       $feedback,
         private GitCredentials $gitCredentials,
+        private StyleInterface $io,
     )
     {
     }
@@ -27,25 +28,28 @@ class BasicPackageBuilder implements PackageBuilderContract
      */
     public function build(): string
     {
-        $name = $this->determineName();
-        $description = $this->determineDescription();
         $authorName = $this->determineAuthorName();
         $authorEmail = $this->determineAuthorEmail();
+        $namespace = $this->determineNamespace();
+        $packageName = $this->determinePackageName();
+
+        $description = $this->determineDescription();
         $author = $authorName . ' <' . $authorEmail . '>';
         $stability = $this->determineStability();
         $license = $this->determineLicense();
 
-        $parts = explode('/', $name);
-        $path = $this->root . '/' . end($parts);
+        $fullPackageName = implode(separator: '/', array: [$namespace, $packageName]);
+
+        $packagePath = $this->root . '/' . $packageName;
 
         try {
             $fs = new Filesystem;
 
-            if ($fs->exists(files: $path)) {
+            if ($fs->exists(files: $packagePath)) {
                 throw new Exception(message: "Package folder name already exists");
             }
 
-            $fs->mkdir(dirs: $path);
+            $fs->mkdir(dirs: $packagePath);
         } catch (Throwable $e) {
             throw $e;
         }
@@ -54,16 +58,16 @@ class BasicPackageBuilder implements PackageBuilderContract
             separator: ' ',
             array: [
                 'composer init',
-                sprintf('--name="%s"', $name),
-                sprintf('--description="%s"', $description),
-                sprintf('--author="%s"', $author),
-                sprintf('--stability="%s"', $stability),
-                sprintf('--license="%s"', $license),
+                vsprintf(format: '--name="%s"', values: [$fullPackageName]),
+                vsprintf(format: '--description="%s"', values: [$description]),
+                vsprintf(format: '--author="%s"', values: [$author]),
+                vsprintf(format: '--stability="%s"', values: [$stability]),
+                vsprintf(format: '--license="%s"', values: [$license]),
                 '--autoload="src/"',
             ]);
 
         $commands = [
-            'cd ' . $path,
+            'cd ' . $packagePath,
             $composerBuildCommand,
             'cd ../',
         ];
@@ -75,29 +79,28 @@ class BasicPackageBuilder implements PackageBuilderContract
             throw new ProcessFailedException(process: $process);
         }
 
-        return $path;
+        return $packagePath;
     }
 
     /**
      * @return string
      */
-    private function determineName(): string
+    private function determineNamespace(): string
     {
-        $question = vsprintf(
-            format: 'Please enter the full name of your package with namespace [%s/package-name]',
-            values: [
-                $this->gitCredentials->guessNamespace()
-            ]
+        // validation needed
+        return $this->io->ask(
+            question: 'Please enter your package namespace.',
+            default: $this->gitCredentials->guessNamespace(),
         );
+    }
 
-        $answer = vsprintf(
-            format: '%s/package-name',
-            values: [
-                $this->gitCredentials->guessNamespace()
-            ]
+    private function determinePackageName(): string
+    {
+        // validation needed
+        return $this->io->ask(
+            question: 'Please enter your package name.',
+            default: 'my-new-package',
         );
-
-        return $this->feedback->ask(question: $question, defaultAnswer: $answer);
     }
 
     /**
@@ -105,9 +108,11 @@ class BasicPackageBuilder implements PackageBuilderContract
      */
     private function determineDescription(): string
     {
-        $question = 'Please enter the description of your package : ';
-
-        return $this->feedback->ask(question: $question, defaultAnswer: 'Default description set by Manuscript');
+        // validation needed
+        return $this->io->ask(
+            question: 'Please enter the description of your package.',
+            default: 'Default description set by Manuscript'
+        );
     }
 
     /**
@@ -115,14 +120,11 @@ class BasicPackageBuilder implements PackageBuilderContract
      */
     private function determineAuthorName(): string
     {
-        $question = vsprintf(
-            format: 'Please enter the author name of your package [%s]',
-            values: [
-                $this->gitCredentials->getName()
-            ]
+        // validation needed
+        return $this->io->ask(
+            question: 'Please enter the author name of your package.',
+            default: $this->gitCredentials->getName()
         );
-
-        return $this->feedback->ask(question: $question, defaultAnswer: $this->gitCredentials->getName());
     }
 
     /**
@@ -130,14 +132,11 @@ class BasicPackageBuilder implements PackageBuilderContract
      */
     private function determineAuthorEmail(): string
     {
-        $question = vsprintf(
-            format: 'Please enter the author email of your package [%s]',
-            values: [
-                $this->gitCredentials->getEmail()
-            ]
+        // validation needed
+        return $this->io->ask(
+            question: 'Please enter the author email of your package.',
+            default: $this->gitCredentials->getEmail()
         );
-
-        return $this->feedback->ask(question: $question, defaultAnswer: $this->gitCredentials->getEmail());
     }
 
     /**
@@ -145,9 +144,11 @@ class BasicPackageBuilder implements PackageBuilderContract
      */
     private function determineStability(): string
     {
-        $question = 'Please select your minimum stability [stable]';
-
-        return $this->feedback->ask(question: $question, defaultAnswer: 'stable');
+        // validation needed, or choice question
+        return $this->io->ask(
+            question: 'Please select your minimum stability.',
+            default: 'stable'
+        );
     }
 
     /**
@@ -155,8 +156,9 @@ class BasicPackageBuilder implements PackageBuilderContract
      */
     private function determineLicense(): string
     {
-        $question = 'Please enter the license for your package [MIT]';
-
-        return $this->feedback->ask(question: $question, defaultAnswer: 'MIT');
+        return $this->io->ask(
+            question: 'Please enter the license for your package.',
+            default: 'MIT'
+        );
     }
 }

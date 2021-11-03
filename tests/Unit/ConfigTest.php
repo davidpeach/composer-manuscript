@@ -37,7 +37,9 @@ class ConfigTest extends TestCase
         );
 
         // when newing up the config
-        new Config($this->directory, $this->fs);
+        $config = new Config($this->directory, $this->fs);
+
+        $config->init();
 
         // the config should be created with default content
         $this->assertTrue(
@@ -77,7 +79,7 @@ class ConfigTest extends TestCase
 
         // when updating the key to a new value
         $config = new Config($this->directory, $this->fs);
-        $config->updateConfig('git_personal_access_token', 'FRESH_TEST_TOKEN');
+        $config->update('git_personal_access_token', 'FRESH_TEST_TOKEN');
 
         //when accessing that key should get the new value
         $this->assertEquals(

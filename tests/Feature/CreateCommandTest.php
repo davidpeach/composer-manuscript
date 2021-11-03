@@ -5,6 +5,7 @@ namespace DavidPeach\Manuscript\Tests\Feature;
 use DavidPeach\Manuscript\Commands\CreateCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -40,16 +41,19 @@ class CreateCommandTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->setInputs([
-            'manuscript-test/package-name',
-            'This is the manuscript test package',
             'David Peach',
             'test@example.com',
+            'manuscript-test',
+            'package-name',
+            'This is the manuscript test package',
             'stable',
             'MIT',
         ]);
-//        dd($this->directory . '/valid');
+
         $commandTester->execute([
-            '--install-dir' => $this->directory . '/valid',
+            '--dir' => $this->directory . '/valid',
+        ],[
+            'capture_stderr_separately' => true,
         ]);
 
         $this->assertEquals(
@@ -123,16 +127,17 @@ class CreateCommandTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->setInputs([
-            'manuscript-test/package-name',
-            'This is the manuscript test package',
             'David Peach',
             'test@example.com',
+            'manuscript-test',
+            'package-name',
+            'This is the manuscript test package',
             'stable',
             'MIT',
         ]);
 
         $commandTester->execute([
-            '--install-dir' => $this->directory . '/valid',
+            '--dir' => $this->directory . '/valid',
         ]);
 
         $this->assertEquals(
@@ -152,8 +157,11 @@ class CreateCommandTest extends TestCase
         $command = new CreateCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
         $commandTester = new CommandTester($command);
+
+        $this->expectException(LogicException::class);
+
         $commandTester->execute([
-            '--install-dir' => $this->directory . '/invalid',
+            '--dir' => $this->directory . '/invalid',
         ], ['capture_stderr_separately' => true]);
 
         $this->assertEquals(

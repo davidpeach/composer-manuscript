@@ -6,14 +6,14 @@ use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\GithubPackageFromTemplate;
 use DavidPeach\Manuscript\GithubRepository;
-use DavidPeach\Manuscript\Feedback;
+use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Exception;
 
 class SpatiePackageBuilder implements PackageBuilderContract
 {
-    const TEMPLATE_OWNER = 'spatie';
+    const TEMPLATE_OWNER = 'davidpeach';
 
     const TEMPLATE_REPOSITORY = 'package-skeleton-laravel';
 
@@ -21,7 +21,7 @@ class SpatiePackageBuilder implements PackageBuilderContract
 
     public function __construct(
         private string   $root,
-        private Feedback $feedback,
+        private StyleInterface $io,
         private Config   $config
     )
     {
@@ -45,24 +45,24 @@ class SpatiePackageBuilder implements PackageBuilderContract
             }
 
             $token = $this->askForToken();
-            $this->config->updateConfig(key: 'git_personal_access_token', value: $token);
+            $this->config->update(key: 'git_personal_access_token', value: $token);
 
             self::$attempts += 1;
 
             return $this->build();
         }
 
-        $guessedNamespace = (new GitCredentials)->guessNamespace();
 
-        $question = vsprintf(
-            format: 'Please enter your GitHub username / package namespace [%s]',
-            values: [$guessedNamespace],
+        // validate
+        $namespace = $this->io->ask(
+            question: 'Please enter your GitHub username / package namespace',
+            default: (new GitCredentials)->guessNamespace()
         );
-        $namespace = $this->feedback->ask(question: $question, defaultAnswer: $guessedNamespace);
 
-        $repositoryName = $this->feedback->ask(
-            question: 'Please enter the name of your new repository [my-new-repository]',
-            defaultAnswer: 'my-new-repository'
+        // validate
+        $repositoryName = $this->io->ask(
+            question: 'Please enter the name of your new repository',
+            default: 'my-new-repository'
         );
 
         $newGithubPackage
@@ -109,14 +109,10 @@ class SpatiePackageBuilder implements PackageBuilderContract
      */
     private function askForToken(): string
     {
-        $question = 'Please enter your GitHub personal access token';
-
         if (self::$attempts > 0) {
-            $question .= self::$attempts . ' failed attempt(s) to validate GitHub personal access token';
+            $this->io->warning(message: self::$attempts . ' failed attempt(s) to validate GitHub personal access token');
         }
 
-        $question .= ' : ';
-
-        return $this->feedback->ask(question: $question, defaultAnswer: '');
+        return $this->io->ask(question: 'Please enter your GitHub personal access token', default: '');
     }
 }

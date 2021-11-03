@@ -2,7 +2,9 @@
 
 namespace DavidPeach\Manuscript;
 
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -15,9 +17,11 @@ class Feedback
      * @param OutputInterface $output
      */
     public function __construct(
-        private InputInterface $input,
+        private InputInterface  $input,
         private OutputInterface $output,
-    ){}
+    )
+    {
+    }
 
     /**
      * @param string $question
@@ -26,14 +30,18 @@ class Feedback
      */
     public function ask(string $question, string $defaultAnswer): string
     {
-        return (new QuestionHelper)->ask(
+        $answer = (new QuestionHelper)->ask(
             input: $this->input,
             output: $this->output,
             question: new Question(
-                $question,
-                $defaultAnswer,
+                question: $question,
+                default: $defaultAnswer,
             )
         );
+
+        $this->print(lines: []);
+
+        return $answer;
     }
 
     /**
@@ -60,6 +68,8 @@ class Feedback
      */
     public function print(array $lines): void
     {
+//        $this->output->writeln(messages: '');
         $this->output->writeln(messages: $lines);
+        $this->output->writeln(messages: '');
     }
 }
