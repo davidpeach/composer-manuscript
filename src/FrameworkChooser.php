@@ -6,6 +6,7 @@ use DavidPeach\Manuscript\Frameworks\Framework;
 use DavidPeach\Manuscript\Frameworks\Laravel6;
 use DavidPeach\Manuscript\Frameworks\Laravel7;
 use DavidPeach\Manuscript\Frameworks\Laravel8;
+use Symfony\Component\Console\Style\StyleInterface;
 
 class FrameworkChooser
 {
@@ -16,7 +17,7 @@ class FrameworkChooser
     ];
 
     public function __construct(
-        private Feedback $feedback
+        private StyleInterface $io
     ){}
 
     /**
@@ -24,14 +25,14 @@ class FrameworkChooser
      */
     public function choose(): Framework
     {
-        $chosenFramework = $this->feedback->choose(
+        $chosenFramework = $this->io->choice(
             question: 'Please select your framework',
             choices: array_keys($this->frameworks),
-            defaultKey: 0
+            default: 0
         );
 
-        $this->feedback->print(
-            lines: ['Installing ' . $chosenFramework . ' as your framework of choice.']
+        $this->io->info(
+            message: ['Installing ' . $chosenFramework . ' as your framework of choice.']
         );
 
         return new $this->frameworks[$chosenFramework];

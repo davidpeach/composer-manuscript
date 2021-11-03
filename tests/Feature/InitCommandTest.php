@@ -34,7 +34,7 @@ class InitCommandTest extends TestCase
         $command = new InitCommand;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            '--install-dir' => $directory,
+            '--dir' => $directory,
         ]);
 
         $this->assertTrue(
@@ -58,7 +58,7 @@ class InitCommandTest extends TestCase
         $command = new InitCommand;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            '--install-dir' => $directory,
+            '--dir' => $directory,
         ]);
 
         $output = $commandTester->getDisplay();

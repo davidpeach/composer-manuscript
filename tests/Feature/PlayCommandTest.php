@@ -44,7 +44,7 @@ class PlayCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--package-dir' => $this->directory . '/packages/test-package',
+            '--dir' => $this->directory . '/packages/test-package',
         ]);
 
         $this->assertTrue(
@@ -95,7 +95,7 @@ class PlayCommandTest extends TestCase
         ]);
 
         $commandTester->execute([
-            '--package-dir' => $invalidPackage,
+            '--dir' => $invalidPackage,
         ]);
 
         $this->assertEquals(

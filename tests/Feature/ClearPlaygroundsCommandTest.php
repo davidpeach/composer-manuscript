@@ -7,6 +7,7 @@ use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Playgrounds;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -74,19 +75,19 @@ class ClearPlaygroundsCommandTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            '--install-dir' => $this->root,
+            '--dir' => $this->root . '/valid',
         ]);
 
         $this->assertFalse(
-            $this->fs->exists($this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-1')
+            $this->fs->exists($this->root . '/valid/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-1')
         );
 
         $this->assertFalse(
-            $this->fs->exists($this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-2')
+            $this->fs->exists($this->root . '/valid/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-2')
         );
 
         $this->assertFalse(
-            $this->fs->exists($this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-3')
+            $this->fs->exists($this->root . '/valid/' . Playgrounds::PLAYGROUND_DIRECTORY . '/playground-3')
         );
 
     }
@@ -96,12 +97,15 @@ class ClearPlaygroundsCommandTest extends TestCase
     {
         $root = realpath(__DIR__ . '/../test-environments/commands/clear');
 
+
         $command = new ClearPlaygroundsCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
         $commandTester = new CommandTester($command);
 
+        $this->expectException(LogicException::class);
+
         $commandTester->execute([
-            '--install-dir' => $root . '/invalid',
+            '--dir' => $root . '/invalid',
         ], ['capture_stderr_separately' => true]);
 
         $this->assertEquals(

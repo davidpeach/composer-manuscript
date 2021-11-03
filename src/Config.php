@@ -13,7 +13,6 @@ class Config
         private Filesystem $filesystem,
     )
     {
-        $this->ensureConfigExists();
     }
 
     /**
@@ -40,7 +39,7 @@ class Config
      * @param $key
      * @param string|array $value
      */
-    public function updateConfig($key, string|array $value): void
+    public function update($key, string|array $value): void
     {
          $configFile = $this->getFullConfigPath();
          $configData = $this->getConfigData();
@@ -49,14 +48,15 @@ class Config
          file_put_contents(filename: $configFile, data: json_encode(value: $configData));
     }
 
-    private function ensureConfigExists(): void
+    public function exists(): bool
     {
-        $configFile = $this->getFullConfigPath();
+        return $this->filesystem->exists(files:  $this->getFullConfigPath());
+    }
 
-        if (!$this->filesystem->exists(files: $configFile)) {
-            $this->filesystem->touch(files: $configFile);
-            $this->updateConfig(key: 'init', value: []);
-        }
+    public function init(): void
+    {
+        $this->filesystem->touch(files: $this->getFullConfigPath());
+        $this->update(key: 'created_at', value: time());
     }
 
     /**

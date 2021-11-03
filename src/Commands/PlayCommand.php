@@ -5,7 +5,6 @@ namespace DavidPeach\Manuscript\Commands;
 use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
-use DavidPeach\Manuscript\Feedback;
 use DavidPeach\Manuscript\FrameworkChooser;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
@@ -19,18 +18,16 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class PlayCommand extends Command
+class PlayCommand extends BaseCommand
 {
     protected static $defaultName = 'play';
-
-    private Feedback $feedback;
 
     protected function configure(): void
     {
         $this
             ->addOption(
-                name: 'package-dir',
-                shortcut: 'p',
+                name: 'dir',
+                shortcut: 'd',
                 mode: InputOption::VALUE_OPTIONAL,
                 description: 'The root directory where your packages in development live. Defaults to the current directory.'
             )
@@ -45,29 +42,26 @@ class PlayCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $packageDirectory = ($input->getOption(name: 'package-dir') ?? getcwd());
-
-        $this->feedback = new Feedback(input: $input, output: $output);
-
         try {
             $package = (new PackageModelFactory(composer: new ComposerFileManager))
-                ->fromPath(pathToPackage: $packageDirectory);
+                ->fromPath(pathToPackage: $this->root);
         } catch (PackageModelNotCreatedException) {
-            $this->feedback->print(lines: ['Not a valid composer package. No action taken.']);
+            $this->io->error(message: ['Not a valid composer package. No action taken.']);
             return Command::INVALID;
         }
 
-        $root = $packageDirectory . '/../..';
+        $this->io->title(message: '🎪 Setting up a playground for your package: ' . $package->getName());
+
+        $root = $this->root . '/../..';
 
         $fs = new Filesystem;
 
         if (!$fs->exists(files: $root . '/.manuscript')) {
-            $this->feedback->print(lines: ['Not a manuscript directory. No action taken.']);
+            $this->io->error(message: ['Not a manuscript directory. No action taken.']);
             return Command::INVALID;
         }
 
-        $this->intro();
-
+        // Should this create?
         if (!$fs->exists(files: $root . '/playgrounds')) {
             $fs->mkdir(dirs: $root . '/playgrounds');
         }
@@ -75,7 +69,7 @@ class PlayCommand extends Command
         try {
             $playground = $this->getPlayground(root: $root);
         } catch (PackageModelNotCreatedException) {
-            $this->feedback->print(lines: ['Error setting up a package playground']);
+            $this->io->error(message: ['Error setting up a package playground']);
             return Command::FAILURE;
         }
 
@@ -85,34 +79,18 @@ class PlayCommand extends Command
                 playground: $playground
             );
         } catch (PackageInstallFailedException | ProcessFailedException) {
-            $this->feedback->print(lines: ['Error installing the package into the playground']);
+            $this->io->error(message: ['Error installing the package into the playground']);
             return Command::FAILURE;
         }
 
-        $this->outro(playground: $playground);
-
-        return Command::SUCCESS;
-    }
-
-    private function intro(): void
-    {
-        $this->feedback->print(lines: [
-            '🎼 Manuscript — Composer package scaffolding and environment helper',
-            '👌 Let\'s scaffold you a fresh composer package for you to start building.',
-        ]);
-    }
-
-    /**
-     * @param PackageModel $playground
-     */
-    private function outro(PackageModel $playground): void
-    {
-        $this->feedback->print(lines: [
-            '🎮 Playground setup complete!',
+        $this->io->success(message: [
+            '🎪 Playground setup complete!',
             '🎼 Thank You for using Manuscript.',
             'Your package has been installed into the playground at ' . realpath($playground->getPath()),
             'Any changes made to your package whilst developing it will be updated in the playground automatically.',
         ]);
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -128,10 +106,10 @@ class PlayCommand extends Command
 
         if (!empty($existingPlaygrounds)) {
 
-            $answer = $this->feedback->choose(
+            $answer = $this->io->choice(
                 question: 'Please select your framework playground, or select "new" to have a fresh one made for you.',
                 choices: array_merge([0 => 'new'], array_keys($existingPlaygrounds)),
-                defaultKey: 0
+                default: 0
             );
 
             if ($answer !== 'new') {
@@ -141,7 +119,7 @@ class PlayCommand extends Command
 
         if (is_null($playground)) {
 
-            $frameworks = new FrameworkChooser(feedback: $this->feedback);
+            $frameworks = new FrameworkChooser(io: $this->io);
 
             $chosenFramework = $frameworks->choose();
 

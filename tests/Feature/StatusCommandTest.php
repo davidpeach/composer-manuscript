@@ -28,7 +28,7 @@ class StatusCommandTest extends TestCase
         $command = new StatusCommand;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            '--install-dir' => $directory,
+            '--dir' => $directory,
         ]);
 
         $output = $commandTester->getDisplay();

@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript;
 
+use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
 use Symfony\Component\Finder\Finder;
 
 class Playgrounds
@@ -11,7 +12,6 @@ class Playgrounds
     /**
      * @param string $root
      * @return array
-     * @throws Exceptions\PackageModelNotCreatedException
      */
     public function discover(string $root): array
     {
@@ -29,8 +29,12 @@ class Playgrounds
         $modelFactory = new PackageModelFactory(composer: new ComposerFileManager);
 
         foreach ($finder as $file) {
-            $playground = $modelFactory->fromPath(pathToPackage: $file->getPathname());
-            $currentPlaygrounds[$playground->getFolderName()] = $playground;
+            try {
+                $playground = $modelFactory->fromPath(pathToPackage: $file->getPathname());
+                $currentPlaygrounds[$playground->getFolderName()] = $playground;
+            } catch (PackageModelNotCreatedException) {
+                // do nothing
+            }
         }
 
         return $currentPlaygrounds;
