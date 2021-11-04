@@ -17,7 +17,7 @@ rm -rf build && mkdir build &&
 cp -r bin/ src/ composer.json composer.lock LICENSE build/ && rm build/bin/build.php &&
 
 cd build &&
-composer install --no-dev &&
+composer install &&
 composer remove --dev symfony/framework-bundle &&
 composer remove --dev symfony/var-dumper &&
 composer remove --dev phpunit/phpunit &&
