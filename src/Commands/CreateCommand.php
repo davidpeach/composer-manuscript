@@ -19,28 +19,41 @@ class CreateCommand extends BaseCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this
             ->addOption(
                 name: 'play',
                 shortcut: 'p',
                 mode: InputOption::VALUE_OPTIONAL,
                 description: 'Setup a framework playground immediately after the fresh package is created.',
-                default: false
+                default: false,
             )
             ->addOption(
-                name: 'type',
-                shortcut: 't',
+                name: 'laravel',
+                shortcut: 'l',
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'Create a new laravel package using Spatie\'s excellent skeleton.',
+                description: 'Create a laravel package using Spatie\'s package skeleton',
+                default: false,
             )
-            ->addOption(
-                name: 'dir',
-                shortcut: 'd',
-                mode: InputOption::VALUE_OPTIONAL,
-                description: 'The root directory where your packages in development live. Defaults to the current directory.'
+            ->setDescription(
+                description: 'Scaffold a new composer package. Pass the "-l" or "--laravel" flag to scaffold a Laravel package using Spatie\'s package skeleton.',
             )
-            ->setHelp(help: 'This command will enable you to easily scaffold a composer package and have a playground in which to test your package as you build it.')
-            ->setDescription(description: 'Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
+            ->setHelp(
+                help:
+                '=== BASIC PACKAGE ===' . PHP_EOL .
+                'The basic package scaffolding will ask you a few questions about your package' . PHP_EOL .
+                'and just pass those to the "composer init" command.' . PHP_EOL . PHP_EOL .
+
+                '=== LARAVEL PACKAGE ===' . PHP_EOL .
+                'If you pass the "-l" or "--laravel" flag, it will use Spatie\'s package skeleton to create a Laravel package.' . PHP_EOL .
+                'For this, you will need to generate a Github Personal Access Token and pass that to manuscript when asked.' .
+                PHP_EOL .
+                'It will then create a new repository in your account using the package skeleton and clone it down '
+                . PHP_EOL .
+                'into your manuscript packages directory.' . PHP_EOL .
+                'You will then be presented with some quick questions by the package scaffold configure script to set up your class and file names.' . PHP_EOL
+            );
     }
 
     /**
@@ -50,18 +63,22 @@ class CreateCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->io->title(message: '📦 Scaffolding a new composer package');
+        if ($input->getOption(name: 'laravel') === null) {
+            $this->io->title(message: '📦 Scaffolding a new LARAVEL composer package');
+        } else {
+            $this->io->title(message: '📦 Scaffolding a new BASIC composer package');
+        }
 
         $packagesDirectory = $this->root . '/packages';
 
         try {
-            $packagePath = match ($input->getOption(name: 'type')) {
-                null => (new BasicPackageBuilder(
+            $packagePath = match ($input->getOption(name: 'laravel')) {
+                false => (new BasicPackageBuilder(
                     root: $packagesDirectory,
                     gitCredentials: new GitCredentials,
                     io: $this->io,
                 ))->build(),
-                'laravel' => (new SpatiePackageBuilder(
+                null => (new SpatiePackageBuilder(
                     root: $packagesDirectory,
                     io: $this->io,
                     config: $this->config

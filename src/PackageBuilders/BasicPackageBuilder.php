@@ -41,17 +41,13 @@ class BasicPackageBuilder implements PackageBuilderContract
 
         $packagePath = $this->root . '/' . $packageName;
 
-        try {
-            $fs = new Filesystem;
+        $fs = new Filesystem;
 
-            if ($fs->exists(files: $packagePath)) {
-                throw new Exception(message: "Package folder name already exists");
-            }
-
-            $fs->mkdir(dirs: $packagePath);
-        } catch (Throwable $e) {
-            throw $e;
+        if ($fs->exists(files: $packagePath)) {
+            throw new Exception(message: "Package folder name already exists");
         }
+
+        $fs->mkdir(dirs: $packagePath);
 
         $composerBuildCommand = implode(
             separator: ' ',

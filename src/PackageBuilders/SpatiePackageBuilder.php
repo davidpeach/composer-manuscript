@@ -13,7 +13,7 @@ use Exception;
 
 class SpatiePackageBuilder implements PackageBuilderContract
 {
-    const TEMPLATE_OWNER = 'davidpeach';
+    const TEMPLATE_OWNER = 'spatie';
 
     const TEMPLATE_REPOSITORY = 'package-skeleton-laravel';
 

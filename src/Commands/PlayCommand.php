@@ -14,7 +14,6 @@ use DavidPeach\Manuscript\Playgrounds;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -24,15 +23,12 @@ class PlayCommand extends BaseCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this
-            ->addOption(
-                name: 'dir',
-                shortcut: 'd',
-                mode: InputOption::VALUE_OPTIONAL,
-                description: 'The root directory where your packages in development live. Defaults to the current directory.'
-            )
-            ->setHelp(help: 'This command will enable you to easily scaffold a composer package and have a playground in which to test your package as you build it.')
-            ->setDescription(description: 'Setup a composer package development environment. Either with a freshly-scaffolded package (the default) or for an existing package in development.');
+            ->setDescription(
+                description: 'When ran from inside a package (that lives inside the manuscript packages directory), it will install that package into a local framework playground.'
+            );
     }
 
     /**
