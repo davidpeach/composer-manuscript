@@ -1,4 +1,7 @@
 .phpunit.result.cache
 vendor
-tests/test-environments/**/manuscript-playgrounds/**
+tests/test-environments/**/playgrounds/**
+tests/test-environments/commands/init/empty/.manuscript
 .idea
+build
+/manuscript-*.phar

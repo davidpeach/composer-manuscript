@@ -1,0 +1,14 @@
+{
+  "name": "manuscript-testing/playground-two",
+  "description": "Test playground two.",
+  "require": {
+    "php": "^8.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Peach",
+      "email": "mail@davidpeach.co.uk"
+    }
+  ]
+}

@@ -35,6 +35,10 @@
         "symfony/filesystem": "^5.3",
         "knplabs/github-api": "dev-master",
         "guzzlehttp/guzzle": "^7.0.1",
-        "http-interop/http-factory-guzzle": "^1.0"
+        "http-interop/http-factory-guzzle": "^1.0",
+        "clue/phar-composer": "^1.2"
+    },
+    "scripts": {
+        "build": "@php bin/build.php"
     }
 }

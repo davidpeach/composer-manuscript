@@ -1,0 +1,14 @@
+{
+  "name": "%NAME%",
+  "description": "%NAME%",
+  "require": {
+    "php": "^8.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Peach",
+      "email": "mail@davidpeach.co.uk"
+    }
+  ]
+}

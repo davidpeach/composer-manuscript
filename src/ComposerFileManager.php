@@ -2,32 +2,49 @@
 
 namespace DavidPeach\Manuscript;
 
-use Illuminate\Support\Str;
+use DavidPeach\Manuscript\Exceptions\ComposerFileNotFoundException;
 
 class ComposerFileManager
 {
     const COMPOSER_FILE_NAME = 'composer.json';
 
-    public static function read(string $pathToFile): array
+    /**
+     * @param string $pathToFile
+     * @return array
+     * @throws ComposerFileNotFoundException
+     */
+    public function read(string $pathToFile): array
     {
-        if (! Str::endsWith($pathToFile, self::COMPOSER_FILE_NAME)) {
-            Str::finish($pathToFile, '/') . self::COMPOSER_FILE_NAME;
+        if (!str_ends_with(haystack: $pathToFile, needle: self::COMPOSER_FILE_NAME)) {
+            $pathToFile = rtrim(string: $pathToFile, characters: '/') . '/' . self::COMPOSER_FILE_NAME;
         }
 
-        return json_decode(file_get_contents($pathToFile), true);
+        if (!file_exists(filename: $pathToFile)) {
+            throw new ComposerFileNotFoundException(message: 'Composer file not found at ' . $pathToFile);
+        }
+
+        return json_decode(json: file_get_contents(filename: $pathToFile), associative: true);
     }
 
-    public static function add(string $pathToFile, array $toAdd): void
+    /**
+     * @param string $pathToFile
+     * @param array $toAdd
+     * @throws ComposerFileNotFoundException
+     */
+    public function add(string $pathToFile, array $toAdd): void
     {
         $composerArray = array_merge_recursive(
-            self::read($pathToFile),
+            $this->read(pathToFile: $pathToFile),
             $toAdd
         );
 
-        $composerArray['require'] = (object) $composerArray['require'];
+        $composerArray['require'] = (object)$composerArray['require'];
 
-        $updatedComposerJson = json_encode($composerArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
+        $updatedComposerJson = json_encode(
+            value: $composerArray,
+            flags: JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT
+        );
 
-        file_put_contents($pathToFile, $updatedComposerJson);
+        file_put_contents(filename: $pathToFile, data: $updatedComposerJson);
     }
 }
