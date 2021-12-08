@@ -98,6 +98,7 @@ class SpatiePackageBuilder implements PackageBuilderContract
         ];
 
         $process = Process::fromShellCommandline(implode(separator: ' && ', array: $commands));
+        $process->setTimeout(timeout: 3600);
         $process->setTty(tty: true);
         $process->run();
 

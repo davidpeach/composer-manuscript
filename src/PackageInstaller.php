@@ -38,6 +38,7 @@ class PackageInstaller
                 command: 'cd ' . $playground->getPath() . ' && composer require ' . $package->getName()
             );
 
+            $process->setTimeout(timeout: 3600);
             $process->run();
 
             if (!$process->isSuccessful()) {
