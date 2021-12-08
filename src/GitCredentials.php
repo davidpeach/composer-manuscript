@@ -19,6 +19,7 @@ class GitCredentials
             'user.name'
         ]);
 
+        $process->setTimeout(timeout: 3600);
         $process->run();
 
         if ($process->isSuccessful()) {
@@ -32,6 +33,7 @@ class GitCredentials
             'user.email'
         ]);
 
+        $process->setTimeout(timeout: 3600);
         $process->run();
 
         if ($process->isSuccessful()) {

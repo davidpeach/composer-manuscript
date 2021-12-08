@@ -54,6 +54,7 @@ class GithubRepository
             $this->localDirectory,
         ]);
 
+        $process->setTimeout(timeout: 3600);
         $process->run();
 
         if ($process->isSuccessful()) {

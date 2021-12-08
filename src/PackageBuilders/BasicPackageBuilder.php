@@ -68,6 +68,7 @@ class BasicPackageBuilder implements PackageBuilderContract
         ];
 
         $process = Process::fromShellCommandline(implode(separator: ' && ', array: $commands));
+        $process->setTimeout(timeout: 3600);
         $process->run();
 
         if (!$process->isSuccessful()) {
