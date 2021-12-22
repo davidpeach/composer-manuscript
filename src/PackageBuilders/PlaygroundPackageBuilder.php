@@ -35,6 +35,7 @@ class PlaygroundPackageBuilder implements PackageBuilderContract
         );
 
         $process = Process::fromShellCommandline(command: 'composer create-project ' . $installCommand);
+        $process->setTimeout(timeout: 3600);
         $process->run();
 
         if (!$process->isSuccessful()) {
