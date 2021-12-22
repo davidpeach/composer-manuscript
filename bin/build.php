@@ -31,5 +31,7 @@ vendor/bin/phar-composer build build/ ' . escapeshellarg($out) . ' &&
 mv ' . escapeshellarg($out) . ' bin/manuscript &&
 chmod a+x bin/manuscript &&
 
+rm -rf build
+
 echo -n "Reported version is: " && php bin/manuscript --version', $code);
 exit($code);
