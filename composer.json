@@ -21,7 +21,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DavidPeach\\Manuscript\\Tests\\": "tests/"
+            "DavidPeach\\Manuscript\\Tests\\": "tests/",
+            "DavidPeach\\Utils\\": "dev/"
         }
     },
     "require-dev": {
@@ -33,7 +34,7 @@
         "illuminate/support": "^8.42",
         "symfony/finder": "^5.2",
         "symfony/filesystem": "^5.3",
-        "knplabs/github-api": "dev-master",
+        "knplabs/github-api": "^3.4.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.0",
         "clue/phar-composer": "^1.2"
