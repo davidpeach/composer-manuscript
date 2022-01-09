@@ -7,7 +7,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-$app = new Symfony\Component\Console\Application('Manuscript', '5.0.3');
+$app = new Symfony\Component\Console\Application('Manuscript', '5.0.4');
 $app->add(new DavidPeach\Manuscript\Commands\InitCommand);
 $app->add(new DavidPeach\Manuscript\Commands\CreateCommand);
 $app->add(new DavidPeach\Manuscript\Commands\PlayCommand);

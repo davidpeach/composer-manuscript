@@ -33,10 +33,7 @@ class ComposerFileManager
      */
     public function add(string $pathToFile, array $toAdd): void
     {
-        $composerArray = array_merge_recursive(
-            $this->read(pathToFile: $pathToFile),
-            $toAdd
-        );
+        $composerArray = $this->merge($this->read(pathToFile: $pathToFile), $toAdd);
 
         $composerArray['require'] = (object)$composerArray['require'];
 
@@ -46,5 +43,40 @@ class ComposerFileManager
         );
 
         file_put_contents(filename: $pathToFile, data: $updatedComposerJson);
+    }
+
+    private function merge($composer, $wantToAdd): array
+    {
+        $okayToAdd = [];
+
+        foreach ($wantToAdd as $key => $additions) {
+
+            if (! array_key_exists(key: $key, array: $composer)) {
+                $okayToAdd[$key] = $additions;
+                continue;
+            }
+
+            $existing = array_map(function ($item) use ($key) {
+                return match ($key) {
+                    'repositories' => $item['url'],
+                    };
+                }, $composer[$key]);
+
+
+            $adding = array_filter($additions, function ($addition) use ($existing, $key) {
+                return match ($key) {
+                    'repositories' => !in_array(needle: $addition['url'], haystack: $existing),
+                };
+            });
+
+            if (! empty($adding)) {
+                $okayToAdd[$key] = $adding;
+            }
+        }
+
+        return array_merge_recursive(
+            $composer,
+            $okayToAdd
+        );
     }
 }

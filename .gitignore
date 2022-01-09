@@ -5,3 +5,6 @@ tests/test-environments/commands/init/empty/.manuscript
 .idea
 build
 /manuscript-*.phar
+scratchpad/packages
+scratchpad/playgrounds
+scratchpad/.manuscript
