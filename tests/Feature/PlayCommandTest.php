@@ -76,6 +76,9 @@ class PlayCommandTest extends TestCase
                 $this->directory . '/playgrounds/laravel-8-872812800/vendor/manuscript-test/test-package'
             )
         );
+
+        // Remove the playgrounds folder to stop PHPStorm from indexing it.
+        $this->fs->remove($this->directory . '/playgrounds');
     }
 
     /** @test */
