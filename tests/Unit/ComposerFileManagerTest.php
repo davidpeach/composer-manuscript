@@ -3,10 +3,8 @@
 namespace DavidPeach\Manuscript\Tests\Unit;
 
 use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\Playgrounds;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class ComposerFileManagerTest extends TestCase
 {

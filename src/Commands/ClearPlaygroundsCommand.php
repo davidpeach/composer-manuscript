@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Playgrounds;
+use DavidPeach\Manuscript\Finders\Playgrounds;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,7 +31,7 @@ class ClearPlaygroundsCommand extends BaseCommand
     {
         $fs = new Filesystem;
 
-        if (! $fs->exists(files: $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY)) {
+        if (! $fs->exists(files: $this->root . '/' . $this->playgroundFinder->directoryToSearch())) {
             $this->io->error(message: ['Manuscript Playgrounds directory not found. No action taken.']);
             return Command::INVALID;
         }

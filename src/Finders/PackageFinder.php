@@ -1,21 +1,21 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Finders;
 
+use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
+use DavidPeach\Manuscript\PackageModelFactory;
 use Symfony\Component\Finder\Finder;
 
-class Packages
+abstract class PackageFinder
 {
-    const PACKAGES_DIRECTORY = 'packages';
-
     /**
      * @param string $root
      * @return array
      */
     public function discover(string $root): array
     {
-        $directory = $root . '/' . self::PACKAGES_DIRECTORY;
+        $directory = $root . '/' . $this->directoryToSearch();
 
         $finder = new Finder;
 
@@ -39,4 +39,6 @@ class Packages
 
         return $currentPlaygrounds;
     }
+
+    abstract public function directoryToSearch(): string;
 }

@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\Finders\Packages;
 use DavidPeach\Manuscript\PackageModel;
-use DavidPeach\Manuscript\Packages;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;

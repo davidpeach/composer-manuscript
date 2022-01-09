@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Playgrounds;
+use DavidPeach\Manuscript\Finders\Playgrounds;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;

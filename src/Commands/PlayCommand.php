@@ -5,16 +5,16 @@ namespace DavidPeach\Manuscript\Commands;
 use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
+use DavidPeach\Manuscript\Finders\Playgrounds;
 use DavidPeach\Manuscript\FrameworkChooser;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\PackageModel;
 use DavidPeach\Manuscript\PackageModelFactory;
-use DavidPeach\Manuscript\Playgrounds;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PlayCommand extends BaseCommand
@@ -120,7 +120,7 @@ class PlayCommand extends BaseCommand
             $chosenFramework = $frameworks->choose();
 
             $pathToPlayground = (new PlaygroundPackageBuilder(
-                root: $root . '/' . Playgrounds::PLAYGROUND_DIRECTORY,
+                root: $root . '/' . $this->playgroundFinder->directoryToSearch(),
                 framework: $chosenFramework
             ))->build();
 
