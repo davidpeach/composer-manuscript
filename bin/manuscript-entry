@@ -12,5 +12,6 @@ $app->add(new DavidPeach\Manuscript\Commands\InitCommand);
 $app->add(new DavidPeach\Manuscript\Commands\CreateCommand);
 $app->add(new DavidPeach\Manuscript\Commands\PlayCommand);
 $app->add(new DavidPeach\Manuscript\Commands\ClearPlaygroundsCommand);
+$app->add(new DavidPeach\Manuscript\Commands\ListPackagesCommand);
 
 $app->run();

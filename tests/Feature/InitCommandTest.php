@@ -6,7 +6,6 @@ use DavidPeach\Manuscript\Commands\InitCommand;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class InitCommandTest extends TestCase
 {
