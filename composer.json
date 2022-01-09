@@ -45,6 +45,7 @@
         "m-init": "@manuscript init --dir=scratchpad",
         "m-create": "@manuscript create --dir=scratchpad",
         "m-play": "@manuscript play --dir=scratchpad/packages/my-new-package",
-        "m-clear": "@manuscript clear --dir=scratchpad"
+        "m-clear": "@manuscript clear --dir=scratchpad",
+        "m-list-packages": "@manuscript list:packages --dir=scratchpad"
     }
 }
