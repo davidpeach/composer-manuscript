@@ -21,8 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DavidPeach\\Manuscript\\Tests\\": "tests/",
-            "DavidPeach\\Utils\\": "dev/"
+            "DavidPeach\\Manuscript\\Tests\\": "tests/"
         }
     },
     "require-dev": {
