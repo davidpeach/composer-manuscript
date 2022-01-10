@@ -5,12 +5,14 @@ namespace DavidPeach\Manuscript\Commands;
 use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
-use DavidPeach\Manuscript\Finders\Playgrounds;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use DavidPeach\Manuscript\FrameworkChooser;
+use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\PackageModel;
-use DavidPeach\Manuscript\PackageModelFactory;
+use DavidPeach\Manuscript\DevPackageModelFactory;
+use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,8 +41,9 @@ class PlayCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $package = (new PackageModelFactory(composer: new ComposerFileManager))
-                ->fromPath(pathToPackage: $this->root);
+            $package = (new DevPackageModelFactory(
+                composer: new ComposerFileManager
+            ))->fromPath(pathToPackage: $this->root);
         } catch (PackageModelNotCreatedException) {
             $this->io->error(message: ['Not a valid composer package. No action taken.']);
             return Command::INVALID;
@@ -98,7 +101,7 @@ class PlayCommand extends BaseCommand
     {
         $playground = null;
 
-        $existingPlaygrounds = (new Playgrounds)->discover(root: $root);
+        $existingPlaygrounds = (new PlaygroundPackages)->discover(root: $root);
 
         if (!empty($existingPlaygrounds)) {
 
@@ -124,7 +127,7 @@ class PlayCommand extends BaseCommand
                 framework: $chosenFramework
             ))->build();
 
-            return (new PackageModelFactory(composer: new ComposerFileManager))
+            return (new PlaygroundPackageModelFactory(composer: new ComposerFileManager))
                 ->fromPath(pathToPackage: $pathToPlayground);
         }
 

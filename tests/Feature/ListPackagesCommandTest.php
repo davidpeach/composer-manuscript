@@ -3,6 +3,7 @@
 namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\ListPackagesCommand;
+use DavidPeach\Manuscript\DevPackageModelFactory;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -25,6 +26,14 @@ class ListPackagesCommandTest extends TestCase
     /** @test */
     public function it_can_list_all_local_packages_in_the_packages_directory()
     {
+//        $mock = $this->createPartialMock(DevPackageModelFactory::class, [
+//            'determineCurrentBranch',
+//        ]);
+//        $mock->expects($this->once())
+//            ->method('determineCurrentBranch')
+//            ->willReturn('foo/branch');
+
+
         $command = new ListPackagesCommand;
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 

@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Finders\Packages;
-use DavidPeach\Manuscript\PackageModel;
+use DavidPeach\Manuscript\DevPackageModel;
+use DavidPeach\Manuscript\Finders\DevPackages;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,15 +22,15 @@ class ListPackagesCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $packages = (new Packages())->discover($this->root);
+        $packages = (new DevPackages())->discover($this->root);
 
-        $packages = array_map(function (PackageModel $package) {
-            return [ $package->getName() ];
+        $packages = array_map(function (DevPackageModel $package) {
+            return [ $package->getName(), $package->getCurrentBranch() ];
         }, $packages);
 
         $table = new Table($output);
         $table
-            ->setHeaders(['Package Name'])
+            ->setHeaders(['Package Name', 'Current branch'])
             ->setRows($packages)
         ;
         $table->render();

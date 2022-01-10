@@ -5,10 +5,12 @@ namespace DavidPeach\Manuscript;
 use DavidPeach\Manuscript\Exceptions\ComposerFileNotFoundException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
 
-class PackageModelFactory
+abstract class PackageModelFactory
 {
+    protected PackageModel $packageModel;
+
     public function __construct(
-        private ComposerFileManager $composer
+        protected ComposerFileManager $composer
     ){}
 
     /**
@@ -21,16 +23,18 @@ class PackageModelFactory
         try {
             $composerData = $this->composer->read(pathToFile: $pathToPackage);
 
-            $packageModel = new PackageModel;
+            $this->packageModel = $this->getPackageModel();
 
-            $packageModel->setName(name: $composerData['name']);
+            $this->packageModel->setName(name: $composerData['name']);
 
-            $packageModel->setPath(path: $pathToPackage);
+            $this->packageModel->setPath(path: $pathToPackage);
 
             $pathParts = explode(separator: DIRECTORY_SEPARATOR, string: $pathToPackage);
-            $packageModel->setFolderName(folderName: end($pathParts));
+            $this->packageModel->setFolderName(folderName: end($pathParts));
 
-            return $packageModel;
+            $this->setAdditionalPackageAttributes();
+
+            return $this->packageModel;
         } catch (ComposerFileNotFoundException $e) {
             throw new PackageModelNotCreatedException(
                 message: 'Not a valid composer package. No action taken.',
@@ -39,4 +43,8 @@ class PackageModelFactory
             );
         }
     }
+
+    abstract protected function getPackageModel(): PackageModel;
+
+    abstract protected function setAdditionalPackageAttributes(): void;
 }

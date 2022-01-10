@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Finders\Playgrounds;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,7 +36,7 @@ class ClearPlaygroundsCommand extends BaseCommand
             return Command::INVALID;
         }
 
-        $playgrounds = (new Playgrounds)->discover(root: $this->root);
+        $playgrounds = (new PlaygroundPackages)->discover(root: $this->root);
 
         foreach ($playgrounds as $playground) {
             $fs->remove(files: $playground->getPath());

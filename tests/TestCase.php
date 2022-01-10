@@ -2,22 +2,22 @@
 
 namespace DavidPeach\Manuscript\Tests;
 
-use DavidPeach\Manuscript\Finders\Packages;
-use DavidPeach\Manuscript\Finders\Playgrounds;
+use DavidPeach\Manuscript\Finders\DevPackages;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TestCase extends KernelTestCase
 {
-    protected Packages $packageFinder;
+    protected DevPackages $packageFinder;
 
-    protected Playgrounds $playgroundFinder;
+    protected PlaygroundPackages $playgroundFinder;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->packageFinder = new Packages();
+        $this->packageFinder = new DevPackages();
 
-        $this->playgroundFinder = new Playgrounds();
+        $this->playgroundFinder = new PlaygroundPackages();
     }
 }

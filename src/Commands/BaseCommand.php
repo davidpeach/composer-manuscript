@@ -3,8 +3,8 @@
 namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\Config;
-use DavidPeach\Manuscript\Finders\Packages;
-use DavidPeach\Manuscript\Finders\Playgrounds;
+use DavidPeach\Manuscript\Finders\DevPackages;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
@@ -23,9 +23,9 @@ class BaseCommand extends Command
 
     protected Config $config;
 
-    protected Packages $packageFinder;
+    protected DevPackages $packageFinder;
 
-    protected Playgrounds $playgroundFinder;
+    protected PlaygroundPackages $playgroundFinder;
 
     protected function configure(): void
     {
@@ -50,9 +50,9 @@ class BaseCommand extends Command
 
         $this->config = (new Config(directory: $this->root, filesystem: new Filesystem));
 
-        $this->packageFinder = new Packages();
+        $this->packageFinder = new DevPackages();
 
-        $this->playgroundFinder = new Playgrounds();
+        $this->playgroundFinder = new PlaygroundPackages();
     }
 
     #[Pure] private function shouldBlock(string $directory): bool

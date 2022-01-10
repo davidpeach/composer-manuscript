@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript;
 
-class PackageModel
+abstract class PackageModel
 {
     private string $name;
 

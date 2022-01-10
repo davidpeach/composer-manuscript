@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Finders\Playgrounds;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +25,7 @@ class StatusCommand extends BaseCommand
     {
         $root = ($input->getOption(name: 'dir') ?? getcwd());
 
-        $playgrounds = (new Playgrounds)->discover(root: $root);
+        $playgrounds = (new PlaygroundPackages)->discover(root: $root);
 
         $tableRows = [];
 
