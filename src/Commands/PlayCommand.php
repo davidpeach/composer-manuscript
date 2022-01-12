@@ -4,16 +4,17 @@ namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use DavidPeach\Manuscript\FrameworkChooser;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\PackageModel;
-use DavidPeach\Manuscript\PackageModelFactory;
-use DavidPeach\Manuscript\Playgrounds;
-use Symfony\Component\Filesystem\Filesystem;
+use DavidPeach\Manuscript\DevPackageModelFactory;
+use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PlayCommand extends BaseCommand
@@ -21,8 +22,9 @@ class PlayCommand extends BaseCommand
     protected static $defaultName = 'play';
 
     public function __construct(
-        private Playgrounds $playgrounds,
-        private PackageModelFactory $modelFactory,
+        private DevPackageModelFactory $devPackageModelFactory,
+        private PlaygroundPackageModelFactory $playgroundPackageModelFactory,
+        private PlaygroundPackages $playgrounds,
         private PackageInstaller $packageInstaller,
         private FrameworkChooser $frameworkChooser,
         private PlaygroundPackageBuilder $playgroundPackageBuilder,
@@ -50,7 +52,7 @@ class PlayCommand extends BaseCommand
     {
         try {
 
-            $package = $this->modelFactory->fromPath(pathToPackage: $this->root);
+            $package = $this->devPackageModelFactory->fromPath(pathToPackage: $this->root);
 
         } catch (PackageModelNotCreatedException) {
             $this->io->error(message: ['Not a valid composer package. No action taken.']);
@@ -131,11 +133,12 @@ class PlayCommand extends BaseCommand
             $chosenFramework = $frameworks->choose();
 
             $pathToPlayground = $this->playgroundPackageBuilder
-                ->setRoot($root . '/' . Playgrounds::PLAYGROUND_DIRECTORY)
+                ->setRoot($root . '/' . $this->playgrounds->directoryToSearch())
                 ->setFramework($chosenFramework)
                 ->build();
 
-            return $this->modelFactory->fromPath(pathToPackage: $pathToPlayground);
+            return $this->playgroundPackageModelFactory->fromPath(pathToPackage: $pathToPlayground);
+
         }
 
         return $playground;

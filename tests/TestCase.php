@@ -2,6 +2,8 @@
 
 namespace DavidPeach\Manuscript\Tests;
 
+use DavidPeach\Manuscript\Finders\DevPackages;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use DavidPeach\Manuscript\Commands\ClearPlaygroundsCommand;
 use DavidPeach\Manuscript\Commands\CreateCommand;
 use DavidPeach\Manuscript\Commands\InitCommand;
@@ -12,21 +14,22 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TestCase extends KernelTestCase
 {
+    protected DevPackages $packageFinder;
+
+    protected PlaygroundPackages $playgroundFinder;
+
     protected Container $mContainer;
 
-    protected array $commands = [
-        'init' => InitCommand::class,
-        'create' => CreateCommand::class,
-        'clear' => ClearPlaygroundsCommand::class,
-        'play' => PlayCommand::class,
-        'status' => StatusCommand::class,
-    ];
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->mContainer = new Container();
+
+        $this->packageFinder = $this->mContainer->get(id: 'dev_packages_finder');
+
+        $this->playgroundFinder = $this->mContainer->get(id: 'playground_packages_finder');
     }
 
     protected function getCommand(string $command)

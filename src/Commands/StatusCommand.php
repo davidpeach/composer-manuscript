@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Playgrounds;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +13,7 @@ class StatusCommand extends BaseCommand
     protected static $defaultName = 'status';
 
     public function __construct(
-        private Playgrounds $playgrounds,
+        private PlaygroundPackages $playgrounds,
     )
     {
         parent::__construct();

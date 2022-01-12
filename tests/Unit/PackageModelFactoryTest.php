@@ -3,7 +3,8 @@
 namespace DavidPeach\Manuscript\Tests\Unit;
 
 use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\PackageModelFactory;
+use DavidPeach\Manuscript\DevPackageModelFactory;
+use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
 use DavidPeach\Manuscript\Tests\TestCase;
 
 class PackageModelFactoryTest extends TestCase
@@ -15,7 +16,7 @@ class PackageModelFactoryTest extends TestCase
         $pathToPackage = __DIR__ . '/../test-environments/package-model-factory-test/test-package';
 
         // When passing that path to the PackageModelFactory
-        $packageModel = (new PackageModelFactory(new ComposerFileManager))->fromPath($pathToPackage);
+        $packageModel = (new PlaygroundPackageModelFactory(new ComposerFileManager))->fromPath($pathToPackage);
 
         // Then I should get back a model that represents the package at that path
         $this->assertEquals(
