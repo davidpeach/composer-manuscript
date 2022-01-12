@@ -3,11 +3,15 @@
 namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\ListPackagesCommand;
+use DavidPeach\Manuscript\DevPackageModel;
 use DavidPeach\Manuscript\DevPackageModelFactory;
+use DavidPeach\Manuscript\Finders\DevPackages;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ListPackagesCommandTest extends TestCase
@@ -26,16 +30,26 @@ class ListPackagesCommandTest extends TestCase
     /** @test */
     public function it_can_list_all_local_packages_in_the_packages_directory()
     {
-//        $mock = $this->createPartialMock(DevPackageModelFactory::class, [
-//            'determineCurrentBranch',
-//        ]);
-//        $mock->expects($this->once())
-//            ->method('determineCurrentBranch')
-//            ->willReturn('foo/branch');
+        $mockedDevPackagesFinder = $this->getMockBuilder(className: DevPackages::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(methods: ['discover'])
+            ->getMock();
 
+        $packageA = new DevPackageModel();
+        $packageA->setName(name: 'manuscript-testing/package-a');
+        $packageA->setCurrentBranch(branch: 'foo-bar/baz-branch-1');
 
-        $command = $this->getCommand(command: 'list_packages_command');
-        $command->setHelperSet(new HelperSet([new QuestionHelper]));
+        $packageB = new DevPackageModel();
+        $packageB->setName(name: 'manuscript-testing/package-b');
+        $packageB->setCurrentBranch(branch: 'foo-bar/baz-branch-2');
+
+        $mockedDevPackagesFinder->method('discover')->willReturn(value: [
+            'package-a-folder' => $packageA,
+            'package-b-folder' => $packageB,
+        ]);
+
+        $command = new ListPackagesCommand($mockedDevPackagesFinder);
+        $command->setHelperSet(helperSet: new HelperSet(helpers: [new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
 
@@ -46,12 +60,22 @@ class ListPackagesCommandTest extends TestCase
         $output = $commandTester->getDisplay();
 
         $this->assertStringContainsString(
-            'manuscript-testing/package-one',
+            'manuscript-testing/package-a',
             $output
         );
 
         $this->assertStringContainsString(
-            'manuscript-testing/package-two',
+            'foo-bar/baz-branch-1',
+            $output
+        );
+
+        $this->assertStringContainsString(
+            'manuscript-testing/package-b',
+            $output
+        );
+
+        $this->assertStringContainsString(
+            'foo-bar/baz-branch-2',
             $output
         );
     }

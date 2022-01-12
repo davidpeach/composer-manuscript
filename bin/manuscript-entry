@@ -2,6 +2,7 @@
 <?php
 
 use DavidPeach\Manuscript\Container\Container;
+use Symfony\Component\DependencyInjection\Reference;
 
 if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../../../autoload.php';
@@ -9,4 +10,4 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-(new Container)->get(id: 'app')->run();
+(new Container)->get(id: new Reference('app'))->run();

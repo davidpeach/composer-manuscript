@@ -54,7 +54,8 @@ class Container extends ContainerBuilder
             ->addMethodCall(method: 'add', arguments: [new Reference(id: 'create_command')])
             ->addMethodCall(method: 'add', arguments: [new Reference(id: 'init_command')])
             ->addMethodCall(method: 'add', arguments: [new Reference(id: 'play_command')])
-            ->addMethodCall(method: 'add', arguments: [new Reference(id: 'status_command')]);
+            ->addMethodCall(method: 'add', arguments: [new Reference(id: 'status_command')])
+            ->addMethodCall(method: 'add', arguments: [new Reference(id: 'list_packages_command')]);
     }
 
     private function registerServices()
@@ -69,9 +70,6 @@ class Container extends ContainerBuilder
 
         $this->register(id: 'playground_packages_finder', class: PlaygroundPackages::class)
             ->setArgument(key: 'modelFactory', value: new Reference(id: 'playground_package_model_factory'));
-
-        $this->register(id: 'package_model_factory', class: PackageModelFactory::class)
-            ->setArgument(key: 'composer', value: new Reference(id: 'composer_file_manager'));
 
         $this->register(id: 'composer_file_manager', class: ComposerFileManager::class);
 

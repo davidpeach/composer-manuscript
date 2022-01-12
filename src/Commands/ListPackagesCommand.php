@@ -29,7 +29,7 @@ class ListPackagesCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $packages =$this->devPackages->discover($this->root);
+        $packages = $this->devPackages->discover($this->root);
 
         $packages = array_map(function (DevPackageModel $package) {
             return [ $package->getName(), $package->getCurrentBranch() ];
