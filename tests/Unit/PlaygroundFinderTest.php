@@ -2,7 +2,6 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Playgrounds;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -52,17 +51,19 @@ class PlaygroundFinderTest extends TestCase
             $composerStubContents
         );
 
-        $composerMock = $this->createMock(ComposerFileManager::class);
-        $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
+        // todo - check if needed.
+//        $composerMock = $this->createMock(ComposerFileManager::class);
+//        $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
+//        $this->mContainer->set('composer_file_manager', $composerMock);
 
-
-        $existingPlaygrounds = (new Playgrounds($composerMock))->discover($this->root);
+        $existingPlaygrounds = (new Playgrounds(
+            $this->mContainer->get('package_model_factory')
+        ))->discover($this->root);
 
         $this->assertIsArray($existingPlaygrounds);
 
         $this->assertArrayHasKey('playground-1', $existingPlaygrounds);
         $this->assertArrayHasKey('playground-2', $existingPlaygrounds);
         $this->assertArrayHasKey('playground-3', $existingPlaygrounds);
-
     }
 }

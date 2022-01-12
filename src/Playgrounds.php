@@ -9,6 +9,10 @@ class Playgrounds
 {
     const PLAYGROUND_DIRECTORY = 'playgrounds';
 
+    public function __construct(private PackageModelFactory $modelFactory)
+    {
+    }
+
     /**
      * @param string $root
      * @return array
@@ -26,11 +30,9 @@ class Playgrounds
 
         $currentPlaygrounds = [];
 
-        $modelFactory = new PackageModelFactory(composer: new ComposerFileManager);
-
         foreach ($finder as $file) {
             try {
-                $playground = $modelFactory->fromPath(pathToPackage: $file->getPathname());
+                $playground = $this->modelFactory->fromPath(pathToPackage: $file->getPathname());
                 $currentPlaygrounds[$playground->getFolderName()] = $playground;
             } catch (PackageModelNotCreatedException) {
                 // do nothing

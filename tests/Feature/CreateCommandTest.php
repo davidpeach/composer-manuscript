@@ -35,7 +35,7 @@ class CreateCommandTest extends TestCase
     /** @test */
     public function it_generates_a_new_bare_bones_composer_package()
     {
-        $command = new CreateCommand;
+        $command = $this->getCommand(command: 'create_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
@@ -121,7 +121,7 @@ class CreateCommandTest extends TestCase
         // Create the expected folder before running command.
         $this->fs->mkdir($this->directory . '/valid/packages/package-name');
 
-        $command = new CreateCommand;
+        $command = $this->getCommand(command: 'create_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
@@ -154,7 +154,7 @@ class CreateCommandTest extends TestCase
     /** @test */
     public function it_wont_generate_a_package_if_not_ran_from_inside_a_manuscript_root()
     {
-        $command = new CreateCommand;
+        $command = $this->getCommand(command: 'create_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
         $commandTester = new CommandTester($command);
 

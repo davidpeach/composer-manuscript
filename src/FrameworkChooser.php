@@ -10,15 +10,20 @@ use Symfony\Component\Console\Style\StyleInterface;
 
 class FrameworkChooser
 {
+    private ?StyleInterface $io = null;
+
     private array $frameworks = [
         'laravel6x' => Laravel6::class,
         'laravel7x' => Laravel7::class,
         'laravel8x' => Laravel8::class,
     ];
 
-    public function __construct(
-        private StyleInterface $io
-    ){}
+    public function setIO(StyleInterface $io): self
+    {
+        $this->io = $io;
+
+        return $this;
+    }
 
     /**
      * @return Framework

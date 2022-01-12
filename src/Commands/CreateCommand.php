@@ -2,7 +2,6 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
 use Symfony\Component\Console\Command\Command;
@@ -16,6 +15,14 @@ use Throwable;
 class CreateCommand extends BaseCommand
 {
     protected static $defaultName = 'create';
+
+    public function __construct(
+        private BasicPackageBuilder $basicPackageBuilder,
+        private SpatiePackageBuilder $spatiePackageBuilder,
+    )
+    {
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
@@ -73,16 +80,17 @@ class CreateCommand extends BaseCommand
 
         try {
             $packagePath = match ($input->getOption(name: 'laravel')) {
-                false => (new BasicPackageBuilder(
-                    root: $packagesDirectory,
-                    gitCredentials: new GitCredentials,
-                    io: $this->io,
-                ))->build(),
-                null => (new SpatiePackageBuilder(
-                    root: $packagesDirectory,
-                    io: $this->io,
-                    config: $this->config
-                ))->build(),
+
+                false => $this->basicPackageBuilder
+                    ->setRoot($packagesDirectory)
+                    ->setIO($this->io)
+                    ->build(),
+
+                null => $this->spatiePackageBuilder
+                    ->setRoot($packagesDirectory)
+                    ->setIO($this->io)
+                    ->build(),
+
                 default => throw new LogicException('Unknown package type')
             };
         } catch (Throwable $e) {

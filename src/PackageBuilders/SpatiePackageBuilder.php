@@ -20,11 +20,23 @@ class SpatiePackageBuilder implements PackageBuilderContract
     static int $attempts = 0;
 
     public function __construct(
-        private string   $root,
-        private StyleInterface $io,
         private Config   $config
     )
     {
+    }
+
+    public function setRoot(string $root): self
+    {
+        $this->root = $root;
+
+        return $this;
+    }
+
+    public function setIO(StyleInterface $io): self
+    {
+        $this->io = $io;
+
+        return $this;
     }
 
     /**
