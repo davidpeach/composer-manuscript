@@ -19,6 +19,8 @@ class SpatiePackageBuilder implements PackageBuilderContract
 
     static int $attempts = 0;
 
+    private string $root;
+
     public function __construct(
         private Config   $config
     )
@@ -45,6 +47,8 @@ class SpatiePackageBuilder implements PackageBuilderContract
      */
     public function build(): string
     {
+        $this->config->setDirectory($this->root . '/../');
+
         $token = $this->config->gitPersonalAccessToken() ?? $this->askForToken();
 
         $newGithubPackage = new GithubPackageFromTemplate(token: $token);
