@@ -34,7 +34,7 @@ class ListPackagesCommandTest extends TestCase
 //            ->willReturn('foo/branch');
 
 
-        $command = new ListPackagesCommand;
+        $command = $this->getCommand(command: 'list_packages_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);

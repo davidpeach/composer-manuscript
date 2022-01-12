@@ -25,7 +25,7 @@ class StatusCommandTest extends TestCase
     {
         $directory = $this->root . '/root-with-playgrounds';
 
-        $command = new StatusCommand;
+        $command = $this->getCommand(command: 'status_command');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             '--dir' => $directory,

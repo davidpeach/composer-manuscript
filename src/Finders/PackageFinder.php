@@ -3,11 +3,13 @@
 namespace DavidPeach\Manuscript\Finders;
 
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
-use DavidPeach\Manuscript\ModelFactory;
+use DavidPeach\Manuscript\PackageModelFactory;
 use Symfony\Component\Finder\Finder;
 
 abstract class PackageFinder
 {
+    protected PackageModelFactory $modelFactory;
+
     /**
      * @param string $root
      * @return array
@@ -25,12 +27,10 @@ abstract class PackageFinder
 
         $currentPlaygrounds = [];
 
-        $modelFactory = $this->getModelFactory();
-
         foreach ($finder as $file) {
             try {
-                $package = $modelFactory->fromPath(pathToPackage: $file->getPathname());
-                $currentPlaygrounds[$package->getFolderName()] = $package;
+                $playground = $this->modelFactory->fromPath(pathToPackage: $file->getPathname());
+                $currentPlaygrounds[$playground->getFolderName()] = $playground;
             } catch (PackageModelNotCreatedException) {
                 // do nothing
             }
@@ -41,5 +41,5 @@ abstract class PackageFinder
 
     abstract public function directoryToSearch(): string;
 
-    abstract protected function getModelFactory(): ModelFactory;
+//    abstract protected function getModelFactory(): ModelFactory;
 }

@@ -8,11 +8,18 @@ class Config
 {
     const MANUSCRIPT_CONFIG = '.manuscript';
 
+    private string $directory;
+
     public function __construct(
-        private string $directory,
         private Filesystem $filesystem,
     )
     {
+    }
+
+    public function setDirectory(string $root) {
+        $this->directory = $root;
+
+        return $this;
     }
 
     /**

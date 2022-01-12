@@ -12,6 +12,11 @@ class ClearPlaygroundsCommand extends BaseCommand
 {
     protected static $defaultName = 'clear-playgrounds';
 
+    public function __construct(private PlaygroundPackages $playgrounds)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         parent::configure();
@@ -31,12 +36,12 @@ class ClearPlaygroundsCommand extends BaseCommand
     {
         $fs = new Filesystem;
 
-        if (! $fs->exists(files: $this->root . '/' . $this->playgroundFinder->directoryToSearch())) {
+        if (! $fs->exists(files: $this->root . '/' . $this->playgrounds->directoryToSearch())) {
             $this->io->error(message: ['Manuscript Playgrounds directory not found. No action taken.']);
             return Command::INVALID;
         }
 
-        $playgrounds = (new PlaygroundPackages)->discover(root: $this->root);
+        $playgrounds = $this->playgrounds->discover(root: $this->root);
 
         foreach ($playgrounds as $playground) {
             $fs->remove(files: $playground->getPath());

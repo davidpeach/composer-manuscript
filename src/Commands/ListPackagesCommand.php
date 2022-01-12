@@ -13,6 +13,13 @@ class ListPackagesCommand extends BaseCommand
 {
     protected static $defaultName = 'list:packages';
 
+    public function __construct(
+        private DevPackages $devPackages,
+    )
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         parent::configure();
@@ -22,7 +29,7 @@ class ListPackagesCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $packages = (new DevPackages())->discover($this->root);
+        $packages =$this->devPackages->discover($this->root);
 
         $packages = array_map(function (DevPackageModel $package) {
             return [ $package->getName(), $package->getCurrentBranch() ];

@@ -2,12 +2,10 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
 use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use DavidPeach\Manuscript\FrameworkChooser;
-use DavidPeach\Manuscript\GitCredentials;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageInstaller;
 use DavidPeach\Manuscript\PackageModel;
@@ -22,6 +20,18 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 class PlayCommand extends BaseCommand
 {
     protected static $defaultName = 'play';
+
+    public function __construct(
+        private DevPackageModelFactory $devPackageModelFactory,
+        private PlaygroundPackageModelFactory $playgroundPackageModelFactory,
+        private PlaygroundPackages $playgrounds,
+        private PackageInstaller $packageInstaller,
+        private FrameworkChooser $frameworkChooser,
+        private PlaygroundPackageBuilder $playgroundPackageBuilder,
+    )
+    {
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
@@ -41,9 +51,9 @@ class PlayCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $package = (new DevPackageModelFactory(
-                composer: new ComposerFileManager
-            ))->fromPath(pathToPackage: $this->root);
+
+            $package = $this->devPackageModelFactory->fromPath(pathToPackage: $this->root);
+
         } catch (PackageModelNotCreatedException) {
             $this->io->error(message: ['Not a valid composer package. No action taken.']);
             return Command::INVALID;
@@ -73,9 +83,9 @@ class PlayCommand extends BaseCommand
         }
 
         try {
-            (new PackageInstaller(composer: new ComposerFileManager))->install(
+            $this->packageInstaller->install(
                 package: $package,
-                playground: $playground
+                playground: $playground,
             );
         } catch (PackageInstallFailedException | ProcessFailedException) {
             $this->io->error(message: ['Error installing the package into the playground']);
@@ -101,7 +111,7 @@ class PlayCommand extends BaseCommand
     {
         $playground = null;
 
-        $existingPlaygrounds = (new PlaygroundPackages)->discover(root: $root);
+        $existingPlaygrounds = $this->playgrounds->discover(root: $root);
 
         if (!empty($existingPlaygrounds)) {
 
@@ -118,17 +128,17 @@ class PlayCommand extends BaseCommand
 
         if (is_null($playground)) {
 
-            $frameworks = new FrameworkChooser(io: $this->io);
+            $frameworks = $this->frameworkChooser->setIo($this->io);
 
             $chosenFramework = $frameworks->choose();
 
-            $pathToPlayground = (new PlaygroundPackageBuilder(
-                root: $root . '/' . $this->playgroundFinder->directoryToSearch(),
-                framework: $chosenFramework
-            ))->build();
+            $pathToPlayground = $this->playgroundPackageBuilder
+                ->setRoot($root . '/' . $this->playgrounds->directoryToSearch())
+                ->setFramework($chosenFramework)
+                ->build();
 
-            return (new PlaygroundPackageModelFactory(composer: new ComposerFileManager))
-                ->fromPath(pathToPackage: $pathToPlayground);
+            return $this->playgroundPackageModelFactory->fromPath(pathToPackage: $pathToPlayground);
+
         }
 
         return $playground;

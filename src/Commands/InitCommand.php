@@ -2,6 +2,9 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\Config;
+use DavidPeach\Manuscript\Finders\DevPackages;
+use DavidPeach\Manuscript\Finders\PlaygroundPackages;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,6 +13,15 @@ use Symfony\Component\Filesystem\Filesystem;
 class InitCommand extends BaseCommand
 {
     protected static $defaultName = 'init';
+
+    public function __construct(
+        private Config $config,
+        private PlaygroundPackages $playgroundFinder,
+        private DevPackages $devPackageFinder,
+    )
+    {
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
@@ -20,6 +32,8 @@ class InitCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->config->setDirectory($this->root);
+
         $fs = new Filesystem;
 
         if ($fs->exists(files: $this->root . '/' . $this->playgroundFinder->directoryToSearch())) {
@@ -29,10 +43,10 @@ class InitCommand extends BaseCommand
             $this->io->success(message: ['Playgrounds directory created.']);
         }
 
-        if ($fs->exists(files: $this->root . '/' . $this->packageFinder->directoryToSearch())) {
+        if ($fs->exists(files: $this->root . '/' . $this->devPackageFinder->directoryToSearch())) {
             $this->io->warning(message: ['Packages directory already exists. No action taken.']);
         } else {
-            $fs->mkdir(dirs: $this->root . '/' . $this->packageFinder->directoryToSearch());
+            $fs->mkdir(dirs: $this->root . '/' . $this->devPackageFinder->directoryToSearch());
             $this->io->success(message: ['Packages directory created.']);
         }
 
