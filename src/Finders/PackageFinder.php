@@ -40,6 +40,4 @@ abstract class PackageFinder
     }
 
     abstract public function directoryToSearch(): string;
-
-//    abstract protected function getModelFactory(): ModelFactory;
 }

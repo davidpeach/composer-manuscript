@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript;
 
-class PlaygroundPackageModelFactory extends PackageModelFactory implements ModelFactory
+class PlaygroundPackageModelFactory extends PackageModelFactory
 {
     protected function getPackageModel(): PlaygroundPackageModel
     {

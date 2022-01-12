@@ -4,7 +4,7 @@ namespace DavidPeach\Manuscript;
 
 use Symfony\Component\Process\Process;
 
-class DevPackageModelFactory extends PackageModelFactory implements ModelFactory
+class DevPackageModelFactory extends PackageModelFactory
 {
     protected function getPackageModel(): DevPackageModel
     {

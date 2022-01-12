@@ -3,7 +3,6 @@
 namespace DavidPeach\Manuscript\Finders;
 
 use DavidPeach\Manuscript\PackageModelFactory;
-use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
 
 class PlaygroundPackages extends PackageFinder
 {
@@ -15,9 +14,4 @@ class PlaygroundPackages extends PackageFinder
     {
         return 'playgrounds';
     }
-
-//    protected function getModelFactory(): ModelFactory
-//    {
-//        return new PlaygroundPackageModelFactory(composer: new ComposerFileManager);
-//    }
 }
