@@ -9,11 +9,22 @@ use Symfony\Component\Process\Process;
 
 class PlaygroundPackageBuilder implements PackageBuilderContract
 {
-    public function __construct(
-        private string    $root,
-        private Framework $framework,
-    )
+    private string $root;
+
+    private Framework $framework;
+
+    public function setRoot(string $root): self
     {
+        $this->root = $root;
+
+        return $this;
+    }
+
+    public function setFramework(Framework $framework): self
+    {
+        $this->framework = $framework;
+
+        return $this;
     }
 
     /**

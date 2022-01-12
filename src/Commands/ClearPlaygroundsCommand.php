@@ -12,6 +12,11 @@ class ClearPlaygroundsCommand extends BaseCommand
 {
     protected static $defaultName = 'clear-playgrounds';
 
+    public function __construct(private Playgrounds $playgrounds)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         parent::configure();
@@ -36,7 +41,7 @@ class ClearPlaygroundsCommand extends BaseCommand
             return Command::INVALID;
         }
 
-        $playgrounds = (new Playgrounds)->discover(root: $this->root);
+        $playgrounds = $this->playgrounds->discover(root: $this->root);
 
         foreach ($playgrounds as $playground) {
             $fs->remove(files: $playground->getPath());

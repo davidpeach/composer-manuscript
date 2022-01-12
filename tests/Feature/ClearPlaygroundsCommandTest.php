@@ -69,7 +69,7 @@ class ClearPlaygroundsCommandTest extends TestCase
         $composerMock = $this->createMock(ComposerFileManager::class);
         $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
 
-        $command = new ClearPlaygroundsCommand;
+        $command = $this->getCommand(command: 'clear_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         $commandTester = new CommandTester($command);
@@ -98,7 +98,7 @@ class ClearPlaygroundsCommandTest extends TestCase
         $root = realpath(__DIR__ . '/../test-environments/commands/clear');
 
 
-        $command = new ClearPlaygroundsCommand;
+        $command = $this->getCommand(command: 'clear_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
         $commandTester = new CommandTester($command);
 

@@ -32,7 +32,7 @@ class PlayCommandTest extends TestCase
     /** @test */
     public function it_installs_a_laravel_playground_and_installs_the_package_into_the_playground_with_path_symlink()
     {
-        $command = new PlayCommand;
+        $command = $this->getCommand(command: 'play_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         Carbon::setTestNow('29th August 1997');
@@ -86,7 +86,7 @@ class PlayCommandTest extends TestCase
     {
         $invalidPackage = $this->directory . '/packages/invalid-package';
 
-        $command = new PlayCommand;
+        $command = $this->getCommand(command: 'play_command');
         $command->setHelperSet(new HelperSet([new QuestionHelper]));
 
         Carbon::setTestNow('29th August 1997');

@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
+use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\Playgrounds;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +13,11 @@ class InitCommand extends BaseCommand
 {
     protected static $defaultName = 'init';
 
+    public function __construct(private Config $config)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         parent::configure();
@@ -21,6 +27,8 @@ class InitCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->config->setDirectory($this->root);
+
         $fs = new Filesystem;
 
         if ($fs->exists(files: $this->root . '/' . Playgrounds::PLAYGROUND_DIRECTORY)) {

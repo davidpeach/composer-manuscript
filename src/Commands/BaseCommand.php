@@ -3,6 +3,8 @@
 namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\Config;
+use DavidPeach\Manuscript\Container\Container;
+use DavidPeach\Manuscript\Scratch\MyClass;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
@@ -18,8 +20,6 @@ class BaseCommand extends Command
     protected string $root;
 
     protected StyleInterface $io;
-
-    protected Config $config;
 
     protected function configure(): void
     {
@@ -41,8 +41,6 @@ class BaseCommand extends Command
         }
 
         $this->io = new SymfonyStyle(input: $input, output: $output);
-
-        $this->config = (new Config(directory: $this->root, filesystem: new Filesystem));
     }
 
     #[Pure] private function shouldBlock(string $directory): bool

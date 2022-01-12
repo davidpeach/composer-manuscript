@@ -12,6 +12,13 @@ class StatusCommand extends BaseCommand
 {
     protected static $defaultName = 'status';
 
+    public function __construct(
+        private Playgrounds $playgrounds,
+    )
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         parent::configure();
@@ -25,7 +32,7 @@ class StatusCommand extends BaseCommand
     {
         $root = ($input->getOption(name: 'dir') ?? getcwd());
 
-        $playgrounds = (new Playgrounds)->discover(root: $root);
+        $playgrounds = $this->playgrounds->discover(root: $root);
 
         $tableRows = [];
 

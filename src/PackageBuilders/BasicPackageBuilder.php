@@ -4,6 +4,7 @@ namespace DavidPeach\Manuscript\PackageBuilders;
 
 use DavidPeach\Manuscript\GitCredentials;
 use Symfony\Component\Console\Style\StyleInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -12,13 +13,28 @@ use Exception;
 
 class BasicPackageBuilder implements PackageBuilderContract
 {
+    private ?string $root = null;
+
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
-        private string         $root,
         private GitCredentials $gitCredentials,
-        private StyleInterface $io,
     )
     {
+    }
+
+    public function setRoot(string $root): self
+    {
+        $this->root = $root;
+
+        return $this;
+    }
+
+    public function setIO(StyleInterface $io): self
+    {
+        $this->io = $io;
+
+        return $this;
     }
 
     /**

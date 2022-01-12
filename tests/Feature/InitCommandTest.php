@@ -3,6 +3,8 @@
 namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\InitCommand;
+use DavidPeach\Manuscript\Config;
+use DavidPeach\Manuscript\Scratch\MyClass;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
@@ -21,6 +23,25 @@ class InitCommandTest extends TestCase
         parent::setUp();
     }
 
+    public function it_can_mock_something()
+    {
+        $mock = $this->createPartialMock(MyClass::class, [
+            'doSomething',
+        ]);
+
+        $mock->expects($this->once())
+            ->method('doSomething')
+            ->willReturn('THE TEST IMPLEMENTATION');
+
+        $this->mContainer->set('my_class', $mock);
+
+        $command = new InitCommand($this->mContainer);
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            '--dir' => $this->directory . '/empty',
+        ]);
+    }
+
     /** @test */
     public function it_initialises_an_empty_directory_as_a_manuscript_directory()
     {
@@ -31,7 +52,7 @@ class InitCommandTest extends TestCase
         $this->fs->remove($directory . '/packages');
         $this->fs->remove($directory . '/.manuscript');
 
-        $command = new InitCommand;
+        $command = $this->getCommand(command: 'init_command');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             '--dir' => $directory,
@@ -55,7 +76,7 @@ class InitCommandTest extends TestCase
     {
         $directory = $this->directory . '/existing';
 
-        $command = new InitCommand;
+        $command = $this->getCommand(command: 'init_command');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             '--dir' => $directory,
