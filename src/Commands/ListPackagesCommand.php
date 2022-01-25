@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\DevPackageModel;
-use DavidPeach\Manuscript\Finders\DevPackages;
+use DavidPeach\Manuscript\Finders\DevPackageFinder;
+use DavidPeach\Manuscript\Models\DevPackageModel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +14,7 @@ class ListPackagesCommand extends BaseCommand
     protected static $defaultName = 'list:packages';
 
     public function __construct(
-        private DevPackages $devPackages,
+        private DevPackageFinder $devPackages,
     )
     {
         parent::__construct();

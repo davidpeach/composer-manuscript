@@ -1,11 +1,7 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Frameworks;
 
-use DavidPeach\Manuscript\Frameworks\Framework;
-use DavidPeach\Manuscript\Frameworks\Laravel6;
-use DavidPeach\Manuscript\Frameworks\Laravel7;
-use DavidPeach\Manuscript\Frameworks\Laravel8;
 use Symfony\Component\Console\Style\StyleInterface;
 
 class FrameworkChooser

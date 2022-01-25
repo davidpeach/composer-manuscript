@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\Tests\TestCase;
+use DavidPeach\Manuscript\Utilities\Config;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 

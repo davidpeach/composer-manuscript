@@ -1,6 +1,8 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Models\Factories;
+
+use DavidPeach\Manuscript\Models\PlaygroundPackageModel;
 
 class PlaygroundPackageModelFactory extends PackageModelFactory
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Utilities;
 
 use Symfony\Component\Filesystem\Filesystem;
 

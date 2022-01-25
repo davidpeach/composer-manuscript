@@ -2,9 +2,9 @@
 
 namespace DavidPeach\Manuscript\Finders;
 
-use DavidPeach\Manuscript\PackageModelFactory;
+use DavidPeach\Manuscript\Models\Factories\PackageModelFactory;
 
-class DevPackages extends PackageFinder
+class DevPackageFinder extends PackageFinder
 {
     public function __construct(protected PackageModelFactory $modelFactory)
     {

@@ -2,9 +2,9 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Config;
-use DavidPeach\Manuscript\Finders\DevPackages;
-use DavidPeach\Manuscript\Finders\PlaygroundPackages;
+use DavidPeach\Manuscript\Finders\DevPackageFinder;
+use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
+use DavidPeach\Manuscript\Utilities\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,9 +15,9 @@ class InitCommand extends BaseCommand
     protected static $defaultName = 'init';
 
     public function __construct(
-        private Config $config,
-        private PlaygroundPackages $playgroundFinder,
-        private DevPackages $devPackageFinder,
+        private Config                  $config,
+        private PlaygroundPackageFinder $playgroundFinder,
+        private DevPackageFinder        $devPackageFinder,
     )
     {
         parent::__construct();

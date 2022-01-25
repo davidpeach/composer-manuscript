@@ -1,9 +1,11 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Models\Factories;
 
 use DavidPeach\Manuscript\Exceptions\ComposerFileNotFoundException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
+use DavidPeach\Manuscript\Models\PackageModel;
+use DavidPeach\Manuscript\Utilities\ComposerFileManager;
 
 abstract class PackageModelFactory
 {

@@ -8,18 +8,18 @@ use DavidPeach\Manuscript\Commands\InitCommand;
 use DavidPeach\Manuscript\Commands\ListPackagesCommand;
 use DavidPeach\Manuscript\Commands\PlayCommand;
 use DavidPeach\Manuscript\Commands\StatusCommand;
-use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\Config;
-use DavidPeach\Manuscript\DevPackageModelFactory;
-use DavidPeach\Manuscript\Finders\DevPackages;
-use DavidPeach\Manuscript\Finders\PlaygroundPackages;
-use DavidPeach\Manuscript\FrameworkChooser;
-use DavidPeach\Manuscript\GitCredentials;
+use DavidPeach\Manuscript\Finders\DevPackageFinder;
+use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
+use DavidPeach\Manuscript\Frameworks\FrameworkChooser;
+use DavidPeach\Manuscript\Models\Factories\DevPackageModelFactory;
+use DavidPeach\Manuscript\Models\Factories\PlaygroundPackageModelFactory;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
-use DavidPeach\Manuscript\PackageInstaller;
-use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
+use DavidPeach\Manuscript\Utilities\ComposerFileManager;
+use DavidPeach\Manuscript\Utilities\Config;
+use DavidPeach\Manuscript\Utilities\GitCredentials;
+use DavidPeach\Manuscript\Utilities\PackageInstaller;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -63,10 +63,10 @@ class Container extends ContainerBuilder
         $this->register(id: 'config', class: Config::class)
             ->setArgument(key: 'filesystem', value: new Reference(id: 'filesystem_adapter'));
 
-        $this->register(id: 'dev_packages_finder', class: DevPackages::class)
+        $this->register(id: 'dev_packages_finder', class: DevPackageFinder::class)
             ->setArgument(key: 'modelFactory', value: new Reference(id: 'dev_package_model_factory'));
 
-        $this->register(id: 'playground_packages_finder', class: PlaygroundPackages::class)
+        $this->register(id: 'playground_packages_finder', class: PlaygroundPackageFinder::class)
             ->setArgument(key: 'modelFactory', value: new Reference(id: 'playground_package_model_factory'));
 
         $this->register(id: 'composer_file_manager', class: ComposerFileManager::class);

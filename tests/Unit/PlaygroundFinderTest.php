@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\Finders\PlaygroundPackages;
+use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -56,7 +56,7 @@ class PlaygroundFinderTest extends TestCase
 //        $composerMock->method('read')->willReturn(['name' => 'manuscript/playground']);
 //        $this->mContainer->set('composer_file_manager', $composerMock);
 
-        $existingPlaygrounds = (new PlaygroundPackages(
+        $existingPlaygrounds = (new PlaygroundPackageFinder(
             $this->mContainer->get('playground_package_model_factory')
         ))->discover($this->root);
 

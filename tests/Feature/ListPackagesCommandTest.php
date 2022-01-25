@@ -3,15 +3,12 @@
 namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\ListPackagesCommand;
-use DavidPeach\Manuscript\DevPackageModel;
-use DavidPeach\Manuscript\DevPackageModelFactory;
-use DavidPeach\Manuscript\Finders\DevPackages;
+use DavidPeach\Manuscript\Finders\DevPackageFinder;
+use DavidPeach\Manuscript\Models\DevPackageModel;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ListPackagesCommandTest extends TestCase
@@ -30,7 +27,7 @@ class ListPackagesCommandTest extends TestCase
     /** @test */
     public function it_can_list_all_local_packages_in_the_packages_directory()
     {
-        $mockedDevPackagesFinder = $this->getMockBuilder(className: DevPackages::class)
+        $mockedDevPackagesFinder = $this->getMockBuilder(className: DevPackageFinder::class)
             ->disableOriginalConstructor()
             ->onlyMethods(methods: ['discover'])
             ->getMock();

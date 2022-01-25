@@ -2,8 +2,7 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\PackageModel;
-use DavidPeach\Manuscript\PlaygroundPackageModel;
+use DavidPeach\Manuscript\Models\PlaygroundPackageModel;
 use DavidPeach\Manuscript\Tests\TestCase;
 
 class PackageModelTest extends TestCase

@@ -2,14 +2,14 @@
 
 namespace DavidPeach\Manuscript\PackageBuilders;
 
-use DavidPeach\Manuscript\Config;
-use DavidPeach\Manuscript\GitCredentials;
-use DavidPeach\Manuscript\GithubPackageFromTemplate;
-use DavidPeach\Manuscript\GithubRepository;
+use DavidPeach\Manuscript\Github\GithubPackageFromTemplate;
+use DavidPeach\Manuscript\Github\GithubRepository;
+use DavidPeach\Manuscript\Utilities\Config;
+use DavidPeach\Manuscript\Utilities\GitCredentials;
+use Exception;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
-use Exception;
 
 class SpatiePackageBuilder implements PackageBuilderContract
 {

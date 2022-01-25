@@ -2,14 +2,14 @@
 
 namespace DavidPeach\Manuscript\PackageBuilders;
 
-use DavidPeach\Manuscript\GitCredentials;
+use DavidPeach\Manuscript\Utilities\GitCredentials;
+use Exception;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Throwable;
-use Exception;
 
 class BasicPackageBuilder implements PackageBuilderContract
 {

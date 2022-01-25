@@ -1,7 +1,8 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Models\Factories;
 
+use DavidPeach\Manuscript\Models\DevPackageModel;
 use Symfony\Component\Process\Process;
 
 class DevPackageModelFactory extends PackageModelFactory

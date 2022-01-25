@@ -4,13 +4,13 @@ namespace DavidPeach\Manuscript\Commands;
 
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
-use DavidPeach\Manuscript\Finders\PlaygroundPackages;
-use DavidPeach\Manuscript\FrameworkChooser;
+use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
+use DavidPeach\Manuscript\Frameworks\FrameworkChooser;
+use DavidPeach\Manuscript\Models\Factories\DevPackageModelFactory;
+use DavidPeach\Manuscript\Models\Factories\PlaygroundPackageModelFactory;
+use DavidPeach\Manuscript\Models\PackageModel;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
-use DavidPeach\Manuscript\PackageInstaller;
-use DavidPeach\Manuscript\PackageModel;
-use DavidPeach\Manuscript\DevPackageModelFactory;
-use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
+use DavidPeach\Manuscript\Utilities\PackageInstaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,12 +22,12 @@ class PlayCommand extends BaseCommand
     protected static $defaultName = 'play';
 
     public function __construct(
-        private DevPackageModelFactory $devPackageModelFactory,
+        private DevPackageModelFactory        $devPackageModelFactory,
         private PlaygroundPackageModelFactory $playgroundPackageModelFactory,
-        private PlaygroundPackages $playgrounds,
-        private PackageInstaller $packageInstaller,
-        private FrameworkChooser $frameworkChooser,
-        private PlaygroundPackageBuilder $playgroundPackageBuilder,
+        private PlaygroundPackageFinder       $playgrounds,
+        private PackageInstaller              $packageInstaller,
+        private FrameworkChooser              $frameworkChooser,
+        private PlaygroundPackageBuilder      $playgroundPackageBuilder,
     )
     {
         parent::__construct();
@@ -104,7 +104,7 @@ class PlayCommand extends BaseCommand
 
     /**
      * @param string $root
-     * @return PackageModel
+     * @return \DavidPeach\Manuscript\Models\PackageModel
      * @throws PackageModelNotCreatedException
      */
     protected function getPlayground(string $root): PackageModel
