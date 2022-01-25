@@ -3,7 +3,7 @@
 namespace DavidPeach\Manuscript\Finders;
 
 use DavidPeach\Manuscript\Exceptions\PackageModelNotCreatedException;
-use DavidPeach\Manuscript\PackageModelFactory;
+use DavidPeach\Manuscript\Models\Factories\PackageModelFactory;
 use Symfony\Component\Finder\Finder;
 
 abstract class PackageFinder

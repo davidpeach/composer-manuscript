@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Github;
 
 use Symfony\Component\Process\Process;
 

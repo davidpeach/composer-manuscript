@@ -2,7 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\Finders\PlaygroundPackages;
+use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +12,7 @@ class ClearPlaygroundsCommand extends BaseCommand
 {
     protected static $defaultName = 'clear-playgrounds';
 
-    public function __construct(private PlaygroundPackages $playgrounds)
+    public function __construct(private PlaygroundPackageFinder $playgrounds)
     {
         parent::__construct();
     }

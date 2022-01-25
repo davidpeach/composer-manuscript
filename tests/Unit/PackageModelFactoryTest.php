@@ -2,10 +2,9 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\ComposerFileManager;
-use DavidPeach\Manuscript\DevPackageModelFactory;
-use DavidPeach\Manuscript\PlaygroundPackageModelFactory;
+use DavidPeach\Manuscript\Models\Factories\PlaygroundPackageModelFactory;
 use DavidPeach\Manuscript\Tests\TestCase;
+use DavidPeach\Manuscript\Utilities\ComposerFileManager;
 
 class PackageModelFactoryTest extends TestCase
 {

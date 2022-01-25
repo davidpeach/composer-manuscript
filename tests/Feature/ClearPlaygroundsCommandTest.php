@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Tests\Feature;
 
-use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Tests\TestCase;
+use DavidPeach\Manuscript\Utilities\ComposerFileManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\HelperSet;

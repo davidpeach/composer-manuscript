@@ -1,9 +1,10 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Utilities;
 
 use DavidPeach\Manuscript\Exceptions\ComposerFileNotFoundException;
 use DavidPeach\Manuscript\Exceptions\PackageInstallFailedException;
+use DavidPeach\Manuscript\Models\PackageModel;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

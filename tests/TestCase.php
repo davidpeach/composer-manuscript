@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Tests;
 
-use DavidPeach\Manuscript\Finders\DevPackages;
-use DavidPeach\Manuscript\Finders\PlaygroundPackages;
+use DavidPeach\Manuscript\Finders\DevPackageFinder;
+use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
 use DavidPeach\Manuscript\Commands\ClearPlaygroundsCommand;
 use DavidPeach\Manuscript\Commands\CreateCommand;
 use DavidPeach\Manuscript\Commands\InitCommand;
@@ -14,9 +14,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TestCase extends KernelTestCase
 {
-    protected DevPackages $packageFinder;
+    protected DevPackageFinder $packageFinder;
 
-    protected PlaygroundPackages $playgroundFinder;
+    protected PlaygroundPackageFinder $playgroundFinder;
 
     protected Container $mContainer;
 

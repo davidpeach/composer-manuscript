@@ -2,8 +2,8 @@
 
 namespace DavidPeach\Manuscript\Tests\Unit;
 
-use DavidPeach\Manuscript\ComposerFileManager;
 use DavidPeach\Manuscript\Tests\TestCase;
+use DavidPeach\Manuscript\Utilities\ComposerFileManager;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ComposerFileManagerTest extends TestCase

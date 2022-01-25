@@ -3,7 +3,6 @@
 namespace DavidPeach\Manuscript\Tests\Feature;
 
 use DavidPeach\Manuscript\Commands\InitCommand;
-use DavidPeach\Manuscript\Config;
 use DavidPeach\Manuscript\Scratch\MyClass;
 use DavidPeach\Manuscript\Tests\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;

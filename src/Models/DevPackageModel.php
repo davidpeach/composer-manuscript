@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidPeach\Manuscript;
+namespace DavidPeach\Manuscript\Models;
 
 class DevPackageModel extends PackageModel
 {
