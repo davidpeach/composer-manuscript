@@ -14,8 +14,8 @@ use DavidPeach\Manuscript\Frameworks\FrameworkChooser;
 use DavidPeach\Manuscript\Models\Factories\DevPackageModelFactory;
 use DavidPeach\Manuscript\Models\Factories\PlaygroundPackageModelFactory;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
+use DavidPeach\Manuscript\PackageBuilders\LaravelPackageBuilder;
 use DavidPeach\Manuscript\PackageBuilders\PlaygroundPackageBuilder;
-use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
 use DavidPeach\Manuscript\Utilities\ComposerFileManager;
 use DavidPeach\Manuscript\Utilities\Config;
 use DavidPeach\Manuscript\Utilities\GitCredentials;
@@ -74,7 +74,7 @@ class Container extends ContainerBuilder
         $this->register(id: 'basic_package_builder', class: BasicPackageBuilder::class)
             ->setArgument(key: 'gitCredentials', value: new Reference('git_credentials'));
 
-        $this->register(id: 'spatie_package_builder', class: SpatiePackageBuilder::class)
+        $this->register(id: 'laravel_package_builder', class: LaravelPackageBuilder::class)
             ->setArgument(key: 'config', value: new Reference('config'));
 
         $this->register(id: 'git_credentials', class: GitCredentials::class);
@@ -106,7 +106,7 @@ class Container extends ContainerBuilder
 
         $this->register(id: 'create_command', class: CreateCommand::class)
             ->setArgument(key: 'basicPackageBuilder', value: new Reference('basic_package_builder'))
-            ->setArgument(key: 'spatiePackageBuilder', value: new Reference('spatie_package_builder'));
+            ->setArgument(key: 'laravelPackageBuilder', value: new Reference('laravel_package_builder'));
 
         $this->register(id: 'play_command', class: PlayCommand::class)
             ->setArgument(key: 'devPackageModelFactory', value: new Reference(id: 'dev_package_model_factory'))

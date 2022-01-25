@@ -10,4 +10,6 @@ interface PackageBuilderContract
      * @return string
      */
     public function build(): string;
+
+    public function setRoot(string $root): self;
 }
