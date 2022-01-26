@@ -2,6 +2,7 @@
 vendor
 tests/test-environments/**/playgrounds/**
 tests/test-environments/commands/init/empty/.manuscript
+tests/test-environments/laravel-package-builder/laravel-package
 .idea
 build
 /manuscript-*.phar
