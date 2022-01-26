@@ -72,10 +72,10 @@ class Container extends ContainerBuilder
         $this->register(id: 'composer_file_manager', class: ComposerFileManager::class);
 
         $this->register(id: 'basic_package_builder', class: BasicPackageBuilder::class)
-            ->setArgument(key: 'gitCredentials', value: new Reference('git_credentials'));
+            ->setArgument(key: 'gitCredentials', value: new Reference(id: 'git_credentials'));
 
         $this->register(id: 'laravel_package_builder', class: LaravelPackageBuilder::class)
-            ->setArgument(key: 'config', value: new Reference('config'));
+            ->setArgument(key: 'git', value: new Reference(id: 'git_credentials'));
 
         $this->register(id: 'git_credentials', class: GitCredentials::class);
 
