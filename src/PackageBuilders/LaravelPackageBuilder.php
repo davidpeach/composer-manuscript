@@ -2,6 +2,7 @@
 
 namespace DavidPeach\Manuscript\PackageBuilders;
 
+use DavidPeach\Manuscript\Github\GithubRepository;
 use DavidPeach\Manuscript\Utilities\GitCredentials;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Process\Process;
@@ -12,9 +13,14 @@ class LaravelPackageBuilder implements PackageBuilderContract
 
     private string $root;
 
-    private $io;
+    private StyleInterface $io;
 
-    public function __construct(private GitCredentials $git)
+    private string $package;
+
+    public function __construct(
+        private GitCredentials $git,
+        private GithubRepository $githubRepository,
+    )
     {
     }
 
@@ -23,27 +29,15 @@ class LaravelPackageBuilder implements PackageBuilderContract
      */
     public function build(): string
     {
-        $package = $this->io->ask('What would you like to call your new package?');
-        $package = str_replace(search: [' '], replace: '-', subject: $package);
+        $this->package = $this->io->ask(question: 'What would you like to call your new package?');
+        $this->package = str_replace(search: [' '], replace: '-', subject: $this->package);
 
-        // Download the template from Github
-        $process = new Process(command: [
-            'git',
-            'clone',
-            self::TEMPLATE_REPO,
-            $package
-        ]);
+        $this->githubRepository
+            ->setWorkingDirectory(workingDirectory: $this->root)
+            ->setLocalDirectory(localDirectory: $this->root . '/' . $this->package)
+            ->setRemoteUrl(remoteUrl: self::TEMPLATE_REPO)
+            ->clone();
 
-        $process->setWorkingDirectory($this->root);
-        $process->setTimeout(timeout: 3600);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            // throw error
-        }
-
-        // let Github do its thing
-        sleep(seconds: 3);
 
         $process = new Process(command: [
             'rm',
@@ -51,7 +45,7 @@ class LaravelPackageBuilder implements PackageBuilderContract
             '.git'
         ]);
 
-        $process->setWorkingDirectory($this->root . '/' . $package);
+        $process->setWorkingDirectory($this->root . '/' . $this->package);
         $process->setTimeout(timeout: 3600);
         $process->run();
 
@@ -64,7 +58,7 @@ class LaravelPackageBuilder implements PackageBuilderContract
             'init',
         ]);
 
-        $process->setWorkingDirectory($this->root . '/' . $package);
+        $process->setWorkingDirectory($this->root . '/' . $this->package);
         $process->setTimeout(timeout: 3600);
         $process->run();
 
@@ -99,9 +93,12 @@ class LaravelPackageBuilder implements PackageBuilderContract
             default: '8.0'
         );
 
-        $phpNamespace = 'ChangeMe';
+        $phpNamespace = $this->io->ask(
+            question: 'Your PHP Namespace',
+            default: 'ChangeMe'
+        );
 
-        $composerPackageContents = file_get_contents($this->root . '/' . $package . '/' . 'composer.json');
+        $composerPackageContents = file_get_contents(filename: $this->githubRepository->getLocalDirectory() . '/' . 'composer.json');
         $composerPackageContents = str_replace([
             '%vendor%',
             '%package%',
@@ -112,7 +109,7 @@ class LaravelPackageBuilder implements PackageBuilderContract
             '%php_namespace%'
         ], [
             $vendor,
-            $package,
+            $this->package,
             $description,
             $authorName,
             $authorEmail,
@@ -121,11 +118,11 @@ class LaravelPackageBuilder implements PackageBuilderContract
         ], $composerPackageContents);
 
         file_put_contents(
-            filename: $this->root . '/' . $package . '/' . 'composer.json',
+            filename: $this->githubRepository->getLocalDirectory() . '/' . 'composer.json',
             data: $composerPackageContents
         );
 
-        return $this->root . '/' . $package;
+        return $this->root . '/' . $this->package;
     }
 
     public function setRoot(string $root): self

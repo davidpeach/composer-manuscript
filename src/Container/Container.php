@@ -11,6 +11,7 @@ use DavidPeach\Manuscript\Commands\StatusCommand;
 use DavidPeach\Manuscript\Finders\DevPackageFinder;
 use DavidPeach\Manuscript\Finders\PlaygroundPackageFinder;
 use DavidPeach\Manuscript\Frameworks\FrameworkChooser;
+use DavidPeach\Manuscript\Github\GithubRepository;
 use DavidPeach\Manuscript\Models\Factories\DevPackageModelFactory;
 use DavidPeach\Manuscript\Models\Factories\PlaygroundPackageModelFactory;
 use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
@@ -75,9 +76,12 @@ class Container extends ContainerBuilder
             ->setArgument(key: 'gitCredentials', value: new Reference(id: 'git_credentials'));
 
         $this->register(id: 'laravel_package_builder', class: LaravelPackageBuilder::class)
-            ->setArgument(key: 'git', value: new Reference(id: 'git_credentials'));
+            ->setArgument(key: 'git', value: new Reference(id: 'git_credentials'))
+            ->setArgument(key: 'githubRepository', value: new Reference(id: 'github_repository'));
 
         $this->register(id: 'git_credentials', class: GitCredentials::class);
+
+        $this->register(id: 'github_repository', class: GithubRepository::class);
 
         $this->register(id: 'package_installer', class: PackageInstaller::class)
             ->setArgument(key: 'composer', value: new Reference(id: 'composer_file_manager'));
