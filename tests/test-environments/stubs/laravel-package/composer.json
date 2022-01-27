@@ -1,0 +1,45 @@
+{
+    "name": "%vendor%/%package%",
+    "description": "%description%",
+    "keywords": [
+        "%vendor%",
+        "laravel",
+        "%package%"
+    ],
+    "homepage": "https://github.com/%vendor%/%package%",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "%author_name%",
+            "email": "%author_email%",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^%php_minimum_version%"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "%php_namespace%\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "%php_namespace%\\Tests\\": "tests"
+        }
+    },
+    "scripts": {},
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "%php_namespace%\\ManuscriptServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

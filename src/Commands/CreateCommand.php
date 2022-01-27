@@ -2,8 +2,7 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use DavidPeach\Manuscript\PackageBuilders\BasicPackageBuilder;
-use DavidPeach\Manuscript\PackageBuilders\SpatiePackageBuilder;
+use DavidPeach\Manuscript\PackageBuilders\PackageBuilderContract;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -17,8 +16,8 @@ class CreateCommand extends BaseCommand
     protected static $defaultName = 'create';
 
     public function __construct(
-        private BasicPackageBuilder $basicPackageBuilder,
-        private SpatiePackageBuilder $spatiePackageBuilder,
+        private PackageBuilderContract $basicPackageBuilder,
+        private PackageBuilderContract $laravelPackageBuilder,
     )
     {
         parent::__construct();
@@ -86,7 +85,7 @@ class CreateCommand extends BaseCommand
                     ->setIO($this->io)
                     ->build(),
 
-                null => $this->spatiePackageBuilder
+                null => $this->laravelPackageBuilder
                     ->setRoot($packagesDirectory)
                     ->setIO($this->io)
                     ->build(),

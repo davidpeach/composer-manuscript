@@ -10,7 +10,16 @@ class GithubRepository
 
     private string $remoteUrl;
 
-    private bool $clonedSuccessfully;
+    private bool $clonedSuccessfully = false;
+
+    private string $workingDirectory;
+
+    public function setWorkingDirectory(string $workingDirectory): self
+    {
+        $this->workingDirectory = $workingDirectory;
+
+        return $this;
+    }
 
     /**
      * @param string $localDirectory
@@ -47,6 +56,8 @@ class GithubRepository
      */
     public function clone(): self
     {
+        $this->clonedSuccessfully = false;
+
         $process = new Process(command: [
             'git',
             'clone',
@@ -54,6 +65,7 @@ class GithubRepository
             $this->localDirectory,
         ]);
 
+        $process->setWorkingDirectory($this->workingDirectory);
         $process->setTimeout(timeout: 3600);
         $process->run();
 
@@ -63,6 +75,8 @@ class GithubRepository
         }
 
         $this->clonedSuccessfully = false;
+
+        sleep(3);
 
         return $this;
     }
