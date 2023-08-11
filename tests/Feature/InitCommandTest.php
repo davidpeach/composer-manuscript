@@ -84,11 +84,11 @@ class InitCommandTest extends TestCase
 
         // Messages to sow that directories already existing
         $this->assertStringContainsString(
-            'Playgrounds directory already exists. No action taken.',
+            'Playgrounds directory already exists',
             $output
         );
         $this->assertStringContainsString(
-            'Packages directory already exists. No action taken.',
+            'Packages directory already exists',
             $output
         );
 

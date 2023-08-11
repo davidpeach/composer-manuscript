@@ -9,9 +9,7 @@ class FrameworkChooser
     private ?StyleInterface $io = null;
 
     private array $frameworks = [
-        'laravel6x' => Laravel6::class,
-        'laravel7x' => Laravel7::class,
-        'laravel8x' => Laravel8::class,
+        'laravel10x' => Laravel10::class,
     ];
 
     public function setIO(StyleInterface $io): self

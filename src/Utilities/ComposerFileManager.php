@@ -47,20 +47,25 @@ class ComposerFileManager
 
     private function merge($composer, $wantToAdd): array
     {
-        $okayToAdd = [];
-
         foreach ($wantToAdd as $key => $additions) {
 
-            if (! array_key_exists(key: $key, array: $composer)) {
-                $okayToAdd[$key] = $additions;
+            $adding = null;
+
+            if (
+                !array_key_exists(key: $key, array: $composer) ||
+                !is_array($additions)
+            ) {
+                $composer = array_merge($composer, [
+                    $key => $additions,
+                ]);
                 continue;
             }
 
             $existing = array_map(function ($item) use ($key) {
                 return match ($key) {
                     'repositories' => $item['url'],
-                    };
-                }, $composer[$key]);
+                };
+            }, $composer[$key]);
 
 
             $adding = array_filter($additions, function ($addition) use ($existing, $key) {
@@ -69,14 +74,14 @@ class ComposerFileManager
                 };
             });
 
-            if (! empty($adding)) {
-                $okayToAdd[$key] = $adding;
+            if ($adding) {
+                $composer = array_merge_recursive(
+                    $composer,
+                    [$key => $adding],     
+                );
             }
         }
 
-        return array_merge_recursive(
-            $composer,
-            $okayToAdd
-        );
+        return $composer;
     }
 }

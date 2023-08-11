@@ -6,7 +6,7 @@ Manuscript is a tool to help you with developing and testing composer packages o
 
 ## Installation
 
-composer global require davidpeach/composer-manuscript
+`composer global require davidpeach/composer-manuscript`
 
 ## How it works
 
@@ -25,11 +25,11 @@ The `manuscript init` command just creates a `.manuscript` file in the current d
 - packages
 - playgrounds
 
-*./packages* is where you place any packages that you are building.
+**./packages** is where you place any packages that you are building.
 
-*./playgrounds* is where any known frameworks can be installed for you and have your package in development installed into.
+**./playgrounds** is where any known frameworks can be installed for you and have your package in development installed into.
 So for example, you could be developing a laravel package and want a local laravel installation to manually test things in.
-With the `manuscript play` command, you can tell Manuscript to download Laravel and use the repository symlink functionality to install your package into that Laravel installation.
+With the `manuscript play` command, you can tell Manuscript to download a copy of Laravel and use the repository symlink functionality to install your package into that Laravel installation for testing.
 
 ## How to contribute
 

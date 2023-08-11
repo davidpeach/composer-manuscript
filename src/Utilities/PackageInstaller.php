@@ -12,7 +12,8 @@ class PackageInstaller
 {
     public function __construct(
         private ComposerFileManager $composer
-    ){}
+    ) {
+    }
 
     /**
      * @param PackageModel $package
@@ -24,15 +25,18 @@ class PackageInstaller
         try {
             $this->composer->add(
                 pathToFile: $playground->getPath() . '/composer.json',
-                toAdd: ['repositories' => [
-                    [
-                        'type' => 'path',
-                        'url'  =>  realpath($package->getPath()),
-                        'options' => [
-                            'symlink' => true,
-                        ],
+                toAdd: [
+                    'minimum-stability' => 'dev',
+                    'repositories' => [
+                        [
+                            'type' => 'path',
+                            'url'  =>  realpath($package->getPath()),
+                            'options' => [
+                                'symlink' => true,
+                            ],
+                        ]
                     ]
-                ]]
+                ]
             );
 
             $process = Process::fromShellCommandline(
@@ -45,7 +49,6 @@ class PackageInstaller
             if (!$process->isSuccessful()) {
                 throw new ProcessFailedException(process: $process);
             }
-
         } catch (ComposerFileNotFoundException $e) {
             throw new PackageInstallFailedException(
                 message: 'Failed to install package.',
@@ -53,6 +56,5 @@ class PackageInstaller
                 previous: $e
             );
         }
-
     }
 }

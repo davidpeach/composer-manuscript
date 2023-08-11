@@ -40,7 +40,7 @@ class PlayCommandTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->setInputs([
-            'laravel8x',
+            'laravel10x',
         ]);
 
         $commandTester->execute([
@@ -52,11 +52,12 @@ class PlayCommandTest extends TestCase
         );
 
         $this->assertTrue(
-            $this->fs->exists($this->directory . '/playgrounds/laravel-8-872812800')
+            $this->fs->exists($this->directory . '/playgrounds/laravel-10-872812800')
         );
 
-        $composerFile = $this->directory . '/playgrounds/laravel-8-872812800/composer.json';
+        $composerFile = $this->directory . '/playgrounds/laravel-10-872812800/composer.json';
         $composerFileArray = json_decode(file_get_contents($composerFile), true);
+        $this->assertEquals('dev', $composerFileArray['minimum-stability']);
         $this->assertArrayHasKey('manuscript-test/test-package', $composerFileArray['require']);
 
         $this->assertArrayHasKey('repositories', $composerFileArray);
@@ -73,7 +74,7 @@ class PlayCommandTest extends TestCase
 
         $this->assertTrue(
             $this->fs->exists(
-                $this->directory . '/playgrounds/laravel-8-872812800/vendor/manuscript-test/test-package'
+                $this->directory . '/playgrounds/laravel-10-872812800/vendor/manuscript-test/test-package'
             )
         );
 

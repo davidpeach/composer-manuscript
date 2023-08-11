@@ -10,12 +10,5 @@
       "name": "David Peach",
       "email": "mail@davidpeach.co.uk"
     }
-  ],
-  "repositories": [{
-    "type": "path",
-    "url": "/some/local/path",
-    "options": {
-      "symlink": true
-    }
-  }]
+  ]
 }

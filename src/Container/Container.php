@@ -34,7 +34,7 @@ class Container extends ContainerBuilder
 
         // READ PACKAGE DEETS FROM A SEPARATE FILE ?
         $this->setParameter('app.name', 'Manuscript');
-        $this->setParameter('app.version', '5.1.1');
+        $this->setParameter('app.version', '5.2.0');
 
         $this->registerServices();
 
