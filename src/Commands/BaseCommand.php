@@ -2,7 +2,6 @@
 
 namespace DavidPeach\Manuscript\Commands;
 
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +38,7 @@ class BaseCommand extends Command
         $this->io = new SymfonyStyle(input: $input, output: $output);
     }
 
-    #[Pure] private function shouldBlock(string $directory): bool
+    private function shouldBlock(string $directory): bool
     {
         if ($this->getName() === 'init') {
             return false;
